@@ -12,7 +12,7 @@ export default function Profile() {
 
   return (
     <View style={styles.containerParent}>
-      <InfoBox title='Email' text={email || '#DEVELOPER#'} />
+      <InfoBox title='Your information' text={`Email: ${email || '#DEVELOPER#'}`} />
       <SelectionBox buttons={[
         {
         title: "Logout",

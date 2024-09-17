@@ -1,11 +1,8 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 
-import styles from '../styles/default';
+import Button, {ButtonProps} from './button';
 
-interface ButtonProps {
-    title: string;
-    onPress: () => void;
-}
+import styles from '../styles/default';
 
 interface ButtonBoxProps {
     buttons: ButtonProps[];
@@ -16,9 +13,7 @@ const ButtonBox: React.FC<ButtonBoxProps> = (props) => {
         <View style={styles.containerTop}>
             <View style={styles.containerBox}> 
                 {props.buttons.map((button, index) => (
-                    <TouchableOpacity key={index} style={styles.button} onPress={button.onPress}>
-                        <Text style={styles.buttonText}>{button.title}</Text>
-                    </TouchableOpacity>
+                    <Button key={index} title={button.title} onPress={button.onPress} />
                 ))}
             </View>
         </View>
