@@ -2,10 +2,10 @@ import React from 'react';
 import BottomNavigationBar from '../components/bottom_navigation_bar';
 import { NavigationContainer } from '@react-navigation/native';
 
-import Home from './home';
-import Review from './review';
-import Explore from './explore';
-import Profile from './profile';
+import Home from '../tabs/home';
+import Review from '../tabs/review';
+import Explore from '../tabs/explore';
+import Profile from '../tabs/profile';
 
 
 const tabs = [

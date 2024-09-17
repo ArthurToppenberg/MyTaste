@@ -1,10 +1,26 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
+
+import styles from '../styles/default';
+import SelectionBox from '../components/button_box';
+import InfoBox from '../components/info_box';
+import { useAuth } from '../utils/authenticationProvider';
+
 
 export default function Profile() {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Profile</Text>
-      </View>
-    );
-  }
+  const { logout, email } = useAuth();
+
+  return (
+    <View style={styles.containerParent}>
+      <InfoBox title='Email' text={email || '#DEVELOPER#'} />
+      <SelectionBox buttons={[
+        {
+        title: "Logout",
+        onPress: function (): void {
+          logout();
+        }
+        },
+      ]} />
+    </View>
+  );
+}
