@@ -22,6 +22,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6ebe7ea2-b901-4769-8faf-188cbb205d19"
+      }
+    },
+    "owner": "topperware"
   }
 }

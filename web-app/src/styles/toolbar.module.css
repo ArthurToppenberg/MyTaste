@@ -1,0 +1,6 @@
+.toolbar{
+    min-height: 70px;
+    position: relative;
+    overflow-x: hidden;
+    padding-top: 1.5rem;
+}
