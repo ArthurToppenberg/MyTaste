@@ -5,9 +5,9 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 const secret = process.env.NEXTAUTH_SECRET;
 
-export interface IProfile{
-    email: string;
+export interface IProfile {
     name: string;
+    phoneNumber: string;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -19,13 +19,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (req.method === 'GET') {
         try {
-            const profile = await prisma.user.findUnique({
+            const profile = await prisma.profile.findUnique({
                 where: {
                     id: token.id as number,
                 },
                 select: {
-                    email: true,
                     name: true,
+                    phoneNumber: true,
                 },
             });
 

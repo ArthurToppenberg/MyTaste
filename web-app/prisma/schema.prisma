@@ -9,11 +9,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user{
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  name      String?
-  createdAt DateTime @default(now())
-  permission Int @default(0)
+enum Permission {
+  ADMIN
+  USER
+  RESTORANT
+}
+
+model User {
+  id         Int        @id @default(autoincrement())
+  email      String     @unique
+  password   String
+  createdAt  DateTime   @default(now())
+  permission Permission @default(USER)
+  profile    Profile?   @relation // Foreign key to Profile.id
+}
+
+model Profile {
+  id   Int    @id
+  name String @default("New User")
+  phoneNumber String?
+  user User   @relation(fields: [id], references: [id]) // Connects Profile.id to User.id
 }

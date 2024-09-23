@@ -34,7 +34,7 @@ export default function SignIn() {
         <div className="row justify-content-center">
           <div className="col-md-6">
             <form onSubmit={handleSubmit} className="card p-4">
-              <h1 className="text-center mb-4">Sign In</h1>
+              <h1 className="text-center mb-4">My Taste</h1>
               {error && <div className="alert alert-danger">Invalid Username or password</div>}
               <div className="form-group">
                 <label htmlFor="email">Email</label>
@@ -71,9 +71,9 @@ export default function SignIn() {
               <button
                 type="button"
                 className="btn btn-link btn-block mt-2"
-                onClick={() => router.push('/auth/signup')}
+                onClick={() => router.push('/auth/register')}
               >
-                Don't have an account? Sign Up
+                Don't have an account? Register
               </button>
             </form>
           </div>

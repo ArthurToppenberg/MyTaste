@@ -19,7 +19,7 @@ const Index: React.FC = () => {
   const { data: session, status } = useSession();
 
   const notAuthedElements: JSX.Element[] = [
-    <Button onClick={() => console.log('Button 2 clicked')}>Register</Button>,
+    <Button onClick={() => window.location.href = '/auth/register' }>Register</Button>,
     <Button onClick={() => window.location.href = '/auth/signin'}>Sign In</Button>
   ];
 
@@ -48,7 +48,7 @@ const Index: React.FC = () => {
 
     getProfile().then((profile: IProfile) => {
       setNameElement(<InfoBox text={`Name: ${profile.name}`} />);
-      setEmailElement(<InfoBox text={`Email: ${profile.email}`} />);
+      setEmailElement(<InfoBox text={`Phone: ${profile.phoneNumber}`} />);
     });
 
   }, [session, status]);
@@ -60,6 +60,7 @@ const Index: React.FC = () => {
         <title>My Taste</title>
       </Head>
       <Toolbar
+      logo={<InfoBox text="My Taste" />}
         tabs={[
           { name: 'Home', tab: <Home /> },
           { name: 'About', tab: <About /> },

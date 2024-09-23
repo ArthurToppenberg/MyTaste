@@ -1,6 +1,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaClient } from '@prisma/client';
+import { compare } from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -21,10 +22,8 @@ export default NextAuth({
           where: { email: credentials.email },
         });
 
-        if (user && user.password === credentials.password) {
-          return {
-            id: user.id,
-          };
+        if (user && await compare(credentials.password, user.password)) {
+          return { id: user.id };
         }
 
         return null;
@@ -36,9 +35,8 @@ export default NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
-      // If user is defined, it means this is the first tising created
       if (user) {
-        token.id = user.id as number;
+        token.id = user.id;
       }
       return token;
     },

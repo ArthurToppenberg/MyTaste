@@ -10,11 +10,12 @@ interface tabLinks {
 }
 
 interface ToolbarProps {
+    logo?: React.ReactElement;
     tabs: tabLinks[];
     elements: React.ReactElement[];
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ tabs, elements }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ logo, tabs, elements }) => {
     //keep track of which tab is currently selected
     const [selectedTab, setSelectedTab] = React.useState<number>(0);
 
@@ -23,6 +24,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ tabs, elements }) => {
             <nav className={`toolbar navbar navbar-expand-lg navbar-light bg-light fixed-top ${styles.toolbar}`}>
                 <div className="container-fluid">
                     <div className="d-flex flex-wrap mb-2">
+                        {logo && <div className="me-2 mb-2">{logo}</div>}
                         {tabs.map((tab, index) => (
                             <div key={index} className="me-2 mb-2">
                                 <ToolbarLink

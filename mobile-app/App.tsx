@@ -1,21 +1,17 @@
-// App.tsx
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-
-import Main from './src/pages/main';
-import Authentication from './src/pages/authentication';
-
-import { AuthProvider } from './src/utils/authenticationProvider';
-
+import { TailwindProvider } from 'tailwind-rn';
+import utilities from './tailwind.json'; // Import the generated JSON
+import Test from './src/components/test';
 
 export default function App() {
   return (
-    <View style={{ flex: 1 }}>  
-      <StatusBar style="auto" />     
-      <AuthProvider authProviderProps={{notAuthenticated: <Authentication/>}}>
-        <Main />
-      </AuthProvider>
-    </View>
+    <TailwindProvider utilities={utilities}>
+      <View style={{ flex: 1 }}>
+        <StatusBar style="auto" />
+        <Test />
+      </View>
+    </TailwindProvider>
   );
 }
