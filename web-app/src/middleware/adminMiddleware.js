@@ -7,8 +7,6 @@ export async function adminMiddleware(req) {
     // Retrieve the JWT token from the request
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-    console.log('Token:', token);
-
     return NextResponse.redirect(new URL('/unauthorized', req.url));
 
     return null;

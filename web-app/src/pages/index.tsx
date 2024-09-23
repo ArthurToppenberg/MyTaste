@@ -29,7 +29,7 @@ const Index: React.FC = () => {
   const authedElements: JSX.Element[] = [
     nameElement,
     emailElement,
-    <Button onClick={() => signOut({ callbackUrl: './' })}>Sign Out</Button>
+    <Button onClick={() => signOut({ callbackUrl: '' })}>Sign Out</Button>
   ];
 
   //session.user.permission === 1
