@@ -1,6 +1,13 @@
-.toolbar{
+.toolbar {
     min-height: 70px;
-    position: relative;
+    max-height: 100px;
+    position: absolute;
     overflow: hidden;
     padding-top: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.699);
+    transition: background-color 0.5s;
+}
+
+.toolbar:hover {
+    background-color: rgba(0, 0, 0, 0.911);
 }

@@ -26,8 +26,8 @@ const Index: React.FC = () => {
   const { data: session, status } = useSession();
 
   const notAuthedElements: JSX.Element[] = [
-    <Button onClick={() => window.location.href = '/auth/register'}>Register</Button>,
-    <Button onClick={() => window.location.href = '/auth/signin'}>Sign In</Button>
+    <InfoBox text="Sign in" invertOnHover={true} invertOnClick={true} onClick={() => window.location.href = '/auth/signin'} />,
+    <InfoBox text="Sign up" invertOnHover={true} invertOnClick={true} onClick={() => window.location.href = '/auth/register'} />
   ];
 
   const [nameElement, setNameElement] = useState<JSX.Element>(<InfoBox text={"LOADING"} loading={true} />);
@@ -107,8 +107,8 @@ const Index: React.FC = () => {
         logo={<InfoBox text="My Taste" />}
         tabLinks={[
           { name: 'Home', tab: <Home /> },
-          { name: 'About', tab: <About /> },
-          { name: 'Contact', tab: <Contact /> }
+          { name: 'About', tab: <Home /> },
+          { name: 'Contact', tab: <Home /> }
         ]}
         elements={
           session ? authedElements : notAuthedElements

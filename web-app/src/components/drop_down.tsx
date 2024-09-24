@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import DropDownItem, { DropDownItemProps } from './drop_down_item';
+import styles from '@/styles/dropdown.module.css';
 
 interface DropdownProps {
   buttonText: string;
@@ -90,7 +91,7 @@ const Dropdown: React.FC<DropdownProps> = ({ buttonText, itemsProps }) => {
       onMouseLeave={handleMouseLeave}
     >
       <button
-        className="btn btn-secondary dropdown-toggle"
+        className={`btn btn-secondary dropdown-toggle border rounded shadow-sm p-2 ${styles.custom_dropdown_menu}`}
         type="button"
         id="dropdownMenuButton"
         onClick={handleClick}
