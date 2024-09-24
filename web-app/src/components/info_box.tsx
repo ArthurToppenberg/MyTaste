@@ -2,11 +2,11 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 interface InfoBoxProps {
-    text: string;
+    text?: string;
     loading?: boolean;
 }
 
-const InfoBox: React.FC<InfoBoxProps> = ({ text, loading = false }) => {
+const InfoBox: React.FC<InfoBoxProps> = ({ text = '', loading = false }) => {
     return (
         <div className="border rounded shadow-sm p-2 bg-light">
             {loading ? (

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from '@/styles/toolbar.module.css';
 
@@ -11,11 +11,12 @@ interface tabLinks {
 
 interface ToolbarProps {
     logo?: React.ReactElement;
-    tabs: tabLinks[];
+    tabLinks: tabLinks[];
     elements: React.ReactElement[];
+    setTab: (tab: ReactElement) => void;
 }
 
-const Toolbar: React.FC<ToolbarProps> = ({ logo, tabs, elements }) => {
+const Toolbar: React.FC<ToolbarProps> = ({ logo, tabLinks, elements, setTab}) => {
     //keep track of which tab is currently selected
     const [selectedTab, setSelectedTab] = React.useState<number>(0);
 
@@ -25,27 +26,26 @@ const Toolbar: React.FC<ToolbarProps> = ({ logo, tabs, elements }) => {
                 <div className="container-fluid">
                     <div className="d-flex flex-wrap mb-2">
                         {logo && <div className="me-2 mb-2">{logo}</div>}
-                        {tabs.map((tab, index) => (
+                        {tabLinks.map((tabLink, index) => (
                             <div key={index} className="me-2 mb-2">
                                 <ToolbarLink
                                     highlight={selectedTab === index}
-                                    onClick={() => setSelectedTab(index)}
+                                    onClick={() => {setSelectedTab(index); setTab(tabLink.tab);}}
                                 >
-                                    {tab.name}
+                                    {tabLink.name}
                                 </ToolbarLink>
                             </div>
                         ))}
                     </div>
-                    <div className="d-flex ms-auto flex-wrap mb-2">
+                    <div className={`d-flex ms-auto flex-wrap mb-2`}>
                         {elements.map((element, index) => (
-                            <div key={index} className="ms-2 mb-2">
+                            <div key={index} className={`ms-2 mb-2`}>
                                 {element}
                             </div>
                         ))}
                     </div>
                 </div>
             </nav>
-            {tabs[selectedTab].tab}
         </>
     );
 };
