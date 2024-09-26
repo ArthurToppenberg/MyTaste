@@ -24,5 +24,6 @@ export async function middleware(req) {
 
 // Apply middleware to specific routes
 export const config = {
+    runtime: 'nodejs',
     matcher: ['/protected/:path*', '/api/protected/:path*'],
 };

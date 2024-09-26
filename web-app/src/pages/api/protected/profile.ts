@@ -1,12 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
-import Prisma from '../../../utils/prisma';
+import Prisma from '../../../utils/server/prisma';
 
 const secret = process.env.NEXTAUTH_SECRET;
 
 export interface IProfile {
-    name: string;
-    phoneNumber: string;
+    name?: string;
+    phoneNumber?: string | null;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -32,7 +32,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 return res.status(404).json({ message: 'Profile not found' });
             }
 
-            return res.status(200).json(profile);
+            const response: IProfile = profile;
+
+            return res.status(200).json(response);
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Internal server error' });

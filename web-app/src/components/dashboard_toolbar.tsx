@@ -2,7 +2,7 @@ import React from 'react';
 import styles from '@/styles/dashboard_toolbar.module.css';
 import DashboardToolbarDropdown, {DashboardDropdownProps} from './dashboard_toolbar_dropdown';
 
-interface DashboardToolBarProps {
+export interface DashboardToolBarProps {
     onReload: () => void;
     dashboardSelectionDropdownProps: DashboardDropdownProps;
 }

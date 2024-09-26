@@ -1,12 +1,18 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getToken } from 'next-auth/jwt';
-import Prisma from '../../../utils/server/prisma';
+import Prisma from '../../../../utils/server/prisma';
 
 const secret = process.env.NEXTAUTH_SECRET;
 
-export interface IUser {
+interface IUser {
     id: number;
+    email: string;
     permission: string;
+    type: string;
+}
+
+export interface IUsers {
+    users: IUser[];
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -18,23 +24,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (req.method === 'GET') {
         try {
-            const user = await Prisma.user.findUnique({
-                where: {
-                    id: token.id as number,
-                },
+            const users = await Prisma.user.findMany({
                 select: {
                     id: true,
+                    email: true,
                     permission: true,
+                    type: true
                 },
             });
 
-            if (!user) {
-                return res.status(404).json({ message: 'User not found' });
+            if (!users || users.length === 0) {
+                return res.status(404).json({ message: 'Users not found' });
             }
+            
+            const response: IUsers = { users };
 
-            const response: IUser = user;
-
-            return res.status(200).json(user);
+            return res.status(200).json(response);
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Internal server error' });

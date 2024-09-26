@@ -11,10 +11,10 @@ import Head from "next/head";
 import { signOut, useSession } from 'next-auth/react';
 import { useEffect, useState } from "react";
 
-import { getProfile } from "@/utils/profile";
+import { getProfile } from "@/utils/client/profile";
 import { IProfile } from "./api/protected/profile";
 
-import { getUser } from "@/utils/user";
+import { getUser } from "@/utils/client/user";
 import { IUser } from "./api/protected/user";
 
 import Dropdown from "@/components/toolbar_dropdown";

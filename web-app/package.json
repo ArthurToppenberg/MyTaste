@@ -9,12 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@prisma/client": "^5.19.1",
+    "@prisma/client": "^5.20.0",
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.3.3",
     "next": "14.2.11",
     "next-auth": "^4.24.7",
-    "prisma": "^5.19.1",
     "react": "^18",
     "react-dom": "^18"
   },
@@ -24,6 +23,7 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.11",
+    "prisma": "^5.20.0",
     "typescript": "^5"
   }
 }

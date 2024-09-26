@@ -1,7 +1,7 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcryptjs';
-import Prisma from '../../../utils/prisma';
+import Prisma from '../../../utils/server/prisma';
 
 export default NextAuth({
   providers: [
@@ -18,6 +18,7 @@ export default NextAuth({
 
         const user = await Prisma.user.findUnique({
           where: { email: credentials.email },
+          select: { id: true, password: true },
         });
 
         if (user && await compare(credentials.password, user.password)) {
@@ -33,7 +34,7 @@ export default NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
+      if (user){
         token.id = user.id;
       }
       return token;

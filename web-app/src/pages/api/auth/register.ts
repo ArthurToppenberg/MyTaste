@@ -1,5 +1,5 @@
 // /pages/api/auth/register.ts
-import Prisma from '../../../utils/prisma';
+import Prisma from '../../../utils/server/prisma';
 import { hash } from 'bcryptjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
