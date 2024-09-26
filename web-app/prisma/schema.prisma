@@ -12,8 +12,13 @@ datasource db {
 enum Permission {
   DEVELOPER
   ADMIN
+  DEFUALT
+}
+
+enum Type {
   USER
   RESTORANT
+  BOTH
 }
 
 model User {
@@ -21,7 +26,8 @@ model User {
   email      String     @unique
   password   String
   createdAt  DateTime   @default(now())
-  permission Permission @default(USER)
+  permission Permission @default(DEFUALT)
+  type Type @default(USER)
   profile    Profile?   @relation // Foreign key to Profile.id
 }
 

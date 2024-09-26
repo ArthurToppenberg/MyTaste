@@ -17,9 +17,10 @@ import { IProfile } from "./api/protected/profile";
 import { getUser } from "@/utils/user";
 import { IUser } from "./api/protected/user";
 
-import Dropdown from "@/components/drop_down";
+import Dropdown from "@/components/toolbar_dropdown";
 
-import Profile from "@/tabs/account/profile";
+import UnderDevelopment from "@/tabs/underDevelopment";
+import Accounts from "@/tabs/admin/accounts"
 
 const Index: React.FC = () => {
   //check if session exists?
@@ -31,19 +32,19 @@ const Index: React.FC = () => {
   ];
 
   const [nameElement, setNameElement] = useState<JSX.Element>(<InfoBox text={"LOADING"} loading={true} />);
-  const [emailElement, setEmailElement] = useState<JSX.Element>(<InfoBox text={"LOADING"} loading={true} />);
+  const [phoneElement, setEmailElement] = useState<JSX.Element>(<InfoBox text={"LOADING"} loading={true} />);
 
   const [manageDropdown, setManageDropdown] = useState<JSX.Element>(<InfoBox loading={true} />);
   const [developerDropdown, setDeveloperDropdown] = useState<JSX.Element>(<InfoBox loading={true} />);
 
   const authedElements: JSX.Element[] = [
     nameElement,
-    emailElement,
+    phoneElement,
     developerDropdown,
     manageDropdown,
     <Dropdown buttonText="Account" itemsProps={[
-      { name: "Profile", action: () => setTab(<Profile />) },
-      { name: "Logout", action: () => signOut({ callbackUrl: '' }) }
+      { name: "Profile", onClick: () => setTab(<UnderDevelopment />) },
+      { name: "Logout", onClick: () => signOut({ callbackUrl: '' }) }
     ]} />
   ];
 
@@ -57,8 +58,8 @@ const Index: React.FC = () => {
     }
 
     getProfile().then((profile: IProfile) => {
-      setNameElement(<InfoBox text={`Name: ${profile.name}`} />);
-      setEmailElement(<InfoBox text={`Phone: ${profile.phoneNumber}`} />);
+      setNameElement(profile.name ? <InfoBox text={`Name: ${profile.name}`} /> : <></>);
+      setEmailElement(profile.phoneNumber ? <InfoBox text={`Phone: ${profile.phoneNumber}`} /> : <></>);
     });
 
     getUser().then((user: IUser) => {
@@ -79,16 +80,23 @@ const Index: React.FC = () => {
       }
 
       function mangageDropdown(show: boolean) {
-        setManageDropdown(<Dropdown buttonText="Manage" itemsProps={[
-          { name: "Accounts", action: () => alert("Accounts") },
-          { name: "Restorants", action: () => alert("Restorants") },
+        if(!show) {
+          return setManageDropdown(<></>);
+        }
+        setManageDropdown(<Dropdown buttonText="Admin" itemsProps={[
+          { name: "Accounts", onClick: () => setTab(<Accounts />) },
+          { name: "Restorants", onClick: () => setTab(<UnderDevelopment />) },
         ]} />);
       }
 
       function developerDropdown(show: boolean) {
+        if(!show) {
+          return setDeveloperDropdown(<></>);
+        }
         setDeveloperDropdown(<Dropdown buttonText="Developer" itemsProps={[
-          { name: "API", action: () => alert("API") },
-          { name: "Documentation", action: () => alert("Documentation") },
+          { name: "Prompts", onClick: () => setTab(<UnderDevelopment />) },
+          { name: "API", onClick: () => setTab(<UnderDevelopment />) },
+          { name: "Documentation", onClick: () => setTab(<UnderDevelopment />) },
         ]} />);
       }
     });
@@ -107,8 +115,8 @@ const Index: React.FC = () => {
         logo={<InfoBox text="My Taste" />}
         tabLinks={[
           { name: 'Home', tab: <Home /> },
-          { name: 'About', tab: <Home /> },
-          { name: 'Contact', tab: <Home /> }
+          { name: 'About', tab: <UnderDevelopment /> },
+          { name: 'Contact', tab: <UnderDevelopment /> }
         ]}
         elements={
           session ? authedElements : notAuthedElements

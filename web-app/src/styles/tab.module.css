@@ -4,8 +4,20 @@
   align-items: center;
   height: 100%;
   width: 100%;
-  padding: 1rem;
-  padding-top: 5rem;
+  padding-inline: 1rem;
+  padding-top: 5.6rem;
+  flex-direction: row;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.content_custom{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  padding-top: 5.6rem;
   flex-direction: row;
   overflow-y: scroll;
   overflow-x: hidden;

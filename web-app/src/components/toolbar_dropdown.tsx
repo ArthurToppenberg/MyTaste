@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import DropDownItem, { DropDownItemProps } from './drop_down_item';
+import DropDownItem, { DropDownItemProps } from './dropdown_item';
 import styles from '@/styles/dropdown.module.css';
 
 interface DropdownProps {
@@ -93,7 +93,6 @@ const Dropdown: React.FC<DropdownProps> = ({ buttonText, itemsProps }) => {
       <button
         className={`btn btn-secondary dropdown-toggle border rounded shadow-sm p-2 ${styles.custom_dropdown_menu}`}
         type="button"
-        id="dropdownMenuButton"
         onClick={handleClick}
         aria-expanded={isOpen}
         ref={buttonRef}

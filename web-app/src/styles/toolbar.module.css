@@ -2,10 +2,11 @@
     min-height: 70px;
     max-height: 100px;
     position: absolute;
-    overflow: hidden;
     padding-top: 1.5rem;
     background-color: rgba(0, 0, 0, 0.699);
     transition: background-color 0.5s;
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .toolbar:hover {

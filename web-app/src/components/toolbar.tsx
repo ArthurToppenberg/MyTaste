@@ -16,9 +16,6 @@ interface ToolbarProps {
 }
 
 const Toolbar: React.FC<ToolbarProps> = ({ logo, tabLinks, elements, setTab}) => {
-    //keep track of which tab is currently selected
-    const [selectedTab, setSelectedTab] = React.useState<number>(0);
-
     return (
         <>
             <nav className={`toolbar navbar navbar-expand-lg fixed-top ${styles.toolbar}`}>
@@ -28,8 +25,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ logo, tabLinks, elements, setTab}) =>
                         {tabLinks.map((tabLink, index) => (
                             <div key={index} className="me-2 mb-2">
                                 <InfoBox
-                                    inverted={selectedTab === index}
-                                    onClick={() => {setSelectedTab(index); setTab(tabLink.tab);}}
+                                    onClick={() => {setTab(tabLink.tab);}}
                                     text={`${tabLink.name}`}
                                     invertOnHover={true} 
                                 />
@@ -38,9 +34,11 @@ const Toolbar: React.FC<ToolbarProps> = ({ logo, tabLinks, elements, setTab}) =>
                     </div>
                     <div className={`d-flex ms-auto flex-wrap mb-2`}>
                         {elements.map((element, index) => (
-                            <div key={index} className={`ms-2 mb-2`}>
-                                {element}
-                            </div>
+                            element.type !== React.Fragment ? (
+                                <div key={index} className={`ms-2 mb-2`}>
+                                    {element}
+                                </div>
+                            ) : null
                         ))}
                     </div>
                 </div>

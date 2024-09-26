@@ -1,0 +1,22 @@
+.custom_dropdown_button{
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 5px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+    position: relative;
+}
+
+.custom_dropdown_button:hover{
+    background-color: #e0e0e0;
+}
+
+.custom_dropdown_button:active{
+    background-color: #d0d0d0;
+}
