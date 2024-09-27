@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from '@/styles/infobox.module.css'; // Assuming you have additional styles here
 
+
 interface InfoBoxProps {
     text?: string;
     loading?: boolean;
@@ -12,6 +13,21 @@ interface InfoBoxProps {
     children?: React.ReactNode;
 }
 
+
+/**
+ * InfoBox component to display information with optional loading state and color inversion.
+ *
+ * @param {Object} props - The properties object.
+ * @param {string} [props.text] - The text to display inside the InfoBox.
+ * @param {boolean} [props.loading] - If true, displays a loading spinner instead of the text.
+ * @param {() => void} [props.onClick] - The function to call when the InfoBox is clicked.
+ * @param {boolean} [props.inverted] - If true, inverts the color scheme.
+ * @param {boolean} [props.invertOnHover] - If true, inverts the color scheme on hover.
+ * @param {boolean} [props.invertOnClick] - If true, inverts the color scheme on click.
+ * @param {React.ReactNode} [props.children] - The children elements to display inside the InfoBox.
+ *
+ * @returns {JSX.Element} The rendered InfoBox component.
+ */
 const InfoBox: React.FC<InfoBoxProps> = ({
     text,
     loading,

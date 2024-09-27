@@ -16,13 +16,18 @@ export default NextAuth({
           return null;
         }
 
-        const user = await Prisma.user.findUnique({
-          where: { email: credentials.email },
-          select: { id: true, password: true },
-        });
+        try {
+          const user = await Prisma.user.findUnique({
+            where: { email: credentials.email },
+            select: { id: true, password: true },
+          });
 
-        if (user && await compare(credentials.password, user.password)) {
-          return { id: user.id };
+          if (user && await compare(credentials.password, user.password)) {
+            return { id: user.id };
+          }
+        } catch (error) {
+          console.error('Error during user authorization:', error);
+          return null;
         }
 
         return null;

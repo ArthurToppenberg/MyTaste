@@ -31,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 password: hashedPassword,
                 profile: {
                     create: {
-                        name: name || null, // Use the provided name or default
+                        name: name, // Use the provided name or default
                         phoneNumber: phoneNumber || null, // Add phone number to Profile if provided
                     },
                 },

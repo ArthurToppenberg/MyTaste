@@ -1,10 +1,9 @@
 import Toolbar from "@/components/toolbar";
-import Button from "@/components/button";
 import InfoBox from "@/components/info_box";
 
 import Home from "@/tabs/index/home";
-import About from "@/tabs/index/about";
-import Contact from "@/tabs/index/contact";
+// import About from "@/tabs/index/about";
+// import Contact from "@/tabs/index/contact";
 
 import Head from "next/head";
 
@@ -27,8 +26,8 @@ const Index: React.FC = () => {
   const { data: session, status } = useSession();
 
   const notAuthedElements: JSX.Element[] = [
-    <InfoBox text="Sign in" invertOnHover={true} invertOnClick={true} onClick={() => window.location.href = '/auth/signin'} />,
-    <InfoBox text="Sign up" invertOnHover={true} invertOnClick={true} onClick={() => window.location.href = '/auth/register'} />
+    <InfoBox key="Sign in button" text="Sign in" invertOnHover={true} invertOnClick={true} onClick={() => window.location.href = '/auth/signin'} />,
+    <InfoBox key="Sign up button" text="Sign up" invertOnHover={true} invertOnClick={true} onClick={() => window.location.href = '/auth/register'} />
   ];
 
   const [nameElement, setNameElement] = useState<JSX.Element>(<InfoBox text={"LOADING"} loading={true} />);
@@ -42,7 +41,7 @@ const Index: React.FC = () => {
     phoneElement,
     developerDropdown,
     manageDropdown,
-    <Dropdown buttonText="Account" itemsProps={[
+    <Dropdown key="Account Dropdown" buttonText="Account" itemsProps={[
       { name: "Profile", onClick: () => setTab(<UnderDevelopment />) },
       { name: "Logout", onClick: () => signOut({ callbackUrl: '' }) }
     ]} />

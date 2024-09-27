@@ -33,7 +33,7 @@ model User {
 
 model Profile {
   id   Int    @id
-  name String @default("New User")
+  name String
   phoneNumber String?
   user User   @relation(fields: [id], references: [id]) // Connects Profile.id to User.id
 }

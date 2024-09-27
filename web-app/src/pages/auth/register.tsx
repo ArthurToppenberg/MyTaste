@@ -18,6 +18,11 @@ export default function Register() {
     setError(''); // Clear previous errors
     setSuccess(''); // Clear previous success messages
 
+    if (!name) {
+      setError('Name is required.');
+      return;
+    }
+
     if (password !== rePassword) {
       setError('Passwords do not match.');
       return;
@@ -68,7 +73,7 @@ export default function Register() {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="name">Name (optional)</label>
+              <label htmlFor="name">Name</label>
               <input
                 type="text"
                 id="name"
@@ -76,6 +81,7 @@ export default function Register() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="John Doe"
+                required
               />
             </div>
             <div className="form-group">

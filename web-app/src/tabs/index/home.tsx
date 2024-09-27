@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from '@/styles/home.module.css';
 import tabStyles from '@/styles/tab.module.css';
@@ -21,12 +22,17 @@ const Home: React.FC = () => {
                             </div>
                         </div>
                         <div className={`${tabStyles.container}`}>
-                            <img src="/images/iphone.png" className={`${styles.img_iphone} ${tabStyles.container_left}`} />
+                            <Image 
+                                src="/images/iphone.png" 
+                                alt="iPhone displaying My Taste app" 
+                                className={`${styles.img_iphone} ${tabStyles.container_left}`} 
+                                width={500} 
+                                height={500} 
+                            />
                         </div>
                     </div>
                 </div>
             </div>
-
         </>
     );
 };
