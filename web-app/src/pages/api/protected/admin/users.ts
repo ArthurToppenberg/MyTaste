@@ -13,11 +13,42 @@ export interface IUsers {
     users: IUser[];
 }
 
+/**
+ * Users api lets you get a list of users from the database in different ways.
+ * Search: Lets you search for users based on specified collum.
+ * SimpleList: Lets you get a list of users starting from a specified id and count. (This is useful for pagination)
+ * 
+ * To use userprops simply populate the preferred querry method, leave the others empty.
+ */
+export interface usersProps{
+    search?: searchProps,
+    simpleList?: simpleListProps,
+}
+
+export interface searchProps {
+    value: string;
+    count: number;
+}
+
+interface simpleListProps{
+    startId: number;
+    count: number;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     Authenticator({ req, validPermission: ['DEVELOPER', 'ADMIN'] }).then(async (response) => {
         if (!response.passedAuthentication) {
             return res.status(401).json({ message: response.failedMessage });
         }
+
+        const requestProps: usersProps = req.body;
+
+        if (!requestProps.search && !requestProps.simpleList) {
+            return res.status(400).json({ message: 'Invalid request: must provide either search or simpleList properties' });
+        }
+
+
+
 
         if (req.method === 'GET') {
             try {
