@@ -15,8 +15,9 @@ export interface IUsers {
 
 /**
  * Users api lets you get a list of users from the database in different ways.
- * Search: Lets you search for users based on specified collum.
- * SimpleList: Lets you get a list of users starting from a specified id and count. (This is useful for pagination)
+ * 
+ * @paramiter Search: Lets you search for users based on specified collum.
+ * @paramiter SimpleList: Lets you get a list of users starting from a specified id and count. (This is useful for pagination)
  * 
  * To use userprops simply populate the preferred querry method, leave the others empty.
  */
