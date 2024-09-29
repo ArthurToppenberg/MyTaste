@@ -34,7 +34,7 @@ export interface searchProps {
 
 interface simpleListProps{
     index: number;
-    count: number;
+    limit: number;
 }
 
 async function simpleList(props: simpleListProps): Promise<IUsers> {
@@ -51,7 +51,7 @@ async function simpleList(props: simpleListProps): Promise<IUsers> {
             }
         },
         skip: props.index,
-        take: props.count
+        take: props.limit
     });
 
     return { users };
@@ -65,7 +65,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         
         // default for get request TESTING PURPOSES
         if (req.method === 'GET') { 
-            return res.status(200).json(await simpleList({ index: 0, count: 100 }));
+            return res.status(200).json(await simpleList({ index: 0, limit: 100 }));
         }
 
         const requestProps: usersProps = req.body;
@@ -76,6 +76,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if ((requestProps.search && requestProps.simpleList) || (!requestProps.search && !requestProps.simpleList)) {
             return res.status(400).json({ message: 'Invalid request: must provide either search or simpleList properties' });
+        }
+
+        if (requestProps.simpleList) {
+            return res.status(200).json(await simpleList(requestProps.simpleList));
         }
     }).catch((error) => {
         console.error(error);

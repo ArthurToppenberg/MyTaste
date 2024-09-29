@@ -15,7 +15,7 @@ const DashboardDropdown: React.FC<DashboardDropdownProps> = ({ name, itemsProps,
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const buttonRef = React.useRef<HTMLButtonElement>(null);
     const dropdownRef = React.useRef<HTMLUListElement>(null);
-    const [selectedItem, setSelectedItem] = useState<string>();
+    const [selectedItem, setSelectedItem] = useState<string>(itemsProps[defaultItem].name);
 
     const calculateDropdownPosition = () => {
         if (buttonRef.current && dropdownRef.current) {

@@ -13,37 +13,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         try {
-            // Find all users with the name 'FAKE'
             const fakeUsers = await Prisma.user.findMany({
                 where: {
                     profile: {
                         name: 'FAKE'
                     }
-                },
-                include: {
-                    profile: true
                 }
             });
 
-            // Delete profiles first
-            for (const user of fakeUsers) {
-                if (user.profile) {
-                    await Prisma.profile.delete({
-                        where: {
-                            id: user.profile.id
-                        }
-                    });
+            const deleteResultProfile = await Prisma.profile.deleteMany({
+                where: {
+                   id: {
+                          in: fakeUsers.map(user => user.id)
+                     }
                 }
-            }
+            });
 
-            // Delete users
-            for (const user of fakeUsers) {
-                await Prisma.user.delete({
-                    where: {
-                        id: user.id
+            const deleteResultUser = await Prisma.user.deleteMany({
+                where: {
+                    id: {
+                        in: fakeUsers.map(user => user.id)
                     }
-                });
-            }
+                }
+            });
 
             return res.status(200).json({ message: 'Fake users removed successfully' });
         } catch (error) {

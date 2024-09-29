@@ -1,3 +1,10 @@
 .background_transparent {
     background-color: rgba(0, 0, 0, 0);
 }
+
+.container{
+    width: min-content;
+    text-wrap: nowrap;
+    padding-inline: 0;
+    margin-inline: 0;
+}

@@ -73,7 +73,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
 
     return (
         <div
-            className={`border rounded shadow-sm p-2 ${containerClass}`}
+            className={`border rounded shadow-sm p-2 ${styles.container} ${containerClass}`}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             onClick={handleClick}
