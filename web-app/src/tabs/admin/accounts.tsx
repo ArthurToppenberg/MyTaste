@@ -26,7 +26,6 @@ const Home: React.FC = () => {
                                     ]}
                                     onReachEnd={async (index: number): Promise<DashboardTableRowProps[]> => {
                                         try {
-                                            alert('You have reached the end, getting new users starting from index: ' + index);
                                             const users: IUsers = await getUsers(
                                                 {
                                                     simpleList: {

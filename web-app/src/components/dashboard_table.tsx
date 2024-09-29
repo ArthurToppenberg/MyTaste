@@ -28,8 +28,8 @@ export interface DashboardTableRowProps {
 const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboardRefreshable, DashboardTableProps>(
     ({ collumnHeaders, collumns, onLoad, onReachEnd, LoadingTableProps }: DashboardTableProps, ref) => {
         const [tableData, setTableData] = useState<DashboardTableRowProps[]>(collumns || []);
-        const [rowsCount, setRowsCount] = useState(0);
         const bottomRef = useRef<HTMLDivElement>(null); // Reference for detecting the end of the table
+        const [isLoading, setIsLoading] = useState(true); // State to track loading status
 
         useEffect(() => {
             InitGetTableData();
@@ -45,40 +45,42 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboardRefre
             if ((onLoad && onReachEnd) || (!onLoad && !onReachEnd)) {
                 return console.error('Error: onLoad and onReachEnd cannot be used together');
             }
-            setRowsCount(0);
             setTableData([]);
+            setIsLoading(true); // Set loading to true before data fetch
             if (onLoad) {
                 // Handle onLoad logic here
                 onLoad().then((data) => {
                     setTableData(data);
-                    setRowsCount(data.length);
+                    setIsLoading(false); // Loading complete
                 });
             } else if (onReachEnd) {
-                onReachEnd(rowsCount).then((data) => {
+                onReachEnd(0).then((data) => {
                     setTableData([...data]);
+                    setIsLoading(false); // Loading complete
                 });
             }
-        }, [onLoad, onReachEnd, rowsCount]);
+        }, [onLoad, onReachEnd]);
 
         const OnReachEndDetected = useCallback(() => {
             if (!onReachEnd) {
                 return;
             }
-            onReachEnd(rowsCount).then((data) => {
+            setIsLoading(true); // Set loading to true before data fetch
+            onReachEnd(tableData.length).then((data) => {
                 setTableData((prevData) => [...prevData, ...data]);
-                setRowsCount((prevCount) => prevCount + data.length);
+                setIsLoading(false); // Loading complete
             });
-        }, [onReachEnd, rowsCount]);
+        }, [onReachEnd]);
 
         // IntersectionObserver to detect scrolling to the bottom
         useEffect(() => {
             const observer = new IntersectionObserver(
                 (entries) => {
-                    if (entries[0].isIntersecting) {
+                    if (entries[0].isIntersecting && !isLoading) {
                         OnReachEndDetected();
                     }
                 },
-                { threshold: 1.0 } // Trigger when 100% of the target is visible
+                { threshold: 0.5 } // Trigger when 50% of the target is visible
             );
 
             if (bottomRef.current) {
@@ -90,7 +92,7 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboardRefre
                     observer.unobserve(bottomRef.current);
                 }
             };
-        }, [OnReachEndDetected]);
+        }, [OnReachEndDetected, isLoading]); // Added isLoading to dependencies
 
         return (
             <div className={styles.dashboard_table_content}>

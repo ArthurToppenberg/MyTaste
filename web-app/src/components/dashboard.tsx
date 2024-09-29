@@ -10,6 +10,7 @@ export interface IDashboardRefreshable {
 interface DashboardDisplaySelectionProps {
   name: string;
   displayComponent: ReactElement;
+  onSearch?: (search: string) => void;
 }
 
 interface DashboardProps {
@@ -51,6 +52,12 @@ const Dashboard: React.FC<DashboardProps> = ({
               },
             };
           }),
+        }}
+        searchbarProps={{
+          placeholder: 'hello',
+          onSearch: (search: string) => {
+            alert(search);
+          },
         }}
       />
       {activeDashboardDisplay === -1 ? (

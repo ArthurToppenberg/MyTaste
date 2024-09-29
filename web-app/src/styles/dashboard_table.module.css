@@ -9,7 +9,7 @@
 .dashboard_table th {
     position: sticky;
     top: 0;
-    background-color: red; /* Ensure the header background sticks with the text */
+    background-color: #d1d1d1; /* Ensure the header background sticks with the text */
     color: #333;
     font-weight: bold;
     padding: 15px 10px;
