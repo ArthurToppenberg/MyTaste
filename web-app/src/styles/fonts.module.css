@@ -1,16 +1,23 @@
 @import url("https://fonts.googleapis.com/css2?family=Bungee+Tint&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Bungee+Tint&family=Old+Standard+TT:ital,wght@0,400;0,700;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Agbalumo&display=swap");
+
+.logo {
+  font-family: "Agbalumo", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
 
 .text {
-    font-family: "Old Standard TT", serif;
-    font-weight: 400;
-    font-style: normal;
-  }
-  
-  .text_pop {
-    font-family: "Bungee Tint", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    text-decoration: underline;
-    text-decoration-color: red;
-  }
+  font-family: "Old Standard TT", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.text_pop {
+  font-family: "Bungee Tint", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  text-decoration: underline;
+  text-decoration-color: red;
+}

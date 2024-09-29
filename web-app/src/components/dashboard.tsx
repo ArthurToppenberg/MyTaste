@@ -54,7 +54,7 @@ const Dashboard: React.FC<DashboardProps> = ({
           }),
         }}
         searchbarProps={{
-          placeholder: 'hello',
+          placeholder: 'Search across all fields...',
           onSearch: (search: string) => {
             alert(search);
           },

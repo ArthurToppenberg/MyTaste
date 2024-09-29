@@ -30,6 +30,7 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboardRefre
         const [tableData, setTableData] = useState<DashboardTableRowProps[]>(collumns || []);
         const bottomRef = useRef<HTMLDivElement>(null); // Reference for detecting the end of the table
         const [isLoading, setIsLoading] = useState(true); // State to track loading status
+        const [hasReachedEnd, setHasReachedEnd] = useState(false);
 
         useEffect(() => {
             InitGetTableData();
@@ -67,10 +68,17 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboardRefre
             }
             setIsLoading(true); // Set loading to true before data fetch
             onReachEnd(tableData.length).then((data) => {
-                setTableData((prevData) => [...prevData, ...data]);
+                if(data.length === 0){
+                    setHasReachedEnd(true);
+                    return;
+                }
+                const previousTableData: DashboardTableRowProps[] = tableData;
+                const newTableData: DashboardTableRowProps[] = data;
+                const combinedTableData: DashboardTableRowProps[] = [...previousTableData, ...newTableData];
+                setTableData(combinedTableData);
                 setIsLoading(false); // Loading complete
             });
-        }, [onReachEnd]);
+        }, [onReachEnd, tableData, hasReachedEnd]);
 
         // IntersectionObserver to detect scrolling to the bottom
         useEffect(() => {

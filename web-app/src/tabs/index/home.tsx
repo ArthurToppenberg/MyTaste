@@ -13,10 +13,10 @@ const Home: React.FC = () => {
                     <div className={`${tabStyles.content_defualt}`}>
                         <div className={`${tabStyles.container}`}>
                             <div className={`${tabStyles.title_container}`}>
-                                <h1 className={`${tabStyles.title} ${fonts.text}`}>My Taste</h1>
+                                <h1 className={`${tabStyles.title} ${fonts.logo}`}>My Taste</h1>
                                 <p className={`${tabStyles.subtitle} ${fonts.text}`}>
                                     Discover your
-                                    {' '}<span className={`${fonts.text_pop}`}>taste</span>{' '}
+                                    {' '}<span className={`${fonts.logo}`}>taste</span>{' '}
                                     today,<br /> sign up to get started
                                 </p>
                             </div>

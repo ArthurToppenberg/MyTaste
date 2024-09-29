@@ -44,7 +44,11 @@ const Index: React.FC = () => {
     <Dropdown key="Account Dropdown" buttonText="Account" itemsProps={[
       { name: "Profile", onClick: () => setTab(<UnderDevelopment />) },
       { name: "Logout", onClick: () => signOut({ callbackUrl: '' }) }
-    ]} />
+    ]} />,
+    // <Dropdown key="Restaurant Dropdown" buttonText="My Restaurant" itemsProps={[
+    //   { name: "Restaurant Profile", onClick: () => setTab(<UnderDevelopment />) },
+    //   { name: "Dashboard", onClick: () => setTab(<UnderDevelopment />) },
+    // ]} />
   ];
 
   useEffect(() => {
@@ -84,7 +88,7 @@ const Index: React.FC = () => {
         }
         setManageDropdown(<Dropdown buttonText="Admin" itemsProps={[
           { name: "Accounts", onClick: () => setTab(<Accounts />) },
-          { name: "Restorants", onClick: () => setTab(<UnderDevelopment />) },
+          { name: "MyTaste Questions", onClick: () => setTab(<UnderDevelopment />) },
         ]} />);
       }
 
