@@ -5,7 +5,7 @@
 
 import { NextApiRequest } from "next";
 import { getToken } from "next-auth/jwt";
-import Prisma from "../../../utils/server/prisma";
+import Prisma from "./prisma";
 
 const secret = process.env.NEXTAUTH_SECRET;
 

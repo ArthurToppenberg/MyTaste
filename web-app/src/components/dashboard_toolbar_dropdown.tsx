@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 export interface DashboardDropdownProps {
     name: string;
     itemsProps: DropDownItemProps[];
-    defaultItem?: number;
+    defaultItem: number;
 }
 
 const DashboardDropdown: React.FC<DashboardDropdownProps> = ({ name, itemsProps, defaultItem}) => {
@@ -15,7 +15,7 @@ const DashboardDropdown: React.FC<DashboardDropdownProps> = ({ name, itemsProps,
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const buttonRef = React.useRef<HTMLButtonElement>(null);
     const dropdownRef = React.useRef<HTMLUListElement>(null);
-    const [selectedItem, setSelectedItem] = useState<string>(defaultItem !== undefined ? itemsProps[defaultItem].name : '');
+    const [selectedItem, setSelectedItem] = useState<string>();
 
     const calculateDropdownPosition = () => {
         if (buttonRef.current && dropdownRef.current) {

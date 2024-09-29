@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import Prisma from '../../../../utils/server/prisma';
-import Authenticator from '../authenticator';
+import Authenticator from '../../../../utils/server/authenticator';
 
 interface IUser {
     id: number;
@@ -28,56 +28,57 @@ export interface usersProps{
 
 export interface searchProps {
     value: string;
+    field: string;
     count: number;
 }
 
 interface simpleListProps{
-    startId: number;
+    index: number;
     count: number;
 }
 
+async function simpleList(props: simpleListProps): Promise<IUsers> {
+    const users = await Prisma.user.findMany({
+        select: {
+            id: true,
+            email: true,
+            permission: true,
+            type: true,
+            profile: {
+                select: {
+                    name: true,
+                }
+            }
+        },
+        skip: props.index,
+        take: props.count
+    });
+
+    return { users };
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    Authenticator({ req, validPermission: ['DEVELOPER', 'ADMIN'] }).then(async (response) => {
+    await Authenticator({ req, validPermission: ['DEVELOPER', 'ADMIN'] }).then(async (response) => {
         if (!response.passedAuthentication) {
             return res.status(401).json({ message: response.failedMessage });
+        }
+        
+        // default for get request TESTING PURPOSES
+        if (req.method === 'GET') { 
+            return res.status(200).json(await simpleList({ index: 0, count: 100 }));
         }
 
         const requestProps: usersProps = req.body;
 
-        if (!requestProps.search && !requestProps.simpleList) {
-            return res.status(400).json({ message: 'Invalid request: must provide either search or simpleList properties' });
+        if (!requestProps) {
+            return res.status(400).json({ message: 'Invalid request: must provide search or simpleList properties' });
         }
 
-
-
-
-        if (req.method === 'GET') {
-            try {
-                const users = await Prisma.user.findMany({
-                    select: {
-                        id: true,
-                        email: true,
-                        permission: true,
-                        type: true
-                    },
-                });
-
-                if (!users || users.length === 0) {
-                    return res.status(404).json({ message: 'Users not found' });
-                }
-
-                const response: IUsers = { users };
-
-                return res.status(200).json(response);
-            } catch (error) {
-                console.error(error);
-                return res.status(500).json({ message: 'Internal server error' });
-            }
-        } else {
-            return res.status(405).json({ message: 'Method not allowed' });
+        if ((requestProps.search && requestProps.simpleList) || (!requestProps.search && !requestProps.simpleList)) {
+            return res.status(400).json({ message: 'Invalid request: must provide either search or simpleList properties' });
         }
     }).catch((error) => {
         console.error(error);
-        return;
+        return res.status(500).json({ message: 'Internal Server Error' });
     });
 }

@@ -8,15 +8,15 @@ const Home: React.FC = () => {
         <>
             <div className={`${tabStyles.content_custom}`}>
                 <Dashboard 
-                    selectionDropdownName={'View'} 
+                    selectionDropdownName={'View'}
                     selectionProps={[
                         {
                             name: 'Users',
-                            apiEndpoint: '/api/accounts'
+                            displayComponent: <div>Users</div>
                         },
                         {
                             name: 'Restaurants',
-                            apiEndpoint: '/api/restaurants'
+                            displayComponent: <div>Resturants</div>
                         }
                     ]} 
                 />
