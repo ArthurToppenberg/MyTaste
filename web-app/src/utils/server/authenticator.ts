@@ -38,7 +38,7 @@ export default async function Authenticator({ req, validPermission }: Authentica
         if (!token) {
             throw new Error("Token not found");
         }
-        response.id = token.id as number;
+        response.id = parseInt(token.id as string, 10);
     } catch (error) {
         response.failedMessage = "Authentication failed: " + (error as Error).message;
         return response;
