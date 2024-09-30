@@ -27,13 +27,13 @@ model User {
   password   String
   createdAt  DateTime   @default(now())
   permission Permission @default(DEFUALT)
-  type Type @default(USER)
+  type       Type       @default(USER)
   profile    Profile?   @relation // Foreign key to Profile.id
 }
 
 model Profile {
-  id   Int    @id
-  name String
+  id          Int     @id
+  name        String
   phoneNumber String?
-  user User   @relation(fields: [id], references: [id]) // Connects Profile.id to User.id
+  user        User    @relation(fields: [id], references: [id]) // Connects Profile.id to User.id
 }
