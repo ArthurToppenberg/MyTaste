@@ -7,10 +7,18 @@ interface IUser {
     email: string;
     permission: string;
     type: string;
+    profile: {
+        name: string;
+    } | null;
 }
 
 export interface IUsers {
     users: IUser[];
+}
+
+export interface IUsersResponse{
+    users?: IUser[];
+    message?: string;
 }
 
 /**
@@ -27,8 +35,8 @@ export interface usersProps{
 }
 
 export interface searchProps {
-    value: string;
-    field: string;
+    query: string;
+    field: string[];
     count: number;
 }
 
@@ -37,7 +45,7 @@ interface simpleListProps{
     limit: number;
 }
 
-async function simpleList(props: simpleListProps): Promise<IUsers> {
+async function simpleList(props: simpleListProps): Promise<IUsersResponse> {
     const users = await Prisma.user.findMany({
         select: {
             id: true,
@@ -53,6 +61,38 @@ async function simpleList(props: simpleListProps): Promise<IUsers> {
         skip: props.index,
         take: props.limit
     });
+
+    return { users };
+}
+
+async function search(props: searchProps): Promise<IUsersResponse> {
+    const users = await Prisma.user.findMany({
+        select: {
+            id: true,
+            email: true,
+            permission: true,
+            type: true,
+            profile: {
+                select: {
+                    name: true,
+                }
+            }
+        },
+        where: {
+            OR: props.field.map((field) => {
+                return {
+                    [field]: {
+                        contains: props.query
+                    }
+                };
+            })
+        },
+        take: props.count
+    });
+
+    if (users.length === 0) {
+        return { message: 'No matches found in field/s: ' + props.field.join(', ') };
+    }
 
     return { users };
 }
@@ -80,6 +120,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         if (requestProps.simpleList) {
             return res.status(200).json(await simpleList(requestProps.simpleList));
+        }
+
+        if(requestProps.search){
+            return res.status(200).json(await search(requestProps.search));
         }
     }).catch((error) => {
         console.error(error);

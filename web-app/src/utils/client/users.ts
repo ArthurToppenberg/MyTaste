@@ -1,6 +1,6 @@
-import {IUsers, usersProps} from '../../../src/pages/api/protected/admin/users';
+import {IUsersResponse, usersProps} from '../../../src/pages/api/protected/admin/users';
 
-export const getUsers = async (props: usersProps): Promise<IUsers> => {
+export const getUsers = async (props: usersProps): Promise<IUsersResponse> => {
     try {
         const res = await fetch('/api/protected/admin/users', {
             method: 'POST',

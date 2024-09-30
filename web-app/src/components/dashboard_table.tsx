@@ -1,6 +1,6 @@
 import React, { useEffect, useImperativeHandle, useState, forwardRef, useRef, useCallback } from 'react';
 import styles from '@/styles/dashboard_table.module.css';
-import { IDashboardRefreshable } from './dashboard';
+import { IDashboard } from './dashboard';
 import InfoBox from './info_box';
 
 /**
@@ -16,64 +16,113 @@ import InfoBox from './info_box';
 export interface DashboardTableProps {
     collumnHeaders: string[];
     collumns?: DashboardTableRowProps[];
-    onLoad?: () => Promise<DashboardTableRowProps[]>;
-    onReachEnd?: (index: number) => Promise<DashboardTableRowProps[]>;
+    onLoad?: () => Promise<DashboardTableData>;
+    onReachEnd?: (index: number) => Promise<DashboardTableData>;
     LoadingTableProps?: LoadingTableProps;
+    onSearch?: (search: string) => Promise<DashboardTableData>;
+}
+
+export interface DashboardTableData {
+    tableRowProps: DashboardTableRowProps[];
+    message?: string;
 }
 
 export interface DashboardTableRowProps {
     rowData: string[];
 }
 
-const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboardRefreshable, DashboardTableProps>(
-    ({ collumnHeaders, collumns, onLoad, onReachEnd, LoadingTableProps }: DashboardTableProps, ref) => {
-        const [tableData, setTableData] = useState<DashboardTableRowProps[]>(collumns || []);
+const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, DashboardTableProps>(
+    ({ collumnHeaders, collumns, onLoad, onReachEnd, LoadingTableProps, onSearch }, ref) => {
+        const [tableData, setTableData] = useState<DashboardTableData>({ tableRowProps: collumns ?? [] });
         const bottomRef = useRef<HTMLDivElement>(null); // Reference for detecting the end of the table
-        const [isLoading, setIsLoading] = useState(true); // State to track loading status
+        const [isLoading, setIsLoading] = useState(false); // State to track loading status
+        const [scrollLoading, setScrollLoading] = useState(true);
 
         useImperativeHandle(ref, () => ({
             refresh: () => {
-                InitGetTableData();
+                setScrollLoading(true);
+                Refresh();
             },
-        }));
+            search: (query: string) => {
+                Search(query);
+            }
+        }), []);
 
-        const InitGetTableData = useCallback(() => {
+        const Refresh = useCallback(() => {
             if ((onLoad && onReachEnd) || (!onLoad && !onReachEnd)) {
                 return console.error('Error: onLoad and onReachEnd cannot be used together');
             }
-            setTableData([]);
+            setTableData({ tableRowProps: [] });
             setIsLoading(true); // Set loading to true before data fetch
-            if (onLoad) {
-                // Handle onLoad logic here
-                onLoad().then((data) => {
+
+            const loadData = async () => {
+                try {
+                    let data: DashboardTableData;
+                    if (onLoad) {
+                        data = await onLoad();
+                    } else if (onReachEnd) {
+                        data = await onReachEnd(0);
+                    } else {
+                        return; // No loading function provided
+                    }
                     setTableData(data);
+                } catch (error) {
+                    console.error('Error loading data:', error);
+                } finally {
                     setIsLoading(false); // Loading complete
-                });
-            } else if (onReachEnd) {
-                onReachEnd(0).then((data) => {
-                    setTableData([...data]);
-                    setIsLoading(false); // Loading complete
-                });
-            }
+                }
+            };
+
+            loadData();
         }, [onLoad, onReachEnd]);
 
+        const Search = useCallback((query: string) => {
+            if (!onSearch) {
+                return console.error('Error: onSearch is not defined');
+            }
+            setTableData({ tableRowProps: [] });
+            setIsLoading(true); // Set loading to true before data fetch
+
+            const searchData = async () => {
+                try {
+                    const data = await onSearch(query);
+                    setTableData(data);
+                } catch (error) {
+                    console.error('Error searching data:', error);
+                } finally {
+                    setIsLoading(false); // Loading complete
+                }
+            };
+
+            searchData();
+        }, [onSearch]);
+
         useEffect(() => {
-            InitGetTableData();
-        }, [InitGetTableData]);
+            Refresh();
+        }, [Refresh]);
 
         const OnReachEndDetected = useCallback(() => {
-            if (!onReachEnd) {
-                return;
+            if (!onReachEnd || isLoading || !scrollLoading) {
+                return; // Exit if no function, already loading, or not scrolling
             }
+
             setIsLoading(true); // Set loading to true before data fetch
-            onReachEnd(tableData.length).then((data) => {
-                const previousTableData: DashboardTableRowProps[] = tableData;
-                const newTableData: DashboardTableRowProps[] = data;
-                const combinedTableData: DashboardTableRowProps[] = [...previousTableData, ...newTableData];
-                setTableData(combinedTableData);
-                setIsLoading(false); // Loading complete
-            });
-        }, [onReachEnd, tableData]);
+            const loadMoreData = async () => {
+                try {
+                    const data = await onReachEnd(tableData.tableRowProps.length);
+                    setTableData((prevData) => ({
+                        tableRowProps: [...prevData.tableRowProps, ...data.tableRowProps],
+                        message: data.message
+                    }));
+                } catch (error) {
+                    console.error('Error loading more data:', error);
+                } finally {
+                    setIsLoading(false); // Loading complete
+                }
+            };
+
+            loadMoreData();
+        }, [onReachEnd, tableData, isLoading, scrollLoading]);
 
         // IntersectionObserver to detect scrolling to the bottom
         useEffect(() => {
@@ -96,11 +145,13 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboardRefre
                     observer.unobserve(currentBottomRef);
                 }
             };
-        }, [OnReachEndDetected, isLoading]); // Added isLoading to dependencies
+        }, [OnReachEndDetected, isLoading]);
 
         return (
             <div className={styles.dashboard_table_content}>
-                {tableData.length === 0 ? (
+                {tableData.message ? (
+                    <MessageTable message={tableData.message} />
+                ) : tableData.tableRowProps.length === 0 ? (
                     LoadingTableProps ? (
                         <LoadingTable {...LoadingTableProps} />
                     ) : (
@@ -117,10 +168,10 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboardRefre
                                 </tr>
                             </thead>
                             <tbody className={styles.dashboard_table_body}>
-                                {tableData.map((tableData, index) => (
-                                    <tr key={index} className={styles.dashboard_table_row}>
-                                        {tableData.rowData.map((collumn, index) => (
-                                            <td key={index}>{collumn}</td>
+                                {tableData.tableRowProps.map((row, rowIndex) => (
+                                    <tr key={rowIndex} className={styles.dashboard_table_row}>
+                                        {row.rowData.map((cell, cellIndex) => (
+                                            <td key={cellIndex}>{cell}</td>
                                         ))}
                                     </tr>
                                 ))}
@@ -187,5 +238,23 @@ const LoadingTable: React.FC<LoadingTableProps> = ({ rows, collumns, expectedTab
         </div>
     );
 };
+
+/**
+ * TableMessage component to display a message in the table
+ * 
+ * @param {Object} props - The properties object.
+ * @param {string} props.message - The message to display.
+ */
+interface MessageTableProps {
+    message: string;
+}
+
+const MessageTable: React.FC<MessageTableProps> = ({ message }) => {
+    return (
+        <div className={styles.dashboard_table_message}>
+            <InfoBox text={message} loading={false} inverted={true} />
+        </div>
+    );
+}
 
 export default DashboardTable;

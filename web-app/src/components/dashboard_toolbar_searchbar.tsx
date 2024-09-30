@@ -4,9 +4,10 @@ import styles from '../styles/dashboard_toolbar_searchbar.module.css';
 export interface DashboardToolbarSearchbarProps {
     placeholder?: string;
     onSearch: (query: string) => void;
+    isRefreshing: boolean;
 }
 
-const DashboardToolbarSearchbar: React.FC<DashboardToolbarSearchbarProps> = ({ placeholder = "Search...", onSearch }) => {
+const DashboardToolbarSearchbar: React.FC<DashboardToolbarSearchbarProps> = ({ placeholder = "Search...", onSearch, isRefreshing }) => {
     const [query, setQuery] = React.useState("");
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -19,13 +20,16 @@ const DashboardToolbarSearchbar: React.FC<DashboardToolbarSearchbarProps> = ({ p
 
     return (
         <div className={styles.container}>
-            <input 
-                type="text" 
-                value={query} 
-                onChange={handleInputChange} 
-                placeholder={placeholder} 
+            <input
+                type="text"
+                value={query}
+                onChange={handleInputChange}
+                placeholder={placeholder}
             />
-            <button onClick={handleSearch}>Search</button>
+            <button onClick={handleSearch}>
+                Search
+                {isRefreshing && <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>}
+            </button>
         </div>
     );
 };

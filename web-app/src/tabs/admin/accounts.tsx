@@ -2,9 +2,9 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import tabStyles from '@/styles/tab.module.css';
 import Dashboard from '@/components/dashboard';
-import Table, { DashboardTableRowProps } from '@/components/dashboard_table';
+import Table, { DashboardTableData, DashboardTableRowProps } from '@/components/dashboard_table';
 import { getUsers } from '../../utils/client/users';
-import { IUsers } from '@/pages/api/protected/admin/users';
+import { IUsers, IUsersResponse } from '@/pages/api/protected/admin/users';
 
 const Home: React.FC = () => {
     return (
@@ -19,14 +19,14 @@ const Home: React.FC = () => {
                                 <Table
                                     collumnHeaders={[
                                         'ID',
+                                        'Name',
                                         'Email',
                                         'Permission',
                                         'Role',
-                                        'Profile'
                                     ]}
-                                    onReachEnd={async (index: number): Promise<DashboardTableRowProps[]> => {
+                                    onReachEnd={async (index: number): Promise<DashboardTableData> => {
                                         try {
-                                            const users: IUsers = await getUsers(
+                                            const response: IUsersResponse = await getUsers(
                                                 {
                                                     simpleList: {
                                                         index: index,
@@ -34,16 +34,62 @@ const Home: React.FC = () => {
                                                     }
                                                 }
                                             );
+                                
+                                            if(response.users === undefined){
+                                                return { tableRowProps: [], message: response.message };
+                                            }
+
+                                            const users: IUsers = { users: response.users };
+
                                             const rows: DashboardTableRowProps[] = [];
                                             users.users.forEach(user => {
                                                 rows.push({
-                                                    rowData: Object.values(user).map(value => value.toString())
+                                                    rowData: [
+                                                        user.id.toString(),
+                                                        user.profile?.name || '',
+                                                        user.email,
+                                                        user.permission,
+                                                        user.type
+                                                    ]
                                                 });
                                             });
-                                            return rows;
+                                            return { tableRowProps: rows};
                                         } catch (error) {
-                                            console.error('Error fetching users:', error);
-                                            return [];
+                                            return { tableRowProps: [], message: 'Error fetching users'};
+                                        }
+                                    }}
+                                    onSearch={async (query: string): Promise<DashboardTableData> => {
+                                        try {
+                                            const response: IUsersResponse = await getUsers(
+                                                {
+                                                    search: {
+                                                        query: query,
+                                                        count: 10,
+                                                        field: ['email']
+                                                    }
+                                                }
+                                            );
+                                            if(response.users === undefined){
+                                                return { tableRowProps: [], message: response.message };
+                                            }
+
+                                            const users: IUsers = { users: response.users };
+
+                                            const rows: DashboardTableRowProps[] = [];
+                                            users.users.forEach(user => {
+                                                rows.push({
+                                                    rowData: [
+                                                        user.id.toString(),
+                                                        user.profile?.name || '',
+                                                        user.email,
+                                                        user.permission,
+                                                        user.type
+                                                    ]
+                                                });
+                                            });
+                                            return { tableRowProps: rows};
+                                        } catch (error) {
+                                            return { tableRowProps: [], message: 'Error fetching users'};
                                         }
                                     }}
                                 />
