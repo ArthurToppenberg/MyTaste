@@ -16,11 +16,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(401).json({ message: 'Unauthorized' });
     }
 
+    if (token.id === undefined) {
+        return res.status(401).json({ message: 'Error authenticating' });
+    }
+
     if (req.method === 'GET') {
         try {
             const profile = await Prisma.profile.findUnique({
                 where: {
-                    id: token.id as number,
+                    id: parseInt(token.id as string, 10), // Convert token.id to an integer
                 },
                 select: {
                     name: true,

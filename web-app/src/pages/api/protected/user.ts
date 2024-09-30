@@ -16,11 +16,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(401).json({ message: 'Unauthorized' });
     }
 
+    if(token.id === undefined) {
+        return res.status(401).json({ message: 'Error authenticating' });
+    }
+
     if (req.method === 'GET') {
         try {
             const user = await Prisma.user.findUnique({
                 where: {
-                    id: token.id as number,
+                    id: parseInt(token.id as string, 10),
                 },
                 select: {
                     id: true,
@@ -36,7 +40,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             return res.status(200).json(response);
         } catch (error) {
-            console.error(error);
             return res.status(500).json({ message: 'Internal server error' });
         }
     } else {
