@@ -30,11 +30,6 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboardRefre
         const [tableData, setTableData] = useState<DashboardTableRowProps[]>(collumns || []);
         const bottomRef = useRef<HTMLDivElement>(null); // Reference for detecting the end of the table
         const [isLoading, setIsLoading] = useState(true); // State to track loading status
-        const [hasReachedEnd, setHasReachedEnd] = useState(false);
-
-        useEffect(() => {
-            InitGetTableData();
-        }, []);
 
         useImperativeHandle(ref, () => ({
             refresh: () => {
@@ -62,23 +57,23 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboardRefre
             }
         }, [onLoad, onReachEnd]);
 
+        useEffect(() => {
+            InitGetTableData();
+        }, [InitGetTableData]);
+
         const OnReachEndDetected = useCallback(() => {
             if (!onReachEnd) {
                 return;
             }
             setIsLoading(true); // Set loading to true before data fetch
             onReachEnd(tableData.length).then((data) => {
-                if(data.length === 0){
-                    setHasReachedEnd(true);
-                    return;
-                }
                 const previousTableData: DashboardTableRowProps[] = tableData;
                 const newTableData: DashboardTableRowProps[] = data;
                 const combinedTableData: DashboardTableRowProps[] = [...previousTableData, ...newTableData];
                 setTableData(combinedTableData);
                 setIsLoading(false); // Loading complete
             });
-        }, [onReachEnd, tableData, hasReachedEnd]);
+        }, [onReachEnd, tableData]);
 
         // IntersectionObserver to detect scrolling to the bottom
         useEffect(() => {
@@ -91,13 +86,14 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboardRefre
                 { threshold: 0.5 } // Trigger when 50% of the target is visible
             );
 
-            if (bottomRef.current) {
-                observer.observe(bottomRef.current);
+            const currentBottomRef = bottomRef.current;
+            if (currentBottomRef) {
+                observer.observe(currentBottomRef);
             }
 
             return () => {
-                if (bottomRef.current) {
-                    observer.unobserve(bottomRef.current);
+                if (currentBottomRef) {
+                    observer.unobserve(currentBottomRef);
                 }
             };
         }, [OnReachEndDetected, isLoading]); // Added isLoading to dependencies
@@ -139,13 +135,7 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboardRefre
     }
 );
 
-const DashboardTableRow: React.FC<DashboardTableRowProps> = (props) => {
-    return (
-        <div className={styles.dashboard_table_row}>
-            {/* Render row content here if needed */}
-        </div>
-    );
-};
+DashboardTable.displayName = 'DashboardTable';
 
 /**
  * LoadingTable component to display a table with loading state

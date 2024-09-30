@@ -28,7 +28,7 @@ export interface AuthenticatorResponse {
  * @returns Promise<AuthenticatorResponse> 
  */
 export default async function Authenticator({ req, validPermission }: AuthenticatorProps): Promise<AuthenticatorResponse> {
-    let response: AuthenticatorResponse = {
+    const response: AuthenticatorResponse = {
         id: 0,
         passedAuthentication: false
     };
@@ -60,8 +60,12 @@ export default async function Authenticator({ req, validPermission }: Authentica
         } else {
             response.failedMessage = "Permission denied";
         }
-    } catch (error: any) {
-        response.failedMessage = "Internal server error: " + (error as Error).message;
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            response.failedMessage = "Internal server error: " + error.message;
+        } else {
+            response.failedMessage = "Internal server error";
+        }
     }
 
     return Promise.resolve(response);
