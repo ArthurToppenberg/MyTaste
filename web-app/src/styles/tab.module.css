@@ -7,8 +7,6 @@
   padding-inline: 1rem;
   padding-top: 5.6rem;
   flex-direction: row;
-  overflow-y: scroll;
-  overflow-x: hidden;
 }
 
 .content_custom{
@@ -19,8 +17,6 @@
   width: 100%;
   padding-top: 5.6rem;
   flex-direction: row;
-  overflow-y: scroll;
-  overflow-x: hidden;
 }
 
 .background_overlay {

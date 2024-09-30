@@ -1,17 +1,16 @@
 .toolbar {
-    min-height: 70px;
-    max-height: 100px;
-    position: absolute;
-    padding-top: 1.5rem;
-    background-color: rgba(0, 0, 0, 0.699);
-    transition: background-color 0.5s;
-    overflow-y: scroll;
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
+  min-height: 70px;
+  max-height: 100px;
+  position: absolute;
+  padding-top: 1.5rem;
+  background-color: rgba(0, 0, 0, 0.699);
+  transition: background-color 0.5s;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
 }
 
 .toolbar:hover {
-    background-color: rgba(0, 0, 0, 0.911);
+  background-color: rgba(0, 0, 0, 0.911);
 }

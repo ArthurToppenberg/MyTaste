@@ -83,7 +83,7 @@ const Index: React.FC = () => {
       }
 
       function mangageDropdown(show: boolean) {
-        if(!show) {
+        if (!show) {
           return setManageDropdown(<></>);
         }
         setManageDropdown(<Dropdown buttonText="Admin" itemsProps={[
@@ -93,7 +93,7 @@ const Index: React.FC = () => {
       }
 
       function developerDropdown(show: boolean) {
-        if(!show) {
+        if (!show) {
           return setDeveloperDropdown(<></>);
         }
         setDeveloperDropdown(<Dropdown buttonText="Developer" itemsProps={[
