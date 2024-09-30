@@ -73,7 +73,7 @@ export default function SignIn() {
                 className="btn btn-link btn-block mt-2"
                 onClick={() => router.push('/auth/register')}
               >
-                Don't have an account? Register
+                Don&apos;t have an account? Register
               </button>
             </form>
           </div>

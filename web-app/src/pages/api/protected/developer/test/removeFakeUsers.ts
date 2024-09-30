@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
             });
 
-            const deleteResultProfile = await Prisma.profile.deleteMany({
+            await Prisma.profile.deleteMany({
                 where: {
                    id: {
                           in: fakeUsers.map(user => user.id)
@@ -29,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
             });
 
-            const deleteResultUser = await Prisma.user.deleteMany({
+            await Prisma.user.deleteMany({
                 where: {
                     id: {
                         in: fakeUsers.map(user => user.id)

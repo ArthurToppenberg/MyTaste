@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth from 'next-auth/next'; // Correct import for NextAuth
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { compare } from 'bcryptjs';
 import Prisma from '../../../utils/server/prisma';
@@ -23,7 +23,7 @@ export default NextAuth({
           });
 
           if (user && await compare(credentials.password, user.password)) {
-            return { id: user.id };
+            return { id: user.id.toString() }; // Convert id to string
           }
         } catch (error) {
           console.error('Error during user authorization:', error);
@@ -39,7 +39,7 @@ export default NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user){
+      if (user) {
         token.id = user.id;
       }
       return token;

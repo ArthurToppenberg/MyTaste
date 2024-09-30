@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             const response: IUser = user;
 
-            return res.status(200).json(user);
+            return res.status(200).json(response);
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Internal server error' });
