@@ -42,19 +42,6 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, Das
         const [scrollLoading, setScrollLoading] = useState(true);
         const [pauseRequests, setPauseRequests] = useState(false); // To track when to pause loading more data
 
-        useImperativeHandle(ref, () => ({
-            refresh: () => {
-                setScrollLoading(true);
-                setPauseRequests(false);
-                Refresh();
-            },
-            search: (query: string, filters: string[]) => {
-                setScrollLoading(false);
-                setPauseRequests(false);
-                Search(query, filters);
-            }
-        }), []);
-
         const Refresh = useCallback(() => {
             if ((onLoad && onReachEnd) || (!onLoad && !onReachEnd)) {
                 return console.error('Error: onLoad and onReachEnd cannot be used together');
@@ -107,6 +94,19 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, Das
         useEffect(() => {
             Refresh();
         }, [Refresh]);
+
+        useImperativeHandle(ref, () => ({
+            refresh: () => {
+                setScrollLoading(true);
+                setPauseRequests(false);
+                Refresh();
+            },
+            search: (query: string, filters: string[]) => {
+                setScrollLoading(false);
+                setPauseRequests(false);
+                Search(query, filters);
+            }
+        }), [Refresh, Search]);
 
         const OnReachEndDetected = useCallback(() => {
             if (!onReachEnd || isLoading || !scrollLoading || pauseRequests) {

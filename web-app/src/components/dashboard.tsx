@@ -76,7 +76,7 @@ const Dashboard: React.FC<DashboardProps> = ({
                     return;
                   }
                   if(searchFilters.length === 0) {
-                    alert('Please select atleast filter');
+                    alert('Please select at least 1 filter');
                     return;
                   }
                   activeDashboardDisplayRef.current.search(query, searchFilters);

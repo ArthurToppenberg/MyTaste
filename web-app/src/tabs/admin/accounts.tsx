@@ -96,6 +96,7 @@ const Home: React.FC = () => {
                                         name: 'Filter',
                                         allButton: true,
                                         selections: ['ID', 'Name', 'Email'],
+                                        defaultAllOn: true
                                     }}
                                 />
                         },

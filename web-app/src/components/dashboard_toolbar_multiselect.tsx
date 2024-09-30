@@ -1,20 +1,23 @@
 import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import DashboardToolbarDropdown, { DashboardDropdownProps } from './dashboard_toolbar_dropdown';
+import DashboardToolbarDropdown from './dashboard_toolbar_dropdown';
 
 export interface MultiselectProps {
     name: string;
     allButton?: boolean;
     selections: string[];
     onFilterChange?: (selectedItems: string[]) => void;
+    defaultAllOn?: boolean;
 }
 
-// ❌ not selected
-// ✅ selected
-
-const Multiselect: React.FC<MultiselectProps> = ({ name, selections, allButton, onFilterChange }) => {
+const Multiselect: React.FC<MultiselectProps> = ({ name, selections, allButton, onFilterChange, defaultAllOn }) => {
     const selectableItems = (allButton ? ['All', ...selections] : selections);
-    const [selectedItemsIndexes, setSelectedItemsIndexes] = React.useState<number[]>([]);
+    
+    // Initialize selectedItemsIndexes based on defaultAllOn
+    const initialIndexes = defaultAllOn 
+        ? selections.map((_, index) => index + 1) // All items selected
+        : []; // No items selected
+    const [selectedItemsIndexes, setSelectedItemsIndexes] = React.useState<number[]>(initialIndexes);
 
     // Trigger onFilterChange whenever selectedItemsIndexes changes
     useEffect(() => {

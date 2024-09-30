@@ -46,6 +46,10 @@ interface simpleListProps {
     limit: number;
 }
 
+interface WhereClause {
+    OR: Array<{ [key: string]: unknown }>;
+}
+
 /**
  * Get a list of users from the database.
  * 
@@ -96,7 +100,7 @@ async function simpleList(props: simpleListProps): Promise<IUsersResponse> {
  * console.log(response.users);
  */
 async function search(props: searchProps): Promise<IUsersResponse> {
-    const whereClause: any = {
+    const whereClause: WhereClause = {
         OR: []
     };
 
@@ -160,7 +164,11 @@ async function search(props: searchProps): Promise<IUsersResponse> {
         take: props.count
     });
 
-    if(users.length <  props.count){
+    if(users.length === 0){
+        return { message: 'No users could be found.' };
+    }
+
+    if(users.length < props.count){
         return { users, hasReachedEnd: true };
     }
 
