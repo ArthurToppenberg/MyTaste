@@ -34,8 +34,8 @@ const Home: React.FC = () => {
                                                     }
                                                 }
                                             );
-                                
-                                            if(response.users === undefined){
+
+                                            if (response.users === undefined) {
                                                 return { tableRowProps: [], message: response.message };
                                             }
 
@@ -53,23 +53,23 @@ const Home: React.FC = () => {
                                                     ]
                                                 });
                                             });
-                                            return { tableRowProps: rows};
+                                            return { tableRowProps: rows, hasReachedEnd: response.hasReachedEnd };
                                         } catch (error) {
-                                            return { tableRowProps: [], message: 'Error fetching users'};
+                                            return { tableRowProps: [], message: 'Error fetching users' };
                                         }
                                     }}
-                                    onSearch={async (query: string): Promise<DashboardTableData> => {
+                                    onSearch={async (query: string, filters: string[]): Promise<DashboardTableData> => {
                                         try {
                                             const response: IUsersResponse = await getUsers(
                                                 {
                                                     search: {
                                                         query: query,
                                                         count: 10,
-                                                        field: ['email']
+                                                        field: filters,
                                                     }
                                                 }
                                             );
-                                            if(response.users === undefined){
+                                            if (response.users === undefined) {
                                                 return { tableRowProps: [], message: response.message };
                                             }
 
@@ -87,10 +87,15 @@ const Home: React.FC = () => {
                                                     ]
                                                 });
                                             });
-                                            return { tableRowProps: rows};
+                                            return { tableRowProps: rows, hasReachedEnd: response.hasReachedEnd };
                                         } catch (error) {
-                                            return { tableRowProps: [], message: 'Error fetching users'};
+                                            return { tableRowProps: [], message: 'Error fetching users' };
                                         }
+                                    }}
+                                    filterProps={{
+                                        name: 'Filter',
+                                        allButton: true,
+                                        selections: ['ID', 'Name', 'Email'],
                                     }}
                                 />
                         },

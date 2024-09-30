@@ -5,9 +5,10 @@ export interface DropDownItemProps {
     name: string;
     onClick: () => void;
     auxOnClick?: () => void;
+    darker?: boolean;
 }
 
-const DropDownItem: React.FC<DropDownItemProps> = ({ name, onClick, auxOnClick }) => {
+const DropDownItem: React.FC<DropDownItemProps> = ({ name, onClick, auxOnClick, darker }) => {
     const handleClick = () => {
         onClick();
         if (auxOnClick) {
@@ -16,7 +17,12 @@ const DropDownItem: React.FC<DropDownItemProps> = ({ name, onClick, auxOnClick }
     };
 
     return (
-        <a className="dropdown-item" href="#" onClick={handleClick}>
+        <a
+            className={`dropdown-item`}
+            style={{ backgroundColor: darker ? '#0000000f' : '' }}
+            href="#"
+            onClick={handleClick}
+        >
             {name}
         </a>
     );

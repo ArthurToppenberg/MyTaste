@@ -16,9 +16,10 @@ export interface IUsers {
     users: IUser[];
 }
 
-export interface IUsersResponse{
+export interface IUsersResponse {
     users?: IUser[];
     message?: string;
+    hasReachedEnd?: boolean;
 }
 
 /**
@@ -29,7 +30,7 @@ export interface IUsersResponse{
  * 
  * To use userprops simply populate the preferred querry method, leave the others empty.
  */
-export interface usersProps{
+export interface usersProps {
     search?: searchProps,
     simpleList?: simpleListProps,
 }
@@ -40,32 +41,109 @@ export interface searchProps {
     count: number;
 }
 
-interface simpleListProps{
+interface simpleListProps {
     index: number;
     limit: number;
 }
 
+/**
+ * Get a list of users from the database.
+ * 
+ * @param props simpleListProps
+ * @returns IUsersResponse
+ * 
+ * @example
+ * const response = await simpleList({ index: 0, limit: 100 });
+ * console.log(response.users);
+ */
 async function simpleList(props: simpleListProps): Promise<IUsersResponse> {
-    const users = await Prisma.user.findMany({
-        select: {
-            id: true,
-            email: true,
-            permission: true,
-            type: true,
-            profile: {
-                select: {
-                    name: true,
+    try {
+        const users = await Prisma.user.findMany({
+            select: {
+                id: true,
+                email: true,
+                permission: true,
+                type: true,
+                profile: {
+                    select: {
+                        name: true,
+                    }
                 }
-            }
-        },
-        skip: props.index,
-        take: props.limit
-    });
+            },
+            skip: props.index,
+            take: props.limit
+        });
 
-    return { users };
+        if(users.length < props.limit) {
+            return { users, hasReachedEnd: true };
+        }
+
+        return { users };
+    } catch (error) {
+        console.error('Error fetching simple list:', error);
+        return { message: 'Error fetching users' };
+    }
 }
 
+/**
+ * Search for users in the database.
+ * 
+ * @param props searchProps
+ * @returns IUsersResponse
+ * 
+ * @example
+ * const response = await search({ query: 'example', field: ['email'], count: 10 });
+ * console.log(response.users);
+ */
 async function search(props: searchProps): Promise<IUsersResponse> {
+    const whereClause: any = {
+        OR: []
+    };
+
+    const normalizedFields = props.field.map((field) => field.toLowerCase());
+
+    // Handle searching by ID (exact match)
+    if (normalizedFields.includes('id')) {
+        const numericQuery = Number(props.query);
+
+        // Only push to OR clause if the query can be converted to a number
+        if (!isNaN(numericQuery)) {
+            whereClause.OR.push({
+                id: {
+                    equals: numericQuery
+                }
+            });
+        }
+    }
+
+    // Handle searching by email (partial match, case insensitive)
+    if (normalizedFields.includes('email')) {
+        whereClause.OR.push({
+            email: {
+                contains: props.query,
+                mode: 'insensitive'
+            }
+        });
+    }
+
+    // Handle searching by profile name (partial match, case insensitive)
+    if (normalizedFields.includes('name')) {
+        whereClause.OR.push({
+            profile: {
+                name: {
+                    contains: props.query,
+                    mode: 'insensitive'
+                }
+            }
+        });
+    }
+
+    // Ensure at least one search condition is present
+    if (whereClause.OR.length === 0) {
+        throw new Error("No valid search fields provided.");
+    }
+
+    // Query the database
     const users = await Prisma.user.findMany({
         select: {
             id: true,
@@ -74,37 +152,30 @@ async function search(props: searchProps): Promise<IUsersResponse> {
             type: true,
             profile: {
                 select: {
-                    name: true,
+                    name: true
                 }
             }
         },
-        where: {
-            OR: props.field.map((field) => {
-                return {
-                    [field]: {
-                        contains: props.query
-                    }
-                };
-            })
-        },
+        where: whereClause,
         take: props.count
     });
 
-    if (users.length === 0) {
-        return { message: 'No matches found in field/s: ' + props.field.join(', ') };
+    if(users.length <  props.count){
+        return { users, hasReachedEnd: true };
     }
 
     return { users };
 }
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     await Authenticator({ req, validPermission: ['DEVELOPER', 'ADMIN'] }).then(async (response) => {
         if (!response.passedAuthentication) {
             return res.status(401).json({ message: response.failedMessage });
         }
-        
+
         // default for get request TESTING PURPOSES
-        if (req.method === 'GET') { 
+        if (req.method === 'GET') {
             return res.status(200).json(await simpleList({ index: 0, limit: 100 }));
         }
 
@@ -122,7 +193,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(200).json(await simpleList(requestProps.simpleList));
         }
 
-        if(requestProps.search){
+        if (requestProps.search) {
             return res.status(200).json(await search(requestProps.search));
         }
     }).catch((error) => {

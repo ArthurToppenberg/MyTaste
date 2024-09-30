@@ -2,6 +2,7 @@ import React, { useEffect, useImperativeHandle, useState, forwardRef, useRef, us
 import styles from '@/styles/dashboard_table.module.css';
 import { IDashboard } from './dashboard';
 import InfoBox from './info_box';
+import {MultiselectProps} from './dashboard_toolbar_multiselect';
 
 /**
  * DashboardTable component to display a table with optional loading state and infinite scroll (As long as there is data)
@@ -19,12 +20,14 @@ export interface DashboardTableProps {
     onLoad?: () => Promise<DashboardTableData>;
     onReachEnd?: (index: number) => Promise<DashboardTableData>;
     LoadingTableProps?: LoadingTableProps;
-    onSearch?: (search: string) => Promise<DashboardTableData>;
+    onSearch?: (search: string, filters: string[]) => Promise<DashboardTableData>;
+    filterProps?: MultiselectProps;
 }
 
 export interface DashboardTableData {
     tableRowProps: DashboardTableRowProps[];
     message?: string;
+    hasReachedEnd?: boolean;
 }
 
 export interface DashboardTableRowProps {
@@ -37,14 +40,18 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, Das
         const bottomRef = useRef<HTMLDivElement>(null); // Reference for detecting the end of the table
         const [isLoading, setIsLoading] = useState(false); // State to track loading status
         const [scrollLoading, setScrollLoading] = useState(true);
+        const [pauseRequests, setPauseRequests] = useState(false); // To track when to pause loading more data
 
         useImperativeHandle(ref, () => ({
             refresh: () => {
                 setScrollLoading(true);
+                setPauseRequests(false);
                 Refresh();
             },
-            search: (query: string) => {
-                Search(query);
+            search: (query: string, filters: string[]) => {
+                setScrollLoading(false);
+                setPauseRequests(false);
+                Search(query, filters);
             }
         }), []);
 
@@ -76,7 +83,7 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, Das
             loadData();
         }, [onLoad, onReachEnd]);
 
-        const Search = useCallback((query: string) => {
+        const Search = useCallback((query: string, filters: string[]) => {
             if (!onSearch) {
                 return console.error('Error: onSearch is not defined');
             }
@@ -85,7 +92,7 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, Das
 
             const searchData = async () => {
                 try {
-                    const data = await onSearch(query);
+                    const data = await onSearch(query, filters);
                     setTableData(data);
                 } catch (error) {
                     console.error('Error searching data:', error);
@@ -102,8 +109,8 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, Das
         }, [Refresh]);
 
         const OnReachEndDetected = useCallback(() => {
-            if (!onReachEnd || isLoading || !scrollLoading) {
-                return; // Exit if no function, already loading, or not scrolling
+            if (!onReachEnd || isLoading || !scrollLoading || pauseRequests) {
+                return; // Exit if no function, already loading, not scrolling, or pause active
             }
 
             setIsLoading(true); // Set loading to true before data fetch
@@ -114,15 +121,19 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, Das
                         tableRowProps: [...prevData.tableRowProps, ...data.tableRowProps],
                         message: data.message
                     }));
+                    setIsLoading(false); // Loading complete
+                    if(!data.hasReachedEnd) {
+                        return;
+                    }
+                    setPauseRequests(true); // Pause new requests for 10 seconds\
+                    setTimeout(() => setPauseRequests(false), 10000); // After 10 seconds, resume checking
                 } catch (error) {
                     console.error('Error loading more data:', error);
-                } finally {
-                    setIsLoading(false); // Loading complete
-                }
+                } 
             };
 
             loadMoreData();
-        }, [onReachEnd, tableData, isLoading, scrollLoading]);
+        }, [onReachEnd, tableData, isLoading, scrollLoading, pauseRequests]);
 
         // IntersectionObserver to detect scrolling to the bottom
         useEffect(() => {

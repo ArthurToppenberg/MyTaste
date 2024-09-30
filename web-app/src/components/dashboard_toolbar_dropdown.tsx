@@ -8,9 +8,10 @@ export interface DashboardDropdownProps {
     name: string;
     itemsProps: DropDownItemProps[];
     defaultItem: number;
+    hideSelection?: boolean;
 }
 
-const DashboardDropdown: React.FC<DashboardDropdownProps> = ({ name, itemsProps, defaultItem}) => {
+const DashboardDropdown: React.FC<DashboardDropdownProps> = ({ name, itemsProps, defaultItem, hideSelection}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
     const buttonRef = React.useRef<HTMLButtonElement>(null);
@@ -100,7 +101,7 @@ const DashboardDropdown: React.FC<DashboardDropdownProps> = ({ name, itemsProps,
                 onMouseLeave={handleMouseLeave}
                 onMouseEnter={handleMouseEnter}
             >
-                {defaultItem !== undefined ? `${name}: ${selectedItem}` : name}
+                {defaultItem === undefined || hideSelection ? name : `${name}: ${selectedItem}`}
             </button>
             {/* Render dropdown menu outside the current container */}
             {isOpen && ReactDOM.createPortal(dropdownMenu, document.body)}

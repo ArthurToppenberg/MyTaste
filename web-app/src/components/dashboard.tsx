@@ -5,7 +5,7 @@ import ToolBar from '@/components/dashboard_toolbar';
 
 export interface IDashboard {
   refresh: () => void;
-  search: (query: string) => void;
+  search?: (query: string, filters: string[]) => void;
 }
 
 interface DashboardDisplaySelectionProps {
@@ -27,6 +27,7 @@ const Dashboard: React.FC<DashboardProps> = ({
   const [activeDashboardDisplay, setActiveDashboardDisplay] = React.useState<number>(defaultDisplayComponent);
   const activeDashboardDisplayRef = useRef<IDashboard>(null);
   const [isRefreshing, setIsRefreshing] = React.useState<boolean>(false);
+  const [searchFilters, setSearchFilters] = React.useState<string[]>([]);
 
   return (
     <div className={style.container}>
@@ -71,12 +72,26 @@ const Dashboard: React.FC<DashboardProps> = ({
                     activeDashboardDisplayRef.current.refresh();
                     return;
                   }
-                  activeDashboardDisplayRef.current.search(query);
+                  if (!activeDashboardDisplayRef.current.search) {
+                    return;
+                  }
+                  if(searchFilters.length === 0) {
+                    alert('Please select atleast filter');
+                    return;
+                  }
+                  activeDashboardDisplayRef.current.search(query, searchFilters);
                 }
               },
             }
             : undefined
         }
+        filtersProps={{
+          onFilterChange: (selectedItems: string[]) => {
+            setSearchFilters(selectedItems);
+          },
+          ...dashboardDisplaySelectionProps[activeDashboardDisplay].displayComponent.props.filterProps,
+        }}
+        
       />
       {activeDashboardDisplay === -1 ? (
         <div>Loading...</div>
