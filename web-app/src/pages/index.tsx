@@ -45,10 +45,10 @@ const Index: React.FC = () => {
       { name: "Profile", onClick: () => setTab(<UnderDevelopment />) },
       { name: "Logout", onClick: () => signOut({ callbackUrl: '' }) }
     ]} />,
-    <Dropdown key="Restaurant Dropdown" buttonText="My Restaurant" itemsProps={[
-      { name: "Restaurant Profile", onClick: () => setTab(<UnderDevelopment />) },
-      { name: "Dashboard", onClick: () => setTab(<UnderDevelopment />) },
-    ]} />
+    // <Dropdown key="Restaurant Dropdown" buttonText="My Restaurant" itemsProps={[
+    //   { name: "Restaurant Profile", onClick: () => setTab(<UnderDevelopment />) },
+    //   { name: "Dashboard", onClick: () => setTab(<UnderDevelopment />) },
+    // ]} />
   ];
 
   useEffect(() => {
