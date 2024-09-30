@@ -1,9 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 
+// Disable ESLint for the global variable declaration to allow var
+/* eslint-disable no-var */
 declare global {
-    // Declare a global variable for PrismaClient to avoid multiple instances in development
     var prisma: PrismaClient | undefined;
 }
+/* eslint-enable no-var */
 
 // Use the existing Prisma instance if available, or create a new one
 const prisma = global.prisma || new PrismaClient();

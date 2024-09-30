@@ -2,8 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import Prisma from '../../../../../utils/server/prisma';
 import Authenticator from '@/utils/server/authenticator';
 import { hash } from 'bcryptjs';
-
-const chance = require('chance').Chance();
+import Chance from 'chance';
+const chance = new Chance();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     await Authenticator({ req, validPermission: ['DEVELOPER'] }).then(async (response) => {

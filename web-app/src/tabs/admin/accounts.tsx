@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import tabStyles from '@/styles/tab.module.css';
 import Dashboard from '@/components/dashboard';
@@ -34,7 +34,7 @@ const Home: React.FC = () => {
                                                     }
                                                 }
                                             );
-                                            let rows: DashboardTableRowProps[] = [];
+                                            const rows: DashboardTableRowProps[] = [];
                                             users.users.forEach(user => {
                                                 rows.push({
                                                     rowData: Object.values(user).map(value => value.toString())
