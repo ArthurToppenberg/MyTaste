@@ -13,6 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         try {
+            console.log("Getting fake users profiles...")
             const fakeUsers = await Prisma.user.findMany({
                 where: {
                     profile: {
@@ -21,6 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
             });
 
+            console.log("Deleting fake users profiles...")
             await Prisma.profile.deleteMany({
                 where: {
                    id: {
@@ -29,6 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
             });
 
+            console.log("Deleting fake users...")
             await Prisma.user.deleteMany({
                 where: {
                     id: {
@@ -37,7 +40,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
             });
 
-            return res.status(200).json({ message: 'Fake users removed successfully' });
+            console.log('done');
+
+            return res.status(200).json({ message: `Removed ${fakeUsers.length} fake users...`});
         } catch (error) {
             console.error(error);
             return res.status(500).json({ message: 'Internal Server Error' });

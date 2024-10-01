@@ -2,8 +2,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import Prisma from '../../../../../utils/server/prisma';
 import Authenticator from '@/utils/server/authenticator';
 import { hash } from 'bcryptjs';
-import Chance from 'chance';
-const chance = new Chance();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     await Authenticator({ req, validPermission: ['DEVELOPER'] }).then(async (response) => {
@@ -15,37 +13,57 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(405).json({ message: 'Method Not Allowed' });
         }
 
-        const count: number = 100;
+        const count: number = 1000;
+        console.log(`Creating ${count} fake users...`);
+        const usersData = await generateFakeUsersData(count);
+        console.log('Fake users data generated successfully');
 
-        for (let i = 0; i < count; i++) {
-            await createFakeUser();
-        }
+        console.log('Inserting into database...');
+        await Prisma.$transaction(
+            usersData.map(userData => 
+                Prisma.user.create({
+                    data: {
+                        email: userData.email,
+                        password: userData.hashedPassword,
+                        profile: {
+                            create: {
+                                name: userData.name,
+                                phoneNumber: userData.phoneNumber,
+                            }
+                        }
+                    }
+                })
+            )
+        );
 
-        return res.status(201).json({ message: 'Fake users created successfully' });
+        console.log('Fake users saved to database...');
+
+        return res.status(201).json({ message: `Created ${count} fake users...` });
     }).catch((error) => {
         console.error(error);
         return res.status(500).json({ message: 'Internal Server Error' });
     });
 }
 
-async function createFakeUser() {
-    const email = chance.email();  // Generating a fake email
-    const password = Math.random().toString(36).substring(7);
-    const name = 'FAKE';
-    const phoneNumber = chance.phone();  // Generating a fake phone number
-    const hashedPassword = await hash(password, 10);
+async function generateFakeUsersData(count: number) {
+    const usersData = [];
 
-    const user = await Prisma.user.create({
-        data: {
+    for (let i = 0; i < count; i++) {
+        const timestamp = Date.now();
+        const email = `fak.e${i}.${timestamp}@fake.com`;
+        const password = `2345${i}3455534`;
+        const hashedPassword = await hash(password, 2);
+        const phoneNumber = `45${i}45647657`;
+        const name = 'FAKE';
+
+        usersData.push({
             email,
-            password: hashedPassword,
-            profile: {
-                create: {
-                    name: name,
-                    phoneNumber: phoneNumber
-                }
-            }
-        }
-    });
-    return user;
+            hashedPassword,
+            name,
+            phoneNumber
+        });
+        console.log(`Fake user ${i + 1} created password: ${hashedPassword}`);
+    }
+
+    return usersData;
 }
