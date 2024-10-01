@@ -17,10 +17,12 @@ const DashboardToolBar: React.FC<DashboardToolBarProps> = ({ dashboardSelectionD
     return (
         <div className={styles.toolbar_container}>
             <div className={styles.toolbar_container_left}>
-                <DashboardToolbarDropdown {...dashboardSelectionDropdownProps} />
-                {(filtersProps && searchbarProps) && <>
+                <div className={styles.toolbar_button_container}>
+                    <DashboardToolbarDropdown {...dashboardSelectionDropdownProps} />
+                </div>
+                {(filtersProps && searchbarProps) && <div className={styles.toolbar_button_container}>
                     <MultiSelect {...filtersProps} />
-                </>}
+                </div>}
                 {searchbarProps && <div className={styles.toolbar_button_container}>
                     <SearchBar {...searchbarProps} />
                 </div>}

@@ -20,7 +20,7 @@ const Toolbar: React.FC<ToolbarProps> = ({ logo, tabLinks, elements, setTab}) =>
         <>
             <nav className={`toolbar navbar navbar-expand-lg fixed-top ${styles.toolbar}`}>
                 <div className="container-fluid">
-                    <div className="d-flex flex-wrap mb-2">
+                    <div className="d-flex flex-wrap align-items-center mb-2">
                         {logo && <div className="me-2 mb-2">{logo}</div>}
                         {tabLinks.map((tabLink, index) => (
                             <div key={index} className="me-2 mb-2">

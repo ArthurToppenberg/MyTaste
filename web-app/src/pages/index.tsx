@@ -115,7 +115,7 @@ const Index: React.FC = () => {
       </Head>
       <Toolbar
         setTab={setTab}
-        logo={<InfoBox text="My Taste" />}
+        logo={<InfoBox imagePath="/images/logo.png" noBorder={true}/>}
         tabLinks={[
           { name: 'Home', tab: <Home /> },
           { name: 'About', tab: <UnderDevelopment /> },

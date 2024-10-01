@@ -8,3 +8,9 @@
     padding-inline: 0;
     margin-inline: 0;
 }
+
+.container img{
+    width: 50px;
+    height: auto;
+    padding: 0;
+}

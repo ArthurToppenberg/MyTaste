@@ -11,12 +11,14 @@ const Home: React.FC = () => {
         <>
             <div className={`${tabStyles.content_custom}`}>
                 <Dashboard
+                    key={'admin_dashboard'}
                     selectionDropdownName={'View'}
                     dashboardDisplaySelectionProps={[
                         {
                             name: 'Users',
                             displayComponent:
                                 <Table
+                                    key={'users_table'}
                                     collumnHeaders={[
                                         'ID',
                                         'Name',

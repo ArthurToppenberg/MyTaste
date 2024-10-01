@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import styles from '@/styles/infobox.module.css'; // Assuming you have additional styles here
-
+import styles from '@/styles/infobox.module.css';
 
 interface InfoBoxProps {
     text?: string;
@@ -11,8 +10,9 @@ interface InfoBoxProps {
     invertOnHover?: boolean; // Invert the color scheme on hover
     invertOnClick?: boolean; // Invert the color scheme on click
     children?: React.ReactNode;
+    imagePath?: string;
+    noBorder?: boolean;
 }
-
 
 /**
  * InfoBox component to display information with optional loading state and color inversion.
@@ -25,6 +25,8 @@ interface InfoBoxProps {
  * @param {boolean} [props.invertOnHover] - If true, inverts the color scheme on hover.
  * @param {boolean} [props.invertOnClick] - If true, inverts the color scheme on click.
  * @param {React.ReactNode} [props.children] - The children elements to display inside the InfoBox.
+ * @param {string} [props.imagePath] - The path to the image to display inside the InfoBox.
+ * @param {boolean} [props.noBorder] - If true, removes the border from the InfoBox.
  *
  * @returns {JSX.Element} The rendered InfoBox component.
  */
@@ -36,6 +38,8 @@ const InfoBox: React.FC<InfoBoxProps> = ({
     invertOnHover,
     invertOnClick,
     children,
+    imagePath,
+    noBorder,
 }) => {
     // State to track temporary color inversion for hover and click
     const [hovered, setHovered] = useState(false);
@@ -73,7 +77,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
 
     return (
         <div
-            className={`border rounded shadow-sm p-2 ${styles.container} ${containerClass}`}
+            className={`rounded shadow-sm p-2 ${styles.container} ${containerClass} ${noBorder ? '' : 'border'}`}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
             onClick={handleClick}
@@ -85,6 +89,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
             ) : (
                 <>
                     {text && <p className={`m-0`}>{text}</p>}
+                    {imagePath && <img src={imagePath} alt="info box image" />}
                     {children && <div>{children}</div>}
                 </>
             )}

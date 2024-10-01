@@ -16,7 +16,7 @@ import {MultiselectProps} from './dashboard_toolbar_multiselect';
  */
 export interface DashboardTableProps {
     collumnHeaders: string[];
-    collumns?: DashboardTableRowProps[];
+    staticCollumns?: DashboardTableRowProps[];
     onLoad?: () => Promise<DashboardTableData>;
     onReachEnd?: (index: number) => Promise<DashboardTableData>;
     LoadingTableProps?: LoadingTableProps;
@@ -35,8 +35,8 @@ export interface DashboardTableRowProps {
 }
 
 const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, DashboardTableProps>(
-    ({ collumnHeaders, collumns, onLoad, onReachEnd, LoadingTableProps, onSearch }, ref) => {
-        const [tableData, setTableData] = useState<DashboardTableData>({ tableRowProps: collumns ?? [] });
+    ({ collumnHeaders, staticCollumns, onLoad, onReachEnd, LoadingTableProps, onSearch }, ref) => {
+        const [tableData, setTableData] = useState<DashboardTableData>({ tableRowProps: staticCollumns ?? [] });
         const bottomRef = useRef<HTMLDivElement>(null); // Reference for detecting the end of the table
         const [isLoading, setIsLoading] = useState(false); // State to track loading status
         const [scrollLoading, setScrollLoading] = useState(true);
@@ -200,6 +200,32 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, Das
 );
 
 DashboardTable.displayName = 'DashboardTable';
+
+enum EditType {
+    string,
+    number,
+    enum,
+}
+
+interface TableRowDataProps{
+    value: string;
+    editType?: EditType;
+}
+
+interface TableRowProps{
+    id: number;
+    data: TableRowDataProps[];
+}
+
+const TableRow: React.FC<TableRowProps> = ({ id, data }) => {
+    return (
+        <tr key={id} className={styles.dashboard_table_row}>
+            {data.map((cell, cellIndex) => (
+                <td key={cellIndex}>{cell.value}</td>
+            ))}
+        </tr>
+    );
+}
 
 /**
  * LoadingTable component to display a table with loading state
