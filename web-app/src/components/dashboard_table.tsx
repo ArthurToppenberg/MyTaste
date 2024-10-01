@@ -201,31 +201,31 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, Das
 
 DashboardTable.displayName = 'DashboardTable';
 
-enum EditType {
-    string,
-    number,
-    enum,
-}
+// enum EditType {
+//     string,
+//     number,
+//     enum,
+// }
 
-interface TableRowDataProps{
-    value: string;
-    editType?: EditType;
-}
+// interface TableRowDataProps{
+//     value: string;
+//     editType?: EditType;
+// }
 
-interface TableRowProps{
-    id: number;
-    data: TableRowDataProps[];
-}
+// interface TableRowProps{
+//     id: number;
+//     data: TableRowDataProps[];
+// }
 
-const TableRow: React.FC<TableRowProps> = ({ id, data }) => {
-    return (
-        <tr key={id} className={styles.dashboard_table_row}>
-            {data.map((cell, cellIndex) => (
-                <td key={cellIndex}>{cell.value}</td>
-            ))}
-        </tr>
-    );
-}
+// const TableRow: React.FC<TableRowProps> = ({ id, data }) => {
+//     return (
+//         <tr key={id} className={styles.dashboard_table_row}>
+//             {data.map((cell, cellIndex) => (
+//                 <td key={cellIndex}>{cell.value}</td>
+//             ))}
+//         </tr>
+//     );
+// }
 
 /**
  * LoadingTable component to display a table with loading state

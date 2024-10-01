@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import styles from '@/styles/infobox.module.css';
+import Image from 'next/image';
 
 interface InfoBoxProps {
     text?: string;
@@ -14,22 +15,6 @@ interface InfoBoxProps {
     noBorder?: boolean;
 }
 
-/**
- * InfoBox component to display information with optional loading state and color inversion.
- *
- * @param {Object} props - The properties object.
- * @param {string} [props.text] - The text to display inside the InfoBox.
- * @param {boolean} [props.loading] - If true, displays a loading spinner instead of the text.
- * @param {() => void} [props.onClick] - The function to call when the InfoBox is clicked.
- * @param {boolean} [props.inverted] - If true, inverts the color scheme.
- * @param {boolean} [props.invertOnHover] - If true, inverts the color scheme on hover.
- * @param {boolean} [props.invertOnClick] - If true, inverts the color scheme on click.
- * @param {React.ReactNode} [props.children] - The children elements to display inside the InfoBox.
- * @param {string} [props.imagePath] - The path to the image to display inside the InfoBox.
- * @param {boolean} [props.noBorder] - If true, removes the border from the InfoBox.
- *
- * @returns {JSX.Element} The rendered InfoBox component.
- */
 const InfoBox: React.FC<InfoBoxProps> = ({
     text,
     loading,
@@ -89,7 +74,7 @@ const InfoBox: React.FC<InfoBoxProps> = ({
             ) : (
                 <>
                     {text && <p className={`m-0`}>{text}</p>}
-                    {imagePath && <img src={imagePath} alt="info box image" />}
+                    {imagePath && <Image src={imagePath} alt="info box image" width={100} height={100} />}
                     {children && <div>{children}</div>}
                 </>
             )}
