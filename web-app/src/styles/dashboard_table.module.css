@@ -1,6 +1,5 @@
 .dashboard_table {
     width: 100%;
-    border-collapse: collapse;
     table-layout: auto;
     padding: 0;
     margin: 0;
@@ -39,7 +38,6 @@
 .dashboard_table_content {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     width: 100%;
-    height: 83vh;
-    overflow-y: auto;
-    margin-bottom: 20px; /* Add margin to ensure it doesn't touch the bottom of the viewport */
+    max-height: 80vh;
+    overflow: scroll;
 }

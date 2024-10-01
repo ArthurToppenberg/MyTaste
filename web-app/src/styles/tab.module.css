@@ -1,22 +1,18 @@
 .content_defualt {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
+  flex-direction: row;
   width: 100%;
   padding-inline: 1rem;
-  padding-top: 5.6rem;
-  flex-direction: row;
+  overflow: hidden;
+  height: 100%;
+  align-items: center;
 }
 
 .content_custom{
   display: flex;
   flex-direction: column;
-  align-items: center;
-  height: 100%;
   width: 100%;
-  padding-top: 5.6rem;
-  flex-direction: row;
+  overflow: hidden;
 }
 
 .background_overlay {
@@ -53,8 +49,6 @@
 .container{
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
   padding: 1rem;
   width: 100%;
 }

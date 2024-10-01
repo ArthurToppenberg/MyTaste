@@ -159,7 +159,9 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, Das
         }, [OnReachEndDetected, isLoading]);
 
         return (
-            <div className={styles.dashboard_table_content}>
+            <div 
+                className={styles.dashboard_table_content} 
+            >
                 {tableData.message ? (
                     <MessageTable message={tableData.message} />
                 ) : tableData.tableRowProps.length === 0 ? (
