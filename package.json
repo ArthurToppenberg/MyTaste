@@ -1,7 +1,11 @@
 {
-  "name": "mytaste",
+  "name": "mytaste-monorepo",
   "version": "1.0.0",
-  "description": "Complete Mobile and Web application for mytaste",
-  "author": "Arthur Toppenberg",
-  "license": "ISC"
-}
+  "workspaces": [
+    "packages/*",
+    "applications/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspaces"
+  }
+} 

@@ -1,0 +1,35 @@
+{
+  "name": "@mytaste/web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "prisma generate && next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.20.0",
+    "bcryptjs": "^2.4.3",
+    "bootstrap": "^5.3.3",
+    "next": "14.2.11",
+    "next-auth": "^4.24.7",
+    "react": "^18",
+    "react-dom": "^18",
+    "test": "file:../../packages/test"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.25.7",
+    "@babel/preset-typescript": "^7.25.7",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/chance": "^1.1.6",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "babel-loader": "^9.2.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.11",
+    "prisma": "^5.20.0",
+    "typescript": "^5"
+  }
+}
