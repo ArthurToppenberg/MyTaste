@@ -1,5 +1,4 @@
 import React from 'react';
-import { signIn } from 'next-auth/react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 
@@ -15,17 +14,7 @@ export const SignIn: React.FC = () => {
     e.preventDefault();
     setError(''); // Clear previous errors
 
-    const result = await signIn('credentials', {
-      redirect: false,
-      email,
-      password,
-    });
-
-    if (result?.error) {
-      setError(result.error);
-    } else {
-      router.push('/'); // Redirect to the home page on successful login
-    }
+    //implement signin logic here
   };
 
   return (

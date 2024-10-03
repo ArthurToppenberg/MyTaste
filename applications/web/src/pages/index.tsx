@@ -2,12 +2,11 @@ import Toolbar from "@/components/toolbar";
 import InfoBox from "@/components/info_box";
 
 import Home from "@/tabs/index/home";
-// import About from "@/tabs/index/about";
-// import Contact from "@/tabs/index/contact";
+import About from "@/tabs/index/about";
+import Contact from "@/tabs/index/contact";
 
 import Head from "next/head";
 
-import { signOut, useSession } from 'next-auth/react';
 import { useEffect, useState } from "react";
 
 import { getProfile } from "@/utils/client/profile";
@@ -24,11 +23,7 @@ import Accounts from "@/tabs/admin/accounts"
 import SignIn from "@/tabs/auth/signin";
 import Register from "@/tabs/auth/register";
 
-import HelloBox from '@packages/test/src/hellobox';
-
 const Index: React.FC = () => {
-  //check if session exists?
-  const { data: session, status } = useSession();
 
   const notAuthedElements: JSX.Element[] = [
     <InfoBox key="Sign in button" text="Sign in" invertOnHover={true} invertOnClick={true} onClick={() => setTab(<SignIn />)} />,
@@ -48,7 +43,7 @@ const Index: React.FC = () => {
     manageDropdown,
     <Dropdown key="Account Dropdown" buttonText="Account" itemsProps={[
       { name: "Profile", onClick: () => setTab(<UnderDevelopment />) },
-      { name: "Logout", onClick: () => signOut({ callbackUrl: '' }) }
+      { name: "Logout", onClick: () => alert("Logout") }
     ]} />,
     // <Dropdown key="Restaurant Dropdown" buttonText="My Restaurant" itemsProps={[
     //   { name: "Restaurant Profile", onClick: () => setTab(<UnderDevelopment />) },
@@ -57,18 +52,13 @@ const Index: React.FC = () => {
   ];
 
   useEffect(() => {
-    if (status === "loading") {
-      return;
-    }
-
-    if (!session) {
-      return;
-    }
 
     getProfile().then((profile: IProfile) => {
       setNameElement(profile.name ? <InfoBox text={`Name: ${profile.name}`} /> : <></>);
       setEmailElement(profile.phoneNumber ? <InfoBox text={`Phone: ${profile.phoneNumber}`} /> : <></>);
     });
+
+    return; 
 
     getUser().then((user: IUser) => {
 
@@ -109,27 +99,26 @@ const Index: React.FC = () => {
       }
     });
 
-  }, [session, status]);
+  }, []);
 
   const [tab, setTab] = useState<JSX.Element>(<Home />);
 
   return (
     <>
       <Head>
-        <title>My Taste</title>
+      <title>My Taste</title>
       </Head>
-     <HelloBox text={"THIS MODULE IS COMPILED FROM ANOTHER DIRECTORY"} />
       <Toolbar
-        setTab={setTab}
-        logo={<InfoBox imagePath="/images/logo.png" noBorder={true}/>}
-        tabLinks={[
-          { name: 'Home', tab: <Home /> },
-          { name: 'About', tab: <UnderDevelopment /> },
-          { name: 'Contact', tab: <UnderDevelopment /> }
-        ]}
-        elements={
-          session ? authedElements : notAuthedElements
-        }
+      hideTabLinkButtons={false}
+      showTabLinkButtonsOnHover={true}
+      setTab={setTab}
+      logo={<InfoBox imagePath="/images/logo.png" noBorder={true} />}
+      tabLinks={[
+        { name: 'Home', tab: <Home /> },
+        { name: 'About', tab: <UnderDevelopment /> },
+        { name: 'Contact', tab: <UnderDevelopment /> }
+      ]}
+      elements={notAuthedElements}
       />
       {tab}
     </>
