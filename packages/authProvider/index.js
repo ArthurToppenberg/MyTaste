@@ -1,2 +1,3 @@
 import {AuthProvider, useAuthContext} from './src/authContext';
-export {AuthProvider, useAuthContext};
+import {signinProps, singinResponse} from './src/authService';
+export {AuthProvider, useAuthContext, signinProps, singinResponse};

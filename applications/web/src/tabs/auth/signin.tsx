@@ -1,9 +1,7 @@
 import React, { useContext } from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { useAuthContext } from '@packages/authProvider';
-
-
+import { useAuthContext, singinResponse } from '@packages/authProvider';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export const SignIn: React.FC = () => {

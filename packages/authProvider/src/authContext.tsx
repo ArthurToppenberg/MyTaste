@@ -3,6 +3,7 @@ import React, { createContext, useEffect, useContext } from 'react';
 
 // Interface for the context
 export interface IAuthContext {
+    apiPath: string;
     localSaveToken: (token: string) => void;
     localDeleteToken: () => boolean;
     localGetToken: () => string;
@@ -11,7 +12,8 @@ export interface IAuthContext {
 
 // Default context values
 export const AuthContext = createContext<IAuthContext>({
-    localSaveToken: (token: string) => { throw new Error('localSaveToken not implemented'); },
+    apiPath: '',
+    localSaveToken: async (token: string) => { throw new Error('localSaveToken not implemented'); },
     localDeleteToken: () => { throw new Error('localDeleteToken not implemented'); },
     localGetToken: () => { throw new Error('localGetToken not implemented'); },
     signin: async (props: AuthService.singinProps) => { throw new Error('signin not implemented'); }
@@ -19,6 +21,7 @@ export const AuthContext = createContext<IAuthContext>({
 
 // Interface for AuthProvider props
 interface AuthProviderProps {
+    apiPath: IAuthContext['apiPath'];
     localSaveToken: IAuthContext['localSaveToken'];
     localDeleteToken: IAuthContext['localDeleteToken'];
     localGetToken: IAuthContext['localGetToken'];
@@ -26,7 +29,7 @@ interface AuthProviderProps {
 }
 
 // AuthProvider component
-export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({localSaveToken, localDeleteToken, localGetToken, children }) => {
+export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({ apiPath, localSaveToken, localDeleteToken, localGetToken, children }) => {
     useEffect(() => {
         const token = localGetToken();
         if (token !== '' && token !== null) {
@@ -36,11 +39,12 @@ export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({localS
 
     return (
         <AuthContext.Provider value={{
+            apiPath,
             localSaveToken,
             localDeleteToken,
             localGetToken,
             signin: async (props: AuthService.singinProps) => {
-                const response = await AuthService.signin(props.email, props.password);
+                const response = await AuthService.signin(props.apiPath || apiPath, props.email, props.password);
 
                 if (!response.token && !response.message) {
                     return { message: 'Something went wrong' };

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useContext } from 'react';
 
 export interface singinResponse {
     token?: string;
@@ -13,13 +14,35 @@ export interface singinProps {
 
 // endpoint = "/auth/signin"
 export async function signin(
+    apiPath: string,
     email: string,
     password: string): Promise<singinResponse> {
-        const base_url = window.location.origin;
-        const endpoint = "/auth/signin";
+    const endpoint = "/auth/signin";
+    
+    const { localSaveToken, localGetToken } = useContext();
 
-        console.log(`Email: ${email}, Password: ${password}, API Endpoint: ${base_url}${endpoint}`);
+    try {
+        const response = await axios.post(`${apiPath}${endpoint}`, {
+            email,
+            password
+        });
 
-    // Implement the actual login logic here
-    return { token: '', message: 'This function is not implemented yet!' };
+        const signinResponse: singinResponse = response.data;
+
+        if (!signinResponse.token) {
+            return { message: 'Something went wrong' };
+        }
+
+        localSaveToken(signinResponse.token);
+        console.log('saved token');
+        localGetToken();
+        console.log('got token: ', localGetToken());
+
+        return response.data;
+    } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+            return { message: error.response.data.message || 'An error occurred' };
+        }
+        return { message: 'An unexpected error occurred' };
+    }
 }
