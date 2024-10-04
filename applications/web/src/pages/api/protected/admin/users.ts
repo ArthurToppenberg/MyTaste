@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import Prisma from '../../../../utils/server/prisma';
-import Authenticator from '../../../../utils/server/authenticator';
 
 interface IUser {
     id: number;
@@ -177,35 +176,35 @@ async function search(props: searchProps): Promise<IUsersResponse> {
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    await Authenticator({ req, validPermission: ['DEVELOPER', 'ADMIN'] }).then(async (response) => {
-        if (!response.passedAuthentication) {
-            return res.status(401).json({ message: response.failedMessage });
-        }
+    // await Authenticator({ req, validPermission: ['DEVELOPER', 'ADMIN'] }).then(async (response) => {
+    //     if (!response.passedAuthentication) {
+    //         return res.status(401).json({ message: response.failedMessage });
+    //     }
 
-        // default for get request TESTING PURPOSES
-        if (req.method === 'GET') {
-            return res.status(200).json(await simpleList({ index: 0, limit: 100 }));
-        }
+    //     // default for get request TESTING PURPOSES
+    //     if (req.method === 'GET') {
+    //         return res.status(200).json(await simpleList({ index: 0, limit: 100 }));
+    //     }
 
-        const requestProps: usersProps = req.body;
+    //     const requestProps: usersProps = req.body;
 
-        if (!requestProps) {
-            return res.status(400).json({ message: 'Invalid request: must provide search or simpleList properties' });
-        }
+    //     if (!requestProps) {
+    //         return res.status(400).json({ message: 'Invalid request: must provide search or simpleList properties' });
+    //     }
 
-        if ((requestProps.search && requestProps.simpleList) || (!requestProps.search && !requestProps.simpleList)) {
-            return res.status(400).json({ message: 'Invalid request: must provide either search or simpleList properties' });
-        }
+    //     if ((requestProps.search && requestProps.simpleList) || (!requestProps.search && !requestProps.simpleList)) {
+    //         return res.status(400).json({ message: 'Invalid request: must provide either search or simpleList properties' });
+    //     }
 
-        if (requestProps.simpleList) {
-            return res.status(200).json(await simpleList(requestProps.simpleList));
-        }
+    //     if (requestProps.simpleList) {
+    //         return res.status(200).json(await simpleList(requestProps.simpleList));
+    //     }
 
-        if (requestProps.search) {
-            return res.status(200).json(await search(requestProps.search));
-        }
-    }).catch((error) => {
-        console.error(error);
-        return res.status(500).json({ message: 'Internal Server Error' });
-    });
+    //     if (requestProps.search) {
+    //         return res.status(200).json(await search(requestProps.search));
+    //     }
+    // }).catch((error) => {
+    //     console.error(error);
+    //     return res.status(500).json({ message: 'Internal Server Error' });
+    // });
 }
