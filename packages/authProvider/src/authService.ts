@@ -6,17 +6,20 @@ export interface singinResponse {
 }
 
 export interface singinProps {
-    apiPath: string;
+    apiPath?: string;
     email: string;
     password: string;
 }
 
 // endpoint = "/auth/signin"
 export async function signin(
-    apiPath: string,
     email: string,
     password: string): Promise<singinResponse> {
+        const base_url = window.location.origin;
+        const endpoint = "/auth/signin";
+
+        console.log(`Email: ${email}, Password: ${password}, API Endpoint: ${base_url}${endpoint}`);
 
     // Implement the actual login logic here
-    return { token: '', message: '' };
+    return { token: '', message: 'This function is not implemented yet!' };
 }

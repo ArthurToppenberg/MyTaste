@@ -1,54 +1,52 @@
 import * as AuthService from './authService';
-import React, {createContext, useEffect} from 'react';
+import React, { createContext, useEffect, useContext } from 'react';
 
-export interface IAuthContext{ // interface for the context
-    apiPath: string;
+// Interface for the context
+export interface IAuthContext {
     localSaveToken: (token: string) => void;
     localDeleteToken: () => boolean;
     localGetToken: () => string;
     signin: (props: AuthService.singinProps) => Promise<AuthService.singinResponse>;
 }
 
-const AuthContext = createContext<IAuthContext>(
-    {
-        apiPath: '',
-        localSaveToken: (token: string) => {throw new Error('localSaveToken not implemented')},
-        localDeleteToken: () => {throw new Error('localDeleteToken not implemented')},
-        localGetToken: () => {throw new Error('localGetToken not implemented')},
-        signin: async (props: AuthService.singinProps) => {throw new Error('signin not implemented') }
-    }
-);
+// Default context values
+export const AuthContext = createContext<IAuthContext>({
+    localSaveToken: (token: string) => { throw new Error('localSaveToken not implemented'); },
+    localDeleteToken: () => { throw new Error('localDeleteToken not implemented'); },
+    localGetToken: () => { throw new Error('localGetToken not implemented'); },
+    signin: async (props: AuthService.singinProps) => { throw new Error('signin not implemented'); }
+});
 
-interface AuthProviderProps { // Props which users needs to define
-    apiPath: IAuthContext['apiPath'];
+// Interface for AuthProvider props
+interface AuthProviderProps {
     localSaveToken: IAuthContext['localSaveToken'];
     localDeleteToken: IAuthContext['localDeleteToken'];
     localGetToken: IAuthContext['localGetToken'];
     children: React.ReactNode;
 }
 
-export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({ apiPath, localSaveToken, localDeleteToken, localGetToken, children }) => {    
+// AuthProvider component
+export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({localSaveToken, localDeleteToken, localGetToken, children }) => {
     useEffect(() => {
         const token = localGetToken();
-        if(token !== '' || token !== null){
+        if (token !== '' && token !== null) {
             localSaveToken(token);
         }
-    }, []);
+    }, [localGetToken, localSaveToken]);
 
     return (
         <AuthContext.Provider value={{
-            apiPath,
             localSaveToken,
             localDeleteToken,
             localGetToken,
             signin: async (props: AuthService.singinProps) => {
-                const response = await AuthService.signin(apiPath, props.email, props.password);
+                const response = await AuthService.signin(props.email, props.password);
 
-                if(!response.token && !response.message){
-                    return {message: 'Something went wrong'};
+                if (!response.token && !response.message) {
+                    return { message: 'Something went wrong' };
                 }
 
-                if(response.message){
+                if (response.message) {
                     return response;
                 }
 
@@ -59,4 +57,13 @@ export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({ apiPa
             {children}
         </AuthContext.Provider>
     );
+};
+
+// Custom hook to use the AuthContext
+export const useAuthContext = () => {
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuthContext must be used within an AuthProvider');
+    }
+    return context;
 };

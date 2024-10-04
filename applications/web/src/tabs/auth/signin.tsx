@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { useAuthContext } from '@packages/authProvider';
+
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -10,11 +12,22 @@ export const SignIn: React.FC = () => {
   const [error, setError] = useState('');
   const router = useRouter();
 
+  const { signin } = useAuthContext();
+  console.log('Auth Context:', signin);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(''); // Clear previous errors
 
-    //implement signin logic here
+    const response = await signin({
+      email: email,
+      password: password
+    });
+
+    if(response.message) {
+      setError(response.message);
+      return;
+    }
   };
 
   return (
@@ -25,7 +38,7 @@ export const SignIn: React.FC = () => {
           <div className="col-md-6">
             <form onSubmit={handleSubmit} className="card p-4">
               <h1 className="text-center mb-4">My Taste</h1>
-              {error && <div className="alert alert-danger">Invalid Username or password</div>}
+              {error && <div className="alert alert-danger">{error}</div>}
               <div className="form-group">
                 <label htmlFor="email">Email</label>
                 <input
