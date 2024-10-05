@@ -1,9 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
-import { useRouter } from 'next/router';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-import Home from "@/tabs/index/home";
 import SignIn from "@/tabs/auth/signin";
 
 interface singinProps {
@@ -19,7 +17,6 @@ export const Register: React.FC<singinProps> = ({ setTab, previousTab }) => {
   const [rePassword, setRePassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

@@ -1,5 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import Prisma from '../../../../utils/server/prisma';
+import Prisma from '@/utils/server/prisma';
+import permissionPolice, { Permission } from '@/utils/server/permissionPolice';
+
 
 interface IUser {
     id: number;
@@ -77,7 +79,7 @@ async function simpleList(props: simpleListProps): Promise<IUsersResponse> {
             take: props.limit
         });
 
-        if(users.length < props.limit) {
+        if (users.length < props.limit) {
             return { users, hasReachedEnd: true };
         }
 
@@ -163,11 +165,11 @@ async function search(props: searchProps): Promise<IUsersResponse> {
         take: props.count
     });
 
-    if(users.length === 0){
+    if (users.length === 0) {
         return { message: 'No users could be found.' };
     }
 
-    if(users.length < props.count){
+    if (users.length < props.count) {
         return { users, hasReachedEnd: true };
     }
 
@@ -176,6 +178,31 @@ async function search(props: searchProps): Promise<IUsersResponse> {
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    permissionPolice({ request: req, permission: [Permission.ADMIN, Permission.DEVELOPER] }).then(async () => {
+        const requestProps: usersProps = req.body;
+        console.log(requestProps);
+
+        if (!requestProps) {
+            return res.status(400).json({ message: 'Invalid request: must provide search or simpleList properties' });
+        }
+
+        if ((requestProps.search && requestProps.simpleList) || (!requestProps.search && !requestProps.simpleList)) {
+            return res.status(400).json({ message: 'Invalid request: must provide either search or simpleList properties' });
+        }
+
+        if (requestProps.simpleList) {
+            return res.status(200).json(await simpleList(requestProps.simpleList));
+        }
+
+        if (requestProps.search) {
+            return res.status(200).json(await search(requestProps.search));
+        }
+
+    }).catch((error) => {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal Server Error' });
+    });
+
     // await Authenticator({ req, validPermission: ['DEVELOPER', 'ADMIN'] }).then(async (response) => {
     //     if (!response.passedAuthentication) {
     //         return res.status(401).json({ message: response.failedMessage });

@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
+import { extractToken, verifyToken } from "@/utils/server/token";
 
 export async function protectedMiddleware(req) {
+    const token = extractToken(req);
    
-    // Get the token from the request and verify it
+    if (verifyToken(token)) {
+        return NextResponse.next();
+    }
 
     return null;
 }

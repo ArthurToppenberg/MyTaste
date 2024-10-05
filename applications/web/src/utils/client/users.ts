@@ -1,18 +1,18 @@
-import {IUsersResponse, usersProps} from '../../pages/api/protected/admin/users';
+import { IAuthContext } from '@packages/authProvider/src/authContext';
+import { IUsersResponse, usersProps } from '../../pages/api/protected/admin/users';
 
-export const getUsers = async (props: usersProps): Promise<IUsersResponse> => {
+export const getUsers = async (authedRequest: IAuthContext['authedRequest'], props: usersProps): Promise<IUsersResponse> => {
     try {
-        const res = await fetch('/api/protected/admin/users', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(props),
+        const response = await authedRequest('/protected/admin/users', 'POST', props).catch((message) => {
+            console.error('ERROR - Failed to fetch users: ', message);
+            return Promise.reject({ message });
         });
-        if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
+
+        if (response.message) {
+            return Promise.reject(`Failed to fetch users: ${response.message}`);
         }
-        const data = await res.json();
+
+        const data: IUsersResponse = response;
         return data;
     } catch (error) {
         if (error instanceof Error) {

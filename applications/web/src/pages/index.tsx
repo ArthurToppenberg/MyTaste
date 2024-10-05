@@ -11,6 +11,8 @@ import Head from "next/head";
 import { getProfile } from "@/utils/client/profile";
 import { getUser } from "@/utils/client/user";
 import { useAuthContext } from "@packages/authProvider";
+import { IProfile } from "./api/protected/profile";
+import { IUser } from "./api/protected/user";
 
 const Index: React.FC = () => {
   const { authedRequest, isAuthed, localDeleteToken } = useAuthContext(); // Assuming isAuthenticated is available in context
@@ -39,45 +41,53 @@ const Index: React.FC = () => {
     ]} />
   ];
 
+  const [profile, setProfile] = useState<IProfile | null>(null);
+  const [user, setUser] = useState<IUser | null>(null);
+
   useEffect(() => {
     if (isAuthed()) {
-      // Fetch profile and user data only when authenticated
       const fetchData = async () => {
         try {
-          const profile = await getProfile(authedRequest);
-          setNameElement(profile.name ? <InfoBox text={`Name: ${profile.name}`} /> : <></>);
-          setPhoneElement(profile.phoneNumber ? <InfoBox text={`Phone: ${profile.phoneNumber}`} /> : <></>);
+          if (!profile) {
+            const fetchedProfile = await getProfile(authedRequest);
+            setProfile(fetchedProfile);
+            setNameElement(fetchedProfile.name ? <InfoBox text={`Name: ${fetchedProfile.name}`} /> : <></>);
+            setPhoneElement(fetchedProfile.phoneNumber ? <InfoBox text={`Phone: ${fetchedProfile.phoneNumber}`} /> : <></>);
+          }
 
-          const user = await getUser(authedRequest);
-          switch (user.permission) {
-            case "ADMIN":
-              setDeveloperDropdown(<></>);
-              setManageDropdown(
-                <Dropdown buttonText="Admin" itemsProps={[
-                  { name: "Accounts", onClick: () => setTab(<Accounts />) },
-                  { name: "MyTaste Questions", onClick: () => setTab(<UnderDevelopment />) }
-                ]} />
-              );
-              break;
-            case "DEVELOPER":
-              setDeveloperDropdown(
-                <Dropdown buttonText="Developer" itemsProps={[
-                  { name: "Prompts", onClick: () => setTab(<UnderDevelopment />) },
-                  { name: "API", onClick: () => setTab(<UnderDevelopment />) },
-                  { name: "Documentation", onClick: () => setTab(<UnderDevelopment />) }
-                ]} />
-              );
-              setManageDropdown(
-                <Dropdown buttonText="Admin" itemsProps={[
-                  { name: "Accounts", onClick: () => setTab(<Accounts />) },
-                  { name: "MyTaste Questions", onClick: () => setTab(<UnderDevelopment />) }
-                ]} />
-              );
-              break;
-            default:
-              setDeveloperDropdown(<></>);
-              setManageDropdown(<></>);
-              break;
+          if (!user) {
+            const fetchedUser = await getUser(authedRequest);
+            setUser(fetchedUser);
+            switch (fetchedUser.permission) {
+              case "ADMIN":
+                setDeveloperDropdown(<></>);
+                setManageDropdown(
+                  <Dropdown buttonText="Admin" itemsProps={[
+                    { name: "Accounts", onClick: () => setTab(<Accounts />) },
+                    { name: "MyTaste Questions", onClick: () => setTab(<UnderDevelopment />) }
+                  ]} />
+                );
+                break;
+              case "DEVELOPER":
+                setDeveloperDropdown(
+                  <Dropdown buttonText="Developer" itemsProps={[
+                    { name: "Prompts", onClick: () => setTab(<UnderDevelopment />) },
+                    { name: "API", onClick: () => setTab(<UnderDevelopment />) },
+                    { name: "Documentation", onClick: () => setTab(<UnderDevelopment />) }
+                  ]} />
+                );
+                setManageDropdown(
+                  <Dropdown buttonText="Admin" itemsProps={[
+                    { name: "Accounts", onClick: () => setTab(<Accounts />) },
+                    { name: "MyTaste Questions", onClick: () => setTab(<UnderDevelopment />) }
+                  ]} />
+                );
+                break;
+              default:
+                setDeveloperDropdown(<></>);
+                setManageDropdown(<></>);
+                break;
+            }
           }
         } catch (error) {
           console.error("Failed to fetch profile and user data: ", error);
@@ -85,9 +95,18 @@ const Index: React.FC = () => {
       };
 
       fetchData(); // Call the function
-    }
+    } else {
+      // Reset elements to loading state
+      setNameElement(<InfoBox loading={true} />);
+      setPhoneElement(<InfoBox loading={true} />);
+      setDeveloperDropdown(<InfoBox loading={true} />);
+      setManageDropdown(<InfoBox loading={true} />);
 
-  }, [isAuthed]); // Runs when authentication status changes
+      // Reset profile and user state
+      setProfile(null);
+      setUser(null);
+    }
+  }, [tab, isAuthed, authedRequest, profile, user]); // Runs when authentication status changes
 
   return (
     <>

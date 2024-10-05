@@ -2,8 +2,7 @@ import Prisma from '../../../utils/server/prisma';
 import { compare } from 'bcryptjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import {singinResponse, signinProps} from '@packages/authProvider';
-import {Token} from '@/types/token';
-import jwt from 'jsonwebtoken';
+import {encryptToken} from '@/utils/server/token';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method == 'GET') {
@@ -42,18 +41,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(401).json(response_invalid);
         }
 
-        // generate jwt token with user id as data
-        const tokenData: Token = {
-            user_id: user.id as number
-        }
-
         // generate jwt token 
-        const jwtToken = jwt.sign(tokenData, process.env.JWT_SECRET as string);
-
-        console.log('jwtToken', jwtToken);
+        const jwtToken = await encryptToken({ user_id: user.id }).catch(() => {
+            return res.status(500).json({ message: 'Internal server error' });
+        });
 
         const response: singinResponse = {
-            token: jwtToken
+            token: jwtToken as string
         }
 
         return res.status(200).json(response);
