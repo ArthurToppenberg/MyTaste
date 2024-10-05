@@ -1,13 +1,19 @@
 import { IProfile } from "@/pages/api/protected/profile";
+import { IAuthContext } from "@packages/authProvider/src/authContext";
 
-export const getProfile = async (): Promise<IProfile> => {
+export const getProfile = async (authedRequest: IAuthContext['authedRequest']): Promise<IProfile> => {
     try {
-        const res = await fetch('/api/protected/profile');
-        if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
+        const response = await authedRequest('/protected/profile', 'GET').catch((message) => {
+            console.error('ERROR - Failed to fetch profile: ', message);
+            return Promise.reject({ message });
+        });
+
+        if (response.message) {
+            return Promise.reject(`Not authenticated to make this request: ${response.message}`);
         }
-        const data = await res.json();
-        return data;
+
+        const profile: IProfile = response;
+        return profile;
     } catch (error) {
         if (error instanceof Error) {
             return Promise.reject(`Failed to fetch profile: ${error.message}`);

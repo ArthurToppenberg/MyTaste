@@ -3,7 +3,15 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export const Register: React.FC = () => {
+import Home from "@/tabs/index/home";
+import SignIn from "@/tabs/auth/signin";
+
+interface singinProps {
+  setTab: React.Dispatch<React.SetStateAction<JSX.Element>>;
+  previousTab: JSX.Element;
+}
+
+export const Register: React.FC<singinProps> = ({ setTab, previousTab }) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -45,7 +53,7 @@ export const Register: React.FC = () => {
 
       setSuccess('Registration successful! You can now sign in.');
       setTimeout(() => {
-        router.push('/auth/signin');
+        setTab(<SignIn setTab={setTab} previousTab={<Register setTab={setTab} previousTab={previousTab}/>}/>);
       }, 2000);
     } catch (err) {
       if (err instanceof Error) {
@@ -129,14 +137,14 @@ export const Register: React.FC = () => {
             <button
               type="button"
               className="btn btn-secondary btn-block mt-2"
-              onClick={() => router.push('/')}
+              onClick={() => setTab(previousTab)}
             >
               Back
             </button>
             <button
               type="button"
               className="btn btn-link btn-block mt-2"
-              onClick={() => router.push('/auth/signin')}
+              onClick={() => setTab(<SignIn setTab={setTab} previousTab={<Register setTab={setTab} previousTab={previousTab}/>}/>)}
             >
               Already have an account? Sign In
             </button>

@@ -43,12 +43,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // generate jwt token with user id as data
-        const token: Token = {
+        const tokenData: Token = {
             user_id: user.id as number
         }
 
         // generate jwt token 
-        const jwtToken = jwt.sign(token, process.env.JWT_SECRET as string);
+        const jwtToken = jwt.sign(tokenData, process.env.JWT_SECRET as string);
 
         console.log('jwtToken', jwtToken);
 

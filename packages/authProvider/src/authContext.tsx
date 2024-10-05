@@ -1,5 +1,10 @@
-import * as AuthService from './authService';
+import {singinProps, singinResponse, authenticate} from './authService';
 import React, { createContext, useEffect, useContext } from 'react';
+import axios from 'axios';
+
+interface authRequestDeny{
+    message: string;
+}
 
 // Interface for the context
 export interface IAuthContext {
@@ -7,7 +12,9 @@ export interface IAuthContext {
     localSaveToken: (token: string) => void;
     localDeleteToken: () => boolean;
     localGetToken: () => string;
-    signin: (props: AuthService.singinProps) => Promise<AuthService.singinResponse>;
+    authenticate: (email: singinProps['email'], password: singinProps['password']) => Promise<singinResponse>;
+    authedRequest: (apiUrl: string, type: 'GET' | 'POST', data?: any) => Promise<any | authRequestDeny>;
+    isAuthed: () => boolean;
 }
 
 // Default context values
@@ -16,7 +23,9 @@ export const AuthContext = createContext<IAuthContext>({
     localSaveToken: async (token: string) => { throw new Error('localSaveToken not implemented'); },
     localDeleteToken: () => { throw new Error('localDeleteToken not implemented'); },
     localGetToken: () => { throw new Error('localGetToken not implemented'); },
-    signin: async (props: AuthService.singinProps) => { throw new Error('signin not implemented'); }
+    authenticate: async (email: singinProps['email'], password: singinProps['password']) => { throw new Error('signin not implemented'); },
+    authedRequest: async (apiUrl: string, type: 'GET' | 'POST', data?: any) => { throw new Error('authedRequest not implemented'); },
+    isAuthed: () => { throw new Error('localDeleteToken not implemented'); },
 });
 
 // Interface for AuthProvider props
@@ -30,21 +39,14 @@ interface AuthProviderProps {
 
 // AuthProvider component
 export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({ apiPath, localSaveToken, localDeleteToken, localGetToken, children }) => {
-    useEffect(() => {
-        const token = localGetToken();
-        if (token !== '' && token !== null) {
-            localSaveToken(token);
-        }
-    }, [localGetToken, localSaveToken]);
-
     return (
         <AuthContext.Provider value={{
             apiPath,
             localSaveToken,
             localDeleteToken,
             localGetToken,
-            signin: async (props: AuthService.singinProps) => {
-                const response = await AuthService.signin(props.apiPath || apiPath, props.email, props.password);
+            authenticate: async (email: singinProps['email'], password: singinProps['password']) => {
+                const response = await authenticate({ apiPath, email, password, localSaveToken, localGetToken });
 
                 if (!response.token && !response.message) {
                     return { message: 'Something went wrong' };
@@ -56,7 +58,41 @@ export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({ apiPa
 
                 localSaveToken(response.token || '');
                 return response;
-            }
+            },
+            authedRequest: async (apiUrl: string, type: 'GET' | 'POST', data?: any) => {
+                const token = localGetToken();
+                
+                if (!token) {
+                    return { message: 'Not authenticated' } as authRequestDeny;
+                }
+
+                try {
+                    const response = await axios({
+                        url: `${apiPath}${apiUrl}`,
+                        method: type,
+                        headers: {
+                            token: token,
+                            'Content-Type': 'application/json',
+                        },
+                        data: data ? JSON.stringify(data) : undefined,
+                    });
+
+                    if (response.status !== 200) {
+                        return { message: 'Request failed' };
+                    }
+
+                    return response.data;
+                } catch (error) {
+                    return { message: 'An unexpected error occurred' };
+                }
+            },
+            isAuthed: () => {
+                const token = localGetToken();
+                if(!token){
+                    return false;
+                }
+                return true;
+            },
         }}>
             {children}
         </AuthContext.Provider>
