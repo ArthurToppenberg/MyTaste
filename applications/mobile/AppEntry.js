@@ -1,5 +1,5 @@
-import { registerRootComponent } from 'expo';
-import App from './App';  // Adjust the path as per your monorepo setup
+import registerRootComponent from 'expo/build/launch/registerRootComponent';
 
-// Register the main app component
+import App from './src/App';
+
 registerRootComponent(App);

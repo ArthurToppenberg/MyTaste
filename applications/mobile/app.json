@@ -1,13 +1,13 @@
 {
   "expo": {
     "name": "mobile",
-    "slug": "mytaste",
+    "slug": "mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./src/assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./src/assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -16,15 +16,12 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./src/assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
     },
-    "extra": {
-      "eas": {
-        "projectId": "94b7204f-99c0-4882-8ec3-87da2adc0c27"
-      }
-    },
-    "owner": "topperware"
+    "web": {
+      "favicon": "./src/assets/favicon.png"
+    }
   }
 }

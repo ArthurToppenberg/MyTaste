@@ -1,7 +1,7 @@
 {
     "name": "@mytaste/auth-provider",
     "version": "0.0.1",
-    "main": "index.js",
+    "main": "index.ts",
     "peerDependencies": {
         "react": "18.2.0",
         "react-dom": "18.2.0"
