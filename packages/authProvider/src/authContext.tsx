@@ -1,4 +1,4 @@
-import {singinProps, singinResponse, authenticate} from './authService';
+import {authenticate, singinProps, singinResponse} from './authService';
 import React, { createContext, useEffect, useContext } from 'react';
 import axios from 'axios';
 
