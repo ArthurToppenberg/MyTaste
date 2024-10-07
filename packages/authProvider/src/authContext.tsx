@@ -1,8 +1,8 @@
-import {authenticate, signinProps, signinResponse} from './authService';
+import { authenticate, signinProps, signinResponse } from './authService';
 import React, { createContext, useEffect, useContext } from 'react';
 import axios from 'axios';
 
-interface authRequestDeny{
+interface authRequestDeny {
     message: string;
 }
 
@@ -10,11 +10,14 @@ interface authRequestDeny{
 export interface IAuthContext {
     apiPath: string;
     localSaveToken: (token: string) => void;
-    localDeleteToken: () => boolean;
-    localGetToken: () => string;
+    localDeleteToken: () => Promise<boolean>;
+    localGetToken: () => Promise<string>;
     authenticate: (email: signinProps['email'], password: signinProps['password']) => Promise<signinResponse>;
     authedRequest: (apiUrl: string, type: 'GET' | 'POST', data?: any) => Promise<any | authRequestDeny>;
-    isAuthed: () => boolean;
+    isAuthed: () => Promise<boolean>;
+    setAuthed: React.Dispatch<React.SetStateAction<boolean>>;
+    Authed: boolean;
+    DeAuthenticate: () => Promise<boolean>;
 }
 
 // Default context values
@@ -26,6 +29,9 @@ export const AuthContext = createContext<IAuthContext>({
     authenticate: async (email: signinProps['email'], password: signinProps['password']) => { throw new Error('signin not implemented'); },
     authedRequest: async (apiUrl: string, type: 'GET' | 'POST', data?: any) => { throw new Error('authedRequest not implemented'); },
     isAuthed: () => { throw new Error('localDeleteToken not implemented'); },
+    setAuthed: () => { throw new Error('setAuthed not implemented'); },
+    Authed: false,
+    DeAuthenticate: () => { throw new Error('DeAuthenticate not implemented'); }
 });
 
 // Interface for AuthProvider props
@@ -39,6 +45,8 @@ interface AuthProviderProps {
 
 // AuthProvider component
 export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({ apiPath, localSaveToken, localDeleteToken, localGetToken, children }) => {
+    const [authed, setAuthed] = React.useState<boolean>(false);
+
     return (
         <AuthContext.Provider value={{
             apiPath,
@@ -46,27 +54,32 @@ export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({ apiPa
             localDeleteToken,
             localGetToken,
             authenticate: async (email: signinProps['email'], password: signinProps['password']) => {
-                const response = await authenticate({ apiPath, email, password, localSaveToken, localGetToken });
+                try {
+                    const response = await authenticate({ apiPath, email, password, localSaveToken, localGetToken });
 
-                if (!response.token && !response.message) {
-                    return { message: 'Something went wrong' };
-                }
+                    if (!response.token && !response.message) {
+                        return { message: 'Something went wrong' };
+                    }
 
-                if (response.message) {
+                    if (response.message) {
+                        return response;
+                    }
+
+                    localSaveToken(response.token || '');
+                    setAuthed(true);
                     return response;
+                } catch (error) {
+                    return { message: 'An error occurred during authentication' };
                 }
-
-                localSaveToken(response.token || '');
-                return response;
             },
             authedRequest: async (apiUrl: string, type: 'GET' | 'POST', data?: any) => {
-                const token = localGetToken();
-                
-                if (!token) {
-                    return { message: 'Not authenticated' } as authRequestDeny;
-                }
-
                 try {
+                    const token = await localGetToken();
+
+                    if (!token) {
+                        return { message: 'Not authenticated' } as authRequestDeny;
+                    }
+
                     const response = await axios({
                         url: `${apiPath}${apiUrl}`,
                         method: type,
@@ -81,18 +94,38 @@ export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({ apiPa
                         return { message: 'Request failed' };
                     }
 
+                    setAuthed(true);
                     return response.data;
                 } catch (error) {
                     return { message: 'An unexpected error occurred' };
                 }
             },
-            isAuthed: () => {
-                const token = localGetToken();
-                if(!token){
+            isAuthed: async () => {
+                try {
+                    const token = await localGetToken();
+                    if (!token) {
+                        return false;
+                    }
+                    if (token === '') {
+                        return false;
+                    }
+                    setAuthed(true);
+                    return true;
+                } catch (error) {
                     return false;
                 }
-                return true;
             },
+            setAuthed,
+            Authed: authed,
+            DeAuthenticate: async () => {
+                try {
+                    await localDeleteToken();
+                    setAuthed(false);
+                    return true;
+                } catch (error) {
+                    return false;
+                }
+            }
         }}>
             {children}
         </AuthContext.Provider>

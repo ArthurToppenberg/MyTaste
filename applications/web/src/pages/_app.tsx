@@ -22,11 +22,11 @@ function MyApp({ Component, pageProps: { ...pageProps } }: AppProps) {
             localSaveToken={(token: string) => {
                 localStorage.setItem('token', token);
             }}
-            localDeleteToken={() => {
+            localDeleteToken={async () => {
                 localStorage.removeItem('token');
                 return true;
             }}
-            localGetToken={() => {
+            localGetToken={async () => {
                 return localStorage.getItem('token') || '';
             }}
         >

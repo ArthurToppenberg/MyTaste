@@ -8,7 +8,7 @@ export interface signinResponse {
 export interface signinProps {
     apiPath: string;
     localSaveToken: (token: string) => void;
-    localGetToken: () => string;
+    localGetToken: () => Promise<string>;
     email: string;
     password: string;
 }
