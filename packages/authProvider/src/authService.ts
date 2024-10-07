@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-export interface singinResponse {
+export interface signinResponse {
     token?: string;
     message?: string;
 }
 
-export interface singinProps {
+export interface signinProps {
     apiPath: string;
     localSaveToken: (token: string) => void;
     localGetToken: () => string;
@@ -14,7 +14,7 @@ export interface singinProps {
 }
 
 // endpoint = "/auth/authenticate"
-export async function authenticate({apiPath, localSaveToken, localGetToken, email, password}: singinProps): Promise<singinResponse> {
+export async function authenticate({apiPath, localSaveToken, localGetToken, email, password}: signinProps): Promise<signinResponse> {
     const endpoint = "/auth/signin";
 
     try {
@@ -23,7 +23,7 @@ export async function authenticate({apiPath, localSaveToken, localGetToken, emai
             password
         });
 
-        const signinResponse: singinResponse = response.data;
+        const signinResponse: signinResponse = response.data;
 
         if (!signinResponse.token) {
             return Promise.reject({ message: 'Something went wrong' });

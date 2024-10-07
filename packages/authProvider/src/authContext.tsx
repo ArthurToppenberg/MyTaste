@@ -1,4 +1,4 @@
-import {authenticate, singinProps, singinResponse} from './authService';
+import {authenticate, signinProps, signinResponse} from './authService';
 import React, { createContext, useEffect, useContext } from 'react';
 import axios from 'axios';
 
@@ -12,7 +12,7 @@ export interface IAuthContext {
     localSaveToken: (token: string) => void;
     localDeleteToken: () => boolean;
     localGetToken: () => string;
-    authenticate: (email: singinProps['email'], password: singinProps['password']) => Promise<singinResponse>;
+    authenticate: (email: signinProps['email'], password: signinProps['password']) => Promise<signinResponse>;
     authedRequest: (apiUrl: string, type: 'GET' | 'POST', data?: any) => Promise<any | authRequestDeny>;
     isAuthed: () => boolean;
 }
@@ -23,7 +23,7 @@ export const AuthContext = createContext<IAuthContext>({
     localSaveToken: async (token: string) => { throw new Error('localSaveToken not implemented'); },
     localDeleteToken: () => { throw new Error('localDeleteToken not implemented'); },
     localGetToken: () => { throw new Error('localGetToken not implemented'); },
-    authenticate: async (email: singinProps['email'], password: singinProps['password']) => { throw new Error('signin not implemented'); },
+    authenticate: async (email: signinProps['email'], password: signinProps['password']) => { throw new Error('signin not implemented'); },
     authedRequest: async (apiUrl: string, type: 'GET' | 'POST', data?: any) => { throw new Error('authedRequest not implemented'); },
     isAuthed: () => { throw new Error('localDeleteToken not implemented'); },
 });
@@ -45,7 +45,7 @@ export const AuthProvider: React.FunctionComponent<AuthProviderProps> = ({ apiPa
             localSaveToken,
             localDeleteToken,
             localGetToken,
-            authenticate: async (email: singinProps['email'], password: singinProps['password']) => {
+            authenticate: async (email: signinProps['email'], password: signinProps['password']) => {
                 const response = await authenticate({ apiPath, email, password, localSaveToken, localGetToken });
 
                 if (!response.token && !response.message) {

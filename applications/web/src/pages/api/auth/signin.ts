@@ -1,7 +1,7 @@
 import Prisma from '../../../utils/server/prisma';
 import { compare } from 'bcryptjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import {singinResponse, signinProps} from '@packages/authProvider';
+import type {signinResponse, signinProps} from '@packages/authProvider';
 import {encryptToken} from '@/utils/server/token';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -27,7 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         });
 
-        const response_invalid: singinResponse = {
+        const response_invalid: signinResponse = {
             message: 'Invalid email or password'
         }
 
@@ -46,7 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(500).json({ message: 'Internal server error' });
         });
 
-        const response: singinResponse = {
+        const response: signinResponse = {
             token: jwtToken as string
         }
 

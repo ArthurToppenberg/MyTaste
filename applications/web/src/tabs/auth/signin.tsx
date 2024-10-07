@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState } from 'react';
-import { useAuthContext, singinResponse } from '@packages/authProvider';
+import { useAuthContext } from '@packages/authProvider';
+import type { signinResponse } from '@packages/authProvider';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import Home from "@/tabs/index/home";
@@ -23,7 +24,7 @@ export const SignIn: React.FC<singinProps> = ({ setTab, previousTab}) => {
     e.preventDefault();
     setLoading(true);
     setError(''); // Clear previous errors
-    const response: singinResponse = await authenticate(email, password);
+    const response: signinResponse = await authenticate(email, password);
 
     if (response.message) {
       setError(response.message);
