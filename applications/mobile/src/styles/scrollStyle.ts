@@ -71,6 +71,20 @@ const scrollStyle = StyleSheet.create({
         height: '100%',
         borderRadius: 10,
     },
+    container_header_POI: {
+        maxHeight: 25,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: 'white',
+        marginTop: 8,
+        marginRight: 5,
+    },
+    text_header_POI: {
+        fontSize: 10,
+        color: 'white',
+        fontFamily: 'MyTaste_Fancy',
+        paddingHorizontal: 10,
+    },
 });
 
 export default scrollStyle;
