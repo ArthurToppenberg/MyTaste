@@ -15,7 +15,7 @@ const Accounts: React.FC = () => {
             const response: IUsersResponse = await getUsers(authedRequest, {
                 simpleList: {
                     index: index,
-                    limit: 10,
+                    limit: 30,
                 },
             });
 
@@ -46,7 +46,7 @@ const Accounts: React.FC = () => {
             const response: IUsersResponse = await getUsers(authedRequest, {
                 search: {
                     query: query,
-                    count: 10,
+                    count: 30,
                     field: filters,
                 },
             });

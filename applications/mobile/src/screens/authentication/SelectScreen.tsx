@@ -1,51 +1,31 @@
-import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { StackParamList } from '../../navigation/AuthNavigatior';
+
+import mainStyle from '../../styles/mainStyle';
 
 const SelectScreen: React.FC = () => {
     const navigation = useNavigation<NavigationProp<StackParamList>>();
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Welcome to My App</Text>
-            <Text style={styles.subtitle}>Please choose an option</Text>
+        <View style={mainStyle.container_top}>
+            <Text style={[mainStyle.title, { marginBottom: 80, marginTop: 140 }]}>My Taste</Text>
 
-            <Button
-                title="Login"
-                onPress={() => navigation.navigate('Login')}
-            />
-
-            <Button
-                title="Register"
-                onPress={() => navigation.navigate('Register')}
-                color="green"
-            />
+            <TouchableOpacity
+            onPress={() => navigation.navigate('Login')}
+            style={mainStyle.button_large}
+            >
+            <Text style={mainStyle.button_large_text}>Login</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+            onPress={() => navigation.navigate('Register')}
+            style={[mainStyle.button_large]}
+            >
+            <Text style={mainStyle.button_large_text}>Register</Text>
+            </TouchableOpacity>
         </View>
     );
 };
 
 export default SelectScreen;
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 16,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 24,
-    },
-    subtitle: {
-        fontSize: 16,
-        textAlign: 'center',
-        marginBottom: 24,
-    },
-    buttonContainer: {
-        marginBottom: 16,
-    },
-});

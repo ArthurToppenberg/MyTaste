@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { StackParamList } from '../../navigation/AuthNavigatior';
+
+import mainStyle from '../../styles/mainStyle';
 
 const RegisterScreen: React.FC = () => {
     const navigation = useNavigation<NavigationProp<StackParamList>>();
@@ -11,30 +13,39 @@ const RegisterScreen: React.FC = () => {
     const [phoneNumber, setPhoneNumber] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [repeatPassword, setRepeatPassword] = useState<string>('');
+    const [loading, setLoading] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     const handleRegister = () => {
         // Basic validation
         if (!email || !name || !phoneNumber || !password || !repeatPassword) {
-            Alert.alert('Error', 'Please fill all the fields.');
+            setErrorMessage('Please fill all the fields.');
             return;
         }
 
         if (password !== repeatPassword) {
-            Alert.alert('Error', 'Passwords do not match.');
+            setErrorMessage('Passwords do not match.');
             return;
         }
 
+        setLoading(true);
+        setErrorMessage(null);
+
         // Call registration logic here (API integration, context update, etc.)
         console.log(`Registering with email: ${email}, name: ${name}, phone: ${phoneNumber}`);
+        setLoading(false);
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Register</Text>
+        <View style={mainStyle.container_center}>
+            <Text style={mainStyle.title}>My Taste</Text>
+
+            {errorMessage && <Text style={mainStyle.text_error}>{errorMessage}</Text>}
 
             <TextInput
-                style={styles.input}
+                style={mainStyle.input_large}
                 placeholder="Email"
+                placeholderTextColor={'white'}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -42,40 +53,53 @@ const RegisterScreen: React.FC = () => {
             />
 
             <TextInput
-                style={styles.input}
+                style={mainStyle.input_large}
                 placeholder="Name"
+                placeholderTextColor={'white'}
                 value={name}
                 onChangeText={setName}
             />
 
             <TextInput
-                style={styles.input}
+                style={mainStyle.input_large}
                 placeholder="Phone Number"
+                placeholderTextColor={'white'}
                 value={phoneNumber}
                 onChangeText={setPhoneNumber}
                 keyboardType="phone-pad"
             />
 
             <TextInput
-                style={styles.input}
+                style={mainStyle.input_large}
                 placeholder="Password"
+                placeholderTextColor={'white'}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
             />
 
             <TextInput
-                style={styles.input}
+                style={mainStyle.input_large}
                 placeholder="Repeat Password"
+                placeholderTextColor={'white'}
                 value={repeatPassword}
                 onChangeText={setRepeatPassword}
                 secureTextEntry
             />
 
-            <Button title="Register" onPress={handleRegister} />
+            <TouchableOpacity
+                onPress={() => handleRegister()}
+                style={mainStyle.button_medium_inverted}
+            >
+                {loading ? (
+                    <ActivityIndicator size="large" color="#0000ff" />
+                ) : (
+                    <Text style={mainStyle.button_medium_text_inverted}>Register</Text>
+                )}
+            </TouchableOpacity>
 
             <Text
-                style={styles.footerText}
+                style={mainStyle.text_footer}
                 onPress={() => navigation.navigate('Login')}
             >
                 Already have an account? Log in.
@@ -85,29 +109,3 @@ const RegisterScreen: React.FC = () => {
 };
 
 export default RegisterScreen;
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        paddingHorizontal: 16,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 24,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 10,
-        marginBottom: 12,
-        borderRadius: 4,
-    },
-    footerText: {
-        marginTop: 16,
-        textAlign: 'center',
-        color: 'blue',
-    },
-});

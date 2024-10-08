@@ -1,20 +1,26 @@
 import React, { useState, useContext } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Alert, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { StackParamList } from '../../navigation/AuthNavigatior';
 
 import { useAuthContext } from '@mytaste/auth-provider';
 import type { signinResponse } from '@mytaste/auth-provider';
 
+import mainStyle from '../../styles/mainStyle';
+
 const LoginScreen: React.FC = () => {
     const navigation = useNavigation<NavigationProp<StackParamList>>();
 
-    const [email, setEmail] = useState<string>('arthur.toppenberg@gmail.com');
-    const [password, setPassword] = useState<string>('sommerhus11');
+    // const [email, setEmail] = useState<string>('arthur.toppenberg@gmail.com');
+    // const [password, setPassword] = useState<string>('sommerhus11');
+
+    const [email, setEmail] = useState<string>();
+    const [password, setPassword] = useState<string>();
+
     const [loading, setLoading] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const { authenticate, localGetToken } = useAuthContext();
+    const { authenticate } = useAuthContext();
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -31,9 +37,7 @@ const LoginScreen: React.FC = () => {
                     setErrorMessage(signinResponse.message);
                 }
                 if (signinResponse.token) {
-                    localGetToken().then((token: string) => {
-                        console.log('Token:', token);
-                    }); 
+                    console.log('Token:', signinResponse.token);
                 }
             }).catch((error) => {
                 setErrorMessage('An error occurred during login.');
@@ -47,14 +51,15 @@ const LoginScreen: React.FC = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Login</Text>
+        <View style={mainStyle.container_center}>
+            <Text style={mainStyle.title}>My Taste</Text>
 
-            {errorMessage && <Text style={styles.errorText}>{errorMessage}</Text>}
+            {errorMessage && <Text style={mainStyle.text_error}>{errorMessage}</Text>}
 
             <TextInput
-                style={styles.input}
+                style={mainStyle.input_large}
                 placeholder="Email"
+                placeholderTextColor={'white'}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -62,21 +67,28 @@ const LoginScreen: React.FC = () => {
             />
 
             <TextInput
-                style={styles.input}
+                style={mainStyle.input_large}
                 placeholder="Password"
+                placeholderTextColor={'white'}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
             />
 
-            {loading ? (
-                <ActivityIndicator size="large" color="#0000ff" />
-            ) : (
-                <Button title="Login" onPress={handleLogin} />
-            )}
+            <TouchableOpacity
+                onPress={() => handleLogin()}
+                style={mainStyle.button_medium_inverted}
+            >
+                {loading ? (
+                    <ActivityIndicator size="large" color="#0000ff" />
+                ) : (
+                    <Text style={mainStyle.button_medium_text_inverted}>Login</Text>
+                )}
+
+            </TouchableOpacity>
 
             <Text
-                style={styles.footerText}
+                style={mainStyle.text_footer}
                 onPress={() => navigation.navigate('Register')}
             >
                 Don't have an account? Sign up.
@@ -86,34 +98,3 @@ const LoginScreen: React.FC = () => {
 };
 
 export default LoginScreen;
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        paddingHorizontal: 16,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 24,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 10,
-        marginBottom: 12,
-        borderRadius: 4,
-    },
-    errorText: {
-        color: 'red',
-        textAlign: 'center',
-        marginBottom: 12,
-    },
-    footerText: {
-        marginTop: 16,
-        textAlign: 'center',
-        color: 'blue',
-    },
-});
