@@ -7,6 +7,7 @@ import AppNavigator from './AppNavigator';
 const Stack = createStackNavigator();
 
 import { useAuthContext } from '@mytaste/auth-provider';
+import { View } from 'react-native';
 
 const RootNavigator: React.FC = () => {
   const { Authed, setAuthed, isAuthed } = useAuthContext();
@@ -19,12 +20,12 @@ const RootNavigator: React.FC = () => {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {Authed ? (
-        <Stack.Screen name="App" component={AppNavigator} />
-      ) : (
-        <Stack.Screen name="Auth" component={AuthNavigator} />
-      )}
-    </Stack.Navigator>
+        {Authed ? (
+          <Stack.Screen name="App" component={AppNavigator} />
+        ) : (
+          <Stack.Screen name="Auth" component={AuthNavigator} />
+        )}
+      </Stack.Navigator>
   );
 };
 

@@ -27,6 +27,7 @@ const AppTabs: React.FC = () => (
       headerShown: false, // Hide the header for tab screens
       tabBarStyle: {
         backgroundColor: 'black',
+        borderTopWidth: 0,
       },
       tabBarActiveTintColor: 'white',
       tabBarInactiveTintColor: 'gray',
@@ -83,6 +84,7 @@ const AppNavigator: React.FC = () => {
         options={{
           headerStyle: {
             backgroundColor: 'black',
+            borderWidth: 0,
           },
           headerTintColor: 'black',
           headerTitleStyle: {

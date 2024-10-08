@@ -82,9 +82,9 @@ const mainStyle = StyleSheet.create({
     },
     text_header_title: {
         fontFamily: 'MyTaste_Logo',
-        fontSize: 24,
+        fontSize: 26,
         color: 'white',
-        paddingStart: 20,
+        paddingStart: 13,
     },
 });
 
