@@ -69,7 +69,23 @@ const mainStyle = StyleSheet.create({
         fontSize: 12,
         width: '80%',
         fontFamily: 'MyTaste_Regular',
-    }
+    },
+    text_bottom: {
+        color: 'white',
+        fontSize: 12,
+        width: '80%',
+        fontFamily: 'MyTaste_Regular',
+        position: 'absolute',
+        bottom: 0,
+        left: 0,
+        padding: 40,
+    },
+    text_header_title: {
+        fontFamily: 'MyTaste_Logo',
+        fontSize: 24,
+        color: 'white',
+        paddingStart: 20,
+    },
 });
 
 export default mainStyle;

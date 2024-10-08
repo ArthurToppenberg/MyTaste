@@ -24,6 +24,7 @@ const SelectScreen: React.FC = () => {
             >
             <Text style={mainStyle.button_large_text}>Register</Text>
             </TouchableOpacity>
+            <Text style={[mainStyle.text_bottom]}>Welocome to My Taste</Text>
         </View>
     );
 };

@@ -4,26 +4,23 @@
     "slug": "mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/images/icon.png",
+    "icon": "./src/assets/images/logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./src/assets/images/splash.png",
+      "image": "./src/assets/images/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.topperware.mobile"
+      "bundleIdentifier": "com.mytaste.mobile"
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./src/assets/images/adaptive-icon.png",
+        "foregroundImage": "./src/assets/images/logo.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.topperware.mobile"
-    },
-    "web": {
-      "favicon": "./src/assets/images/favicon.png"
+      "package": "com.mytaste.mobile"
     },
     "extra": {
       "eas": {

@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AuthProvider } from '@mytaste/auth-provider';
 import { NavigationContainer } from '@react-navigation/native';
 import RootNavigator from './navigation/RootNavigator';
-import { ActivityIndicator, View } from 'react-native'; // For loading spinner
+import { ActivityIndicator, StatusBar, View } from 'react-native'; // For loading spinner
 import { loadFonts } from './utils/loadFonts'; // Import the loadFonts utility
 
 export default function App() {
@@ -61,15 +61,18 @@ export default function App() {
   }
 
   return (
-    <AuthProvider
-      apiPath={'https://my-taste-phi.vercel.app/api'}
-      localSaveToken={localSaveToken}
-      localDeleteToken={localDeleteToken}
-      localGetToken={localGetToken}
-    >
-      <NavigationContainer>
-        <RootNavigator />
-      </NavigationContainer>
-    </AuthProvider>
+    <>
+      <StatusBar barStyle="light-content" />
+      <AuthProvider
+        apiPath={'https://my-taste-phi.vercel.app/api'}
+        localSaveToken={localSaveToken}
+        localDeleteToken={localDeleteToken}
+        localGetToken={localGetToken}
+      >
+        <NavigationContainer>
+          <RootNavigator />
+        </NavigationContainer>
+      </AuthProvider>
+    </>
   );
 }

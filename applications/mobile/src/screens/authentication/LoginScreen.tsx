@@ -11,11 +11,11 @@ import mainStyle from '../../styles/mainStyle';
 const LoginScreen: React.FC = () => {
     const navigation = useNavigation<NavigationProp<StackParamList>>();
 
-    // const [email, setEmail] = useState<string>('arthur.toppenberg@gmail.com');
-    // const [password, setPassword] = useState<string>('sommerhus11');
+    const [email, setEmail] = useState<string>('arthur.toppenberg@gmail.com');
+    const [password, setPassword] = useState<string>('sommerhus11');
 
-    const [email, setEmail] = useState<string>();
-    const [password, setPassword] = useState<string>();
+    // const [email, setEmail] = useState<string>();
+    // const [password, setPassword] = useState<string>();
 
     const [loading, setLoading] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -80,7 +80,7 @@ const LoginScreen: React.FC = () => {
                 style={mainStyle.button_medium_inverted}
             >
                 {loading ? (
-                    <ActivityIndicator size="large" color="#0000ff" />
+                    <ActivityIndicator size="large" color="black" />
                 ) : (
                     <Text style={mainStyle.button_medium_text_inverted}>Login</Text>
                 )}
