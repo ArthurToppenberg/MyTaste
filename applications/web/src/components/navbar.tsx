@@ -1,4 +1,5 @@
 import { Navbar, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button } from "@nextui-org/react";
+import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import fonts from "@/styles/fonts.module.css";
@@ -11,23 +12,24 @@ const NavBar: React.FC = () => {
         router.push(path);
     };
 
-    const menuItems = [
-        { label: "Home", path: "/" },
-        { label: "About Us", path: "/about" },
-        { label: "Contact", path: "/contact" },
+    const authMenuItems = [
         { label: "Login", path: "/auth/login" },
         { label: "Sign Up", path: "/auth/signup" },
     ];
 
+    const menuItems = [
+        { label: "Home", path: "/" },
+        { label: "About Us", path: "/about" },
+        { label: "Contact", path: "/contact" },
+    ];
+
     return (
         <>
-            <Navbar
-                isBordered
-            >
+            <Navbar isBordered>
                 {/* Navbar brand and logo */}
                 <NavbarContent justify="start">
                     <NavbarBrand>
-                        <img src="/images/logo.png" alt="Mytaste Logo" className="h-12 w-auto" />
+                        <Image src="/images/logo.png" alt="Mytaste Logo" width={48} height={48} />
                         <p className={`font-bold text-inherit ${fonts.logo}`}>My Taste</p>
                     </NavbarBrand>
                 </NavbarContent>
@@ -59,15 +61,26 @@ const NavBar: React.FC = () => {
 
                 {/* Toggle for mobile menu - visible on small screens */}
                 <NavbarContent className="flex sm:hidden" justify="end">
-                    <NavbarMenuToggle
-                        onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    />
+                    <NavbarMenuToggle onClick={() => setIsMenuOpen(!isMenuOpen)} />
                 </NavbarContent>
 
                 {/* Dropdown menu for small screens */}
                 {isMenuOpen && (
                     <NavbarMenu>
                         {menuItems.map((item, index) => (
+                            <NavbarMenuItem key={`${item.label}-${index}`}>
+                                <Link
+                                    className="w-full"
+                                    color="foreground"
+                                    href={item.path}
+                                    size="lg"
+                                    onClick={() => setIsMenuOpen(false)} // Close the menu after selection
+                                >
+                                    {item.label}
+                                </Link>
+                            </NavbarMenuItem>
+                        ))}
+                        {authMenuItems.map((item, index) => (
                             <NavbarMenuItem key={`${item.label}-${index}`}>
                                 <Link
                                     className="w-full"
