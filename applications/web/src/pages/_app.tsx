@@ -4,18 +4,19 @@ import { AuthProvider } from '@packages/authProvider';
 import { Analytics } from "@vercel/analytics/react";
 import '@/styles/globals.css';
 import Providers from '@/utils/client/providers';
+import React from 'react';
+import NavBar from '@/components/navbar';
+
 
 function MyApp({ Component, pageProps: { ...pageProps } }: AppProps) {
     const [apiPath, setApiPath] = useState<string | null>(null);
 
     useEffect(() => {
-        // Ensure that this only runs on the client side
         setApiPath(`${window.location.origin}/api`);
     }, []);
 
     if (!apiPath) {
-        // While the API path is being determined, you can return null or a loading screen
-        return null; // or a loading spinner
+        return null;
     }
 
     return (
@@ -33,6 +34,7 @@ function MyApp({ Component, pageProps: { ...pageProps } }: AppProps) {
                     return localStorage.getItem('token') || '';
                 }}
             >
+                <NavBar/>
                 <Component {...pageProps} />
                 <Analytics />
             </AuthProvider>
