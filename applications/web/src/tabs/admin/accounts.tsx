@@ -2,7 +2,7 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import tabStyles from '@/styles/tab.module.css';
 import Dashboard from '@/components/dashboard';
-import Table, { DashboardTableData, DashboardTableRowProps } from '@/components/dashboard_table';
+import Table, { DashboardTableData, DashboardTableRowProps, TableCollumnEditType } from '@/components/dashboard_table';
 import { getUsers } from '../../utils/client/users';
 import { IUsers, IUsersResponse } from '@/pages/api/protected/admin/users';
 import { useAuthContext } from '@packages/authProvider';
@@ -10,7 +10,7 @@ import { useAuthContext } from '@packages/authProvider';
 const Accounts: React.FC = () => {
     const { authedRequest } = useAuthContext();
 
-    const onReachEnd = React.useCallback(async (index: number): Promise<DashboardTableData> => {
+    const onReachEnd_users = React.useCallback(async (index: number): Promise<DashboardTableData> => {
         try {
             const response: IUsersResponse = await getUsers(authedRequest, {
                 simpleList: {
@@ -41,7 +41,7 @@ const Accounts: React.FC = () => {
         }
     }, [authedRequest]);
 
-    const onSearch = React.useCallback(async (query: string, filters: string[]): Promise<DashboardTableData> => {
+    const onSearch_users = React.useCallback(async (query: string, filters: string[]): Promise<DashboardTableData> => {
         try {
             const response: IUsersResponse = await getUsers(authedRequest, {
                 search: {
@@ -80,9 +80,15 @@ const Accounts: React.FC = () => {
                 displayComponent: (
                     <Table
                         key={'users_table'}
-                        collumnHeaders={['ID', 'Name', 'Email', 'Permission', 'Role']}
-                        onReachEnd={onReachEnd}
-                        onSearch={onSearch}
+                        collumns={[
+                            { name: 'ID', editType: TableCollumnEditType.NUMBER },
+                            { name: 'Name'},
+                            { name: 'Email'},
+                            { name: 'Permission'},
+                            { name: 'Role'},
+                        ]}
+                        onReachEnd={onReachEnd_users}
+                        onSearch={onSearch_users}
                         filterProps={{
                             name: 'Filter',
                             allButton: true,
@@ -94,17 +100,19 @@ const Accounts: React.FC = () => {
             },
             {
                 name: 'Restaurants',
-                displayComponent: <div>Restaurants</div>,
+                displayComponent: (
+                    <p>Restaurants</p>
+                ),
             },
         ],
-        [onReachEnd, onSearch]
+        [onReachEnd_users, onSearch_users]
     );
 
     return (
         <div className={`${tabStyles.content_custom}`}>
             <Dashboard
                 key={'admin_dashboard'}
-                selectionDropdownName={'View'}
+                selectionDropdownName={'Select'}
                 dashboardDisplaySelectionProps={dashboardDisplaySelectionProps}
             />
         </div>

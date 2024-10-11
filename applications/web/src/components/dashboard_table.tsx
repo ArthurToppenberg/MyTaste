@@ -2,26 +2,36 @@ import React, { useEffect, useImperativeHandle, useState, forwardRef, useRef, us
 import styles from '@/styles/dashboard_table.module.css';
 import { IDashboard } from './dashboard';
 import InfoBox from './info_box';
-import {MultiselectProps} from './dashboard_toolbar_multiselect';
+import { MultiselectProps } from './dashboard_toolbar_multiselect';
 
 /**
  * DashboardTable component to display a table with optional loading state and infinite scroll (As long as there is data)
  * 
  * @param {Object} props - The properties object.
- * @param {string[]} props.collumnHeaders - The headers for the table collumns.
+ * @param {ITableCollumn[]} props.collumnHeaders - The headers for the table collumns.
  * @param {DashboardTableRowProps[]} [props.collumns] - The rows of the table.
  * @param {() => Promise<DashboardTableRowProps[]>} [props.onLoad] - The function to call when the table is loaded.
  * @param {() => Promise<DashboardTableRowProps[]>} [props.onReachEnd] - The function to call when the table reaches the end.
  * @param {LoadingTableProps} [props.LoadingTableProps] - The properties for the loading table.
  */
 export interface DashboardTableProps {
-    collumnHeaders: string[];
+    collumns: DashboardTableCollumn[];
     staticCollumns?: DashboardTableRowProps[];
     onLoad?: () => Promise<DashboardTableData>;
     onReachEnd?: (index: number) => Promise<DashboardTableData>;
     LoadingTableProps?: LoadingTableProps;
     onSearch?: (search: string, filters: string[]) => Promise<DashboardTableData>;
     filterProps?: MultiselectProps;
+}
+
+export enum TableCollumnEditType {
+    STRING,
+    NUMBER,
+}
+
+interface DashboardTableCollumn {
+    name: string;
+    editType?: TableCollumnEditType;
 }
 
 export interface DashboardTableData {
@@ -35,12 +45,13 @@ export interface DashboardTableRowProps {
 }
 
 const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, DashboardTableProps>(
-    ({ collumnHeaders, staticCollumns, onLoad, onReachEnd, LoadingTableProps, onSearch }, ref) => {
+    ({ collumns, staticCollumns, onLoad, onReachEnd, LoadingTableProps, onSearch }, ref) => {
         const [tableData, setTableData] = useState<DashboardTableData>({ tableRowProps: staticCollumns ?? [] });
         const bottomRef = useRef<HTMLDivElement>(null); // Reference for detecting the end of the table
         const [isLoading, setIsLoading] = useState(false); // State to track loading status
         const [scrollLoading, setScrollLoading] = useState(true);
         const [pauseRequests, setPauseRequests] = useState(false); // To track when to pause loading more data
+        const [editable, setEditable] = useState(collumns.some(collumn => collumn.editType !== undefined));
 
         const Refresh = useCallback(() => {
             if ((onLoad && onReachEnd) || (!onLoad && !onReachEnd)) {
@@ -122,14 +133,14 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, Das
                         message: data.message
                     }));
                     setIsLoading(false); // Loading complete
-                    if(!data.hasReachedEnd) {
+                    if (!data.hasReachedEnd) {
                         return;
                     }
                     setPauseRequests(true); // Pause new requests for 10 seconds\
                     setTimeout(() => setPauseRequests(false), 10000); // After 10 seconds, resume checking
                 } catch (error) {
                     console.error('Error loading more data:', error);
-                } 
+                }
             };
 
             loadMoreData();
@@ -159,8 +170,8 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, Das
         }, [OnReachEndDetected, isLoading]);
 
         return (
-            <div 
-                className={styles.dashboard_table_content} 
+            <div
+                className={styles.dashboard_table_content}
             >
                 {tableData.message ? (
                     <MessageTable message={tableData.message} />
@@ -175,16 +186,22 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, Das
                         <table className={styles.dashboard_table}>
                             <thead className={styles.dashboard_table_header}>
                                 <tr>
-                                    {collumnHeaders.map((header, index) => (
-                                        <th key={index}>{header}</th>
+                                    {editable && <th>Edit</th>}
+                                    {collumns.map((collumn, index) => (
+                                        <th key={index}>{collumn.name}</th>
                                     ))}
                                 </tr>
                             </thead>
                             <tbody className={styles.dashboard_table_body}>
                                 {tableData.tableRowProps.map((row, rowIndex) => (
                                     <tr key={rowIndex} className={styles.dashboard_table_row}>
+                                        {editable && <td><InfoBox text="Edit" loading={false} inverted={true} invertOnClick={true} /></td>}
                                         {row.rowData.map((cell, cellIndex) => (
-                                            <td key={cellIndex}>{cell}</td>
+                                            <td key={cellIndex}>
+                                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                                    {cell}
+                                                </div>
+                                            </td>
                                         ))}
                                     </tr>
                                 ))}
@@ -200,32 +217,6 @@ const DashboardTable: React.FC<DashboardTableProps> = forwardRef<IDashboard, Das
 );
 
 DashboardTable.displayName = 'DashboardTable';
-
-// enum EditType {
-//     string,
-//     number,
-//     enum,
-// }
-
-// interface TableRowDataProps{
-//     value: string;
-//     editType?: EditType;
-// }
-
-// interface TableRowProps{
-//     id: number;
-//     data: TableRowDataProps[];
-// }
-
-// const TableRow: React.FC<TableRowProps> = ({ id, data }) => {
-//     return (
-//         <tr key={id} className={styles.dashboard_table_row}>
-//             {data.map((cell, cellIndex) => (
-//                 <td key={cellIndex}>{cell.value}</td>
-//             ))}
-//         </tr>
-//     );
-// }
 
 /**
  * LoadingTable component to display a table with loading state

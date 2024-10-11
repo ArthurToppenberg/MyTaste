@@ -25,6 +25,7 @@
     white-space: nowrap;
     vertical-align: middle;
     padding-left: 1rem;
+    padding-block: 0.5rem;
 }
 
 .dashboard_table_row:nth-child(even) {
