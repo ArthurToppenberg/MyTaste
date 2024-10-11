@@ -1,15 +1,34 @@
 import React, { useState } from 'react';
-import { Input, Button, Spacer, Card } from '@nextui-org/react';;
+import { Input, Button, Spacer, Card} from '@nextui-org/react';
+import { signinResponse, useAuthContext } from '@packages/authProvider';
+import { useRouter } from 'next/router';
 
 const Login: React.FC = () => {
+    const router = useRouter();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    const handleLogin = () => {
-        // Add login logic here
-        console.log('Login attempt:', { email, password });
+    const { authenticate } = useAuthContext();
+
+    const handleLogin = async() => {
         setLoading(true);
+        setError('');
+
+        const response: signinResponse = await authenticate(email, password);
+    
+        if (response.message) {
+          setError(response.message);
+          setLoading(false);
+          return;
+        }
+    
+        if (response.token) {
+          setLoading(false);
+        }
+    
+        router.push('/');
     };
 
     return (
@@ -17,6 +36,12 @@ const Login: React.FC = () => {
             <Card style={styles.card}>
                 <p style={styles.heading}>Login</p>
                 <Spacer y={1.5} />
+                {error && (
+                    <p color="error" style={styles.error}>
+                        {error}
+                    </p>
+                )}
+                <Spacer y={1} />
                 <Input
                     labelPlacement="inside"
                     type="email"
@@ -75,6 +100,10 @@ const styles = {
         '@media (max-width: 600px)': {
             fontSize: '20px',
         },
+    },
+    error: {
+        textAlign: 'center' as const,
+        color: 'red',
     },
     button: {
         width: '100%',
