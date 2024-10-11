@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Input, Button, Spacer, Card } from '@nextui-org/react';
-import Fonts from '@/styles/fonts.module.css';
 
 const SignUp: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -104,8 +103,8 @@ const styles = {
         },
     },
     heading: {
-        textAlign: 'center' as 'center',
-        fontSize: '24px',
+        textAlign: 'center' as const,
+        fontSize: '24px' as const,
         '@media (max-width: 600px)': {
             fontSize: '20px',
         },
