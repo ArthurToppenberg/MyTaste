@@ -21,7 +21,11 @@ export const decryptToken = async (token: string): Promise<TokenData> => {
 };
 
 // Verify token
-export const verifyToken = async (token: string): Promise<boolean> => {
+export const verifyToken = async (token: string | undefined): Promise<boolean> => {
+    if (!token) {
+        return false; // Return false if the token is undefined
+    }
+    
     try {
         jwt.verify(token, process.env.JWT_SECRET as string);
         return true;

@@ -34,7 +34,6 @@ function MyApp({ Component, pageProps: { ...pageProps } }: AppProps) {
                     return localStorage.getItem('token') || '';
                 }}
             >
-                <NavBar/>
                 <Component {...pageProps} />
                 <Analytics />
             </AuthProvider>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Input, Button, Spacer, Card } from '@nextui-org/react';
+import DefaultLayout from '@/layouts/defaultLayout';
 
 const SignUp: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -16,72 +17,74 @@ const SignUp: React.FC = () => {
     };
 
     return (
-        <div style={styles.container}>
-            <Card style={styles.card}>
-                <h3 style={styles.heading}>Sign Up</h3>
-                <Spacer y={1.5} />
-                <Input
-                    labelPlacement="inside"
-                    type="email"
-                    color="default"
-                    label="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    fullWidth
-                />
-                <Spacer y={1} />
-                <Input
-                    labelPlacement="inside"
-                    type="text"
-                    color="default"
-                    label="Name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    fullWidth
-                />
-                <Spacer y={1} />
-                <Input
-                    labelPlacement="inside"
-                    type="tel"
-                    color="default"
-                    label="Phone"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    fullWidth
-                />
-                <Spacer y={1} />
-                <Input
-                    labelPlacement="inside"
-                    type="password"
-                    color="default"
-                    label="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    fullWidth
-                />
-                <Spacer y={1} />
-                <Input
-                    labelPlacement="inside"
-                    type="password"
-                    color="default"
-                    label="Confirm Password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    fullWidth
-                />
-                <Spacer y={1} />
-                <Button
-                    onClick={handleSignUp}
-                    size="lg"
-                    color="primary"
-                    variant="bordered"
-                    isLoading={loading}
-                    style={styles.button}
-                >
-                    Sign Up
-                </Button>
-            </Card>
-        </div>
+        <DefaultLayout>
+            <div style={styles.container}>
+                <Card style={styles.card}>
+                    <h3 style={styles.heading}>Sign Up</h3>
+                    <Spacer y={1.5} />
+                    <Input
+                        labelPlacement="inside"
+                        type="email"
+                        color="default"
+                        label="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        fullWidth
+                    />
+                    <Spacer y={1} />
+                    <Input
+                        labelPlacement="inside"
+                        type="text"
+                        color="default"
+                        label="Name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        fullWidth
+                    />
+                    <Spacer y={1} />
+                    <Input
+                        labelPlacement="inside"
+                        type="tel"
+                        color="default"
+                        label="Phone"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        fullWidth
+                    />
+                    <Spacer y={1} />
+                    <Input
+                        labelPlacement="inside"
+                        type="password"
+                        color="default"
+                        label="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        fullWidth
+                    />
+                    <Spacer y={1} />
+                    <Input
+                        labelPlacement="inside"
+                        type="password"
+                        color="default"
+                        label="Confirm Password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        fullWidth
+                    />
+                    <Spacer y={1} />
+                    <Button
+                        onClick={handleSignUp}
+                        size="lg"
+                        color="primary"
+                        variant="bordered"
+                        isLoading={loading}
+                        style={styles.button}
+                    >
+                        Sign Up
+                    </Button>
+                </Card>
+            </div>
+        </DefaultLayout>
     );
 };
 
