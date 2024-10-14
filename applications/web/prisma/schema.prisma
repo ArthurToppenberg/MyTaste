@@ -12,13 +12,7 @@ datasource db {
 enum Permission {
   DEVELOPER
   ADMIN
-  DEFUALT
-}
-
-enum Type {
   USER
-  RESTORANT
-  BOTH
 }
 
 model User {
@@ -26,14 +20,21 @@ model User {
   email      String     @unique
   password   String
   createdAt  DateTime   @default(now())
-  permission Permission @default(DEFUALT)
-  type       Type       @default(USER)
-  profile    Profile?   @relation // Foreign key to Profile.id
+  permission Permission @default(USER)
+  client     Client?    @relation
+  restaurant Restaurant? @relation
 }
 
-model Profile {
-  id          Int     @id
+model Client {
+  id          Int    @id
   name        String
-  phoneNumber String?
-  user        User    @relation(fields: [id], references: [id]) // Connects Profile.id to User.id
+  phoneNumber String
+  user        User   @relation(fields: [id], references: [id])
+}
+
+model Restaurant {
+  id       Int    @id
+  name     String
+  location String
+  user    User   @relation(fields: [id], references: [id])
 }

@@ -1,19 +1,87 @@
 import React, { useState } from 'react';
-import { Input, Button, Spacer, Card } from '@nextui-org/react';
+import { Input, Button, Spacer, Card} from '@nextui-org/react';
 import DefaultLayout from '@/layouts/defaultLayout';
+import { signupProps } from '../api/auth/signup';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import { useAuthContext } from '@packages/authProvider';
+import { signinResponse } from '@packages/authProvider';
 
 const SignUp: React.FC = () => {
+    const router = useRouter();
+    const { authenticate } = useAuthContext();
+
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
     const handleSignUp = () => {
         // Add signup logic here
         console.log('Signup attempt:', { email, name, phone, password, confirmPassword });
+    
+        // Validation checks
+        if (!email || !name || !phone || !password || !confirmPassword) {
+            setError('All fields are required.');
+            return;
+        }
+    
+        if (password !== confirmPassword) {
+            setError('Passwords do not match.');
+            return;
+        }
+
+        //check email is an valid email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if(!emailRegex.test(email)){
+            setError('Email is not valid.');
+            return;
+        }
+    
         setLoading(true);
+        setError('');
+    
+        //make axio api call here
+        const apiPath = '/api/auth/signup';
+        const data: signupProps = {
+            email,
+            name,
+            phoneNumber: phone,
+            password,
+        };
+    
+        axios.post(apiPath, data)
+            .then((response) => {
+                autoLogin().then((succses) => {
+                    if(succses){
+                        router.push('/protected/dashboard');
+                    }else{
+                        router.push('/auth/login');
+                    }
+                });
+            })
+            .catch((error) => {
+                console.error(error.message);
+                setError('An error occurred. Please try again.');
+            }).finally(() => {
+                setLoading(false);
+            });
+    };
+
+    const autoLogin = async ():Promise<boolean> => {
+        const response: signinResponse = await authenticate(email, password);
+        if(response.message){
+            return false;
+        }
+
+        if(response.token){
+            return true;
+        }
+
+        return false;
     };
 
     return (
@@ -22,11 +90,18 @@ const SignUp: React.FC = () => {
                 <Card style={styles.card}>
                     <h3 style={styles.heading}>Sign Up</h3>
                     <Spacer y={1.5} />
+                    {error && (
+                        <p color="error" style={styles.errorText}>
+                            {error}
+                        </p>
+                    )}
+                    <Spacer y={1} />
                     <Input
                         labelPlacement="inside"
                         type="email"
                         color="default"
                         label="Email"
+                        isRequired
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         fullWidth
@@ -37,6 +112,7 @@ const SignUp: React.FC = () => {
                         type="text"
                         color="default"
                         label="Name"
+                        isRequired
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         fullWidth
@@ -47,6 +123,7 @@ const SignUp: React.FC = () => {
                         type="tel"
                         color="default"
                         label="Phone"
+                        isRequired
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         fullWidth
@@ -57,6 +134,7 @@ const SignUp: React.FC = () => {
                         type="password"
                         color="default"
                         label="Password"
+                        isRequired
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         fullWidth
@@ -67,6 +145,7 @@ const SignUp: React.FC = () => {
                         type="password"
                         color="default"
                         label="Confirm Password"
+                        isRequired
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         fullWidth
@@ -117,6 +196,10 @@ const styles = {
         '@media (max-width: 600px)': {
             fontSize: '14px',
         },
+    },
+    errorText: {
+        textAlign: 'center' as const,
+        color: 'red',
     },
 };
 

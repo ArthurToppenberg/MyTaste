@@ -1,0 +1,17 @@
+.navbar_container{
+    height: 100vh;
+    width: 15rem;
+    background-color: var(--color-gray);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.navbar_logo_container{
+    height: 5rem;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    background-color: var(--color-dark);
+}

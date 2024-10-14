@@ -2,8 +2,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import Prisma from '../../../utils/server/prisma';
 import jwt from 'jsonwebtoken';
 
-export interface IProfile {
-    name?: string;
+export interface IClient {
+    name: string;
     phoneNumber?: string | null;
 }
 
@@ -36,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     if (req.method === 'GET') {
         try {
-            const profile = await Prisma.profile.findUnique({
+            const client = await Prisma.client.findUnique({
                 where: {
                     id: decodedToken.user_id,
                 },
@@ -46,11 +46,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
             });
 
-            if (!profile) {
+            if (!client) {
                 return res.status(404).json({ message: 'Profile not found' });
             }
 
-            const response: IProfile = profile;
+            const response: IClient = client;
 
             return res.status(200).json(response);
         } catch (error) {

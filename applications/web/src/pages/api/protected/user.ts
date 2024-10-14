@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 
 export interface IUser {
     id: number;
+    email: string;
     permission: string;
 }
 
@@ -35,6 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
                 select: {
                     id: true,
+                    email: true,
                     permission: true,
                 },
             });

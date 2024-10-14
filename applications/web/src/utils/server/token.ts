@@ -33,3 +33,12 @@ export const verifyToken = async (token: string | undefined): Promise<boolean> =
         return false;
     }
 };
+
+export const getTokenData = async (request: NextApiRequest): Promise<TokenData | undefined> => {
+    const token = extractToken(request);
+    if (!token) {
+        return undefined;
+    }
+    
+    return decryptToken(token);
+}

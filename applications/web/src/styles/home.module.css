@@ -14,18 +14,51 @@
 
   /* Send the image to the farthest back layer */
   z-index: -1;
+
+  /* Darken the background image slightly */
+  background-color: rgba(0, 0, 0, 0.5);
+  background-blend-mode: darken;
 }
 
-.img_iphone {
-  align-self: center;
-  height: auto;
-  width: 20%;
-  min-width: 100px;
+.hero_container {
+  /* Center the content within the viewport */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh;
+  text-align: center;
+  color: white;
+  padding-left: 5rem;
 }
 
-/* Hide the iPhone image if its width is less than 100px */
-@media (max-width: 499px) {
-  .img_iphone {
-    display: none;
+.hero_title {
+  /* Style the main title */
+  font-size: 5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.hero_description {
+  /* Style the description text */
+  font-size: 1rem;
+  margin-top: 1rem;
+  max-width: 600px;
+}
+
+/* Media query for devices with a max width of 480px (mobile phones) */
+@media (max-width: 480px) {
+  .hero_container {
+    padding-left: 1rem;
+    align-items: flex-start;
+  }
+
+  .hero_title {
+    font-size: 3rem;
+  }
+
+  .hero_description {
+    font-size: 0.75rem;
+    max-width: 90%;
   }
 }
