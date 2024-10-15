@@ -1,7 +1,7 @@
-import { Navbar, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, Tooltip, DropdownSection } from "@nextui-org/react";
+import { Navbar, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, DropdownSection } from "@nextui-org/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import fonts from "@/styles/fonts.module.css";
 
 import { getUser } from "@/utils/client/user";
@@ -34,7 +34,7 @@ const NavBar: React.FC = () => {
         { label: "Contact", path: "/contact" },
     ];
 
-    const { authedRequest, localDeleteToken, localGetToken } = useAuthContext();
+    const { authedRequest, localDeleteToken } = useAuthContext();
     const [user, setUser] = useState<IUser | null>(null);
 
     useEffect(() => {
@@ -44,7 +44,7 @@ const NavBar: React.FC = () => {
             }).catch((error) => {
                 console.warn(error);
             });
-    }, []);
+    }, [authedRequest]);
 
     const [profileDropdown, setProfileDropdown] = useState([{
         key: "logout",
@@ -96,7 +96,7 @@ const NavBar: React.FC = () => {
                 console.warn(error);
             });
 
-    }, []);
+    }, [authedRequest, router]);
 
     const ProfileDropDown: React.FC = () => {
         return (

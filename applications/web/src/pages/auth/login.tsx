@@ -11,7 +11,7 @@ const Login: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const {authenticate, authedRequest} = useAuthContext();
+    const {authenticate} = useAuthContext();
 
     const handleLogin = async () => {
         setLoading(true);

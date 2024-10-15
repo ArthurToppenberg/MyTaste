@@ -5,8 +5,6 @@ import { Analytics } from "@vercel/analytics/react";
 import '@/styles/globals.css';
 import Providers from '@/utils/client/providers';
 import React from 'react';
-import NavBar from '@/components/navbar';
-
 
 function MyApp({ Component, pageProps: { ...pageProps } }: AppProps) {
     const [apiPath, setApiPath] = useState<string | null>(null);

@@ -54,7 +54,7 @@ const SignUp: React.FC = () => {
         };
     
         axios.post(apiPath, data)
-            .then((response) => {
+            .then(() => {
                 autoLogin().then((succses) => {
                     if(succses){
                         router.push('/protected/dashboard');
