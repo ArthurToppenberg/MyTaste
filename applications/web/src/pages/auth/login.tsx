@@ -27,7 +27,7 @@ const Login: React.FC = () => {
 
         if (response.token) {
             setLoading(false);
-            router.push('/protected/dashboard');
+            router.push('/');
             return;
         }
     };

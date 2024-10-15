@@ -15,3 +15,31 @@
     align-items: center;
     background-color: var(--color-dark);
 }
+
+.navbar_logo_header_container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    margin-left: 1rem;
+}
+
+.navbar_logo_header_container h1{
+    font-size: 1.5rem;
+}
+
+.navbar_logo_header_container p{
+    font-size: 0.8rem;
+}
+
+.navbar_container_top{
+    width: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.navbar_container_bottom{
+    width: 100%;
+    margin-top: auto;
+    padding: 0;
+}

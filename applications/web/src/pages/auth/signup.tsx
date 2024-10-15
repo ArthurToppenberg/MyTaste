@@ -57,7 +57,7 @@ const SignUp: React.FC = () => {
             .then(() => {
                 autoLogin().then((succses) => {
                     if(succses){
-                        router.push('/protected/dashboard');
+                        router.push('/');
                     }else{
                         router.push('/auth/login');
                     }

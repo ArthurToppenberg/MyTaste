@@ -30,8 +30,8 @@ const NavBar: React.FC = () => {
 
     const menuItems = [
         { label: "Home", path: "/" },
-        { label: "About Us", path: "/about" },
-        { label: "Contact", path: "/contact" },
+        { label: "About Us", path: "/" },
+        { label: "Contact", path: "/" },
     ];
 
     const { authedRequest, localDeleteToken } = useAuthContext();
@@ -46,52 +46,67 @@ const NavBar: React.FC = () => {
             });
     }, [authedRequest]);
 
-    const [profileDropdown, setProfileDropdown] = useState([{
-        key: "logout",
-        label: "Logout",
-        onclick: async () => {
-            await localDeleteToken();
-            setUser(null);
+    const [profileDropdown, setProfileDropdown] = useState([
+        {
+            key: "dashboard",
+            label: "Dashboard",
+            onclick: async () => {
+                router.push('/protected/dashboard');
+            },
+            description: "Go to Dashboard",
         },
-        description: "Logout from your account",
-    }]);
+        {
+            key: "logout",
+            label: "Logout",
+            onclick: async () => {
+                await localDeleteToken();
+                setUser(null);
+            },
+            description: "Logout from your account",
+        },
+    ]);
 
     useEffect(() => {
-        //if client exists, add profile to dropdown
+        // if restaurant exists, add restaurant to dropdown
         getRestaurant(authedRequest)
             .then((data) => {
                 const restaurant: IRestaurant = data;
-                setProfileDropdown((prevState) => [
-                    {
-                        key: "restaurant",
-                        label: 'Restaurant',
-                        onclick: async () => {
-                            router.push('/protected/dashboard/restaurant');
+                setProfileDropdown((prevState) => {
+                    const newState = prevState.filter(item => item.key !== "restaurant");
+                    return [
+                        ...newState,
+                        {
+                            key: "restaurant",
+                            label: 'Restaurant',
+                            onclick: async () => {
+                                router.push('/protected/dashboard/restaurant');
+                            },
+                            description: `Manage ${restaurant.name}`,
                         },
-                        description: `Manage ${restaurant.name}`,
-                    },
-                    ...prevState,
-                ]);
+                    ];
+                });
             }).catch((error) => {
                 console.warn(error);
             });
 
-
-        //if restaurant exists, add restaurant to dropdown
+        // if client exists, add account to dropdown
         getClient(authedRequest)
             .then((data) => {
                 const client: IClient = data;
-                setProfileDropdown((prevState) => [
-                    {
-                        key: "account",
-                        label: 'Account',
-                        onclick: async () => {
-                            router.push('/protected/dashboard/account');
+                setProfileDropdown((prevState) => {
+                    const newState = prevState.filter(item => item.key !== "account");
+                    return [
+                        ...newState,
+                        {
+                            key: "account",
+                            label: 'Account',
+                            onclick: async () => {
+                                router.push('/protected/dashboard/account');
+                            },
+                            description: `Manage ${client.name}'s account`,
                         },
-                        description: `Manage ${client.name}'s account`,
-                    },
-                    ...prevState,
-                ]);
+                    ];
+                });
             }).catch((error) => {
                 console.warn(error);
             });
@@ -144,7 +159,7 @@ const NavBar: React.FC = () => {
                 <NavbarContent justify="start">
                     <NavbarBrand>
                         <Image src="/images/logo.png" alt="Mytaste Logo" width={48} height={48} />
-                        <p className={`font-bold text-inherit ${fonts.logo}`}>My Taste</p>
+                        <p className={`font-bold text-inherit ${fonts.logo}`} style={{fontSize: '1.1rem'}}>My Taste</p>
                     </NavbarBrand>
                 </NavbarContent>
 

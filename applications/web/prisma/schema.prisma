@@ -34,7 +34,7 @@ model Client {
 
 model Restaurant {
   id       Int    @id
-  name     String
-  location String
-  user    User   @relation(fields: [id], references: [id])
+  name     String @unique
+  location String @unique
+  user     User?   @relation(fields: [id], references: [id])
 }

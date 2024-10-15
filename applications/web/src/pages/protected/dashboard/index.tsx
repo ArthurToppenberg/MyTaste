@@ -1,9 +1,9 @@
 import React from 'react';
-import DashboardNavbar from '@/components/dashboardNavbar';
+import DashboardNavbar from '@/components/dashboardSidebar';
 
 const Dashboard: React.FC = () => {
     return (
-        <DashboardNavbar />
+        <DashboardNavbar title='Dashboard'/>
     );
 };
 
