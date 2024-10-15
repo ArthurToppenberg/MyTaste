@@ -28,6 +28,7 @@ const SessionControll: React.FC = () => {
             label: "Logout",
             onclick: async () => {
                 await localDeleteToken();
+                router.push("/auth/login");
             },
             description: "Logout from your account",
         },
