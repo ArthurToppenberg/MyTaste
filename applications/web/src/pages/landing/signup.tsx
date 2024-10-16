@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Input, Button, Spacer, Card} from '@nextui-org/react';
-import DefaultLayout from '@/layouts/defaultLayout';
-import { signupProps } from '../api/auth/signup';
+import DefaultLayout from '@/pages/landing/layouts/defaultLayout';
+import { signupProps } from '../api/authentication/signup';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useAuthContext } from '@packages/authProvider';

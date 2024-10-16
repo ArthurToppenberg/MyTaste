@@ -8,7 +8,7 @@ interface DashboardNavbarProps {
     title: string;
 }
 
-const DashboardNavbar: React.FC<DashboardNavbarProps> = ({ title }) => {
+const Sidebar: React.FC<DashboardNavbarProps> = ({ title }) => {
     return (
         <div className={style.navbar_container}>
             <div className={`${style.navbar_container_top}`}>
@@ -28,4 +28,4 @@ const DashboardNavbar: React.FC<DashboardNavbarProps> = ({ title }) => {
     );
 };
 
-export default DashboardNavbar;
+export default Sidebar;

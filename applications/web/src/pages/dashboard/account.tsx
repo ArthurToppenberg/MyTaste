@@ -1,9 +1,9 @@
 import React from 'react';
-import DashboardNavbar from '@/components/dashboardSidebar';
+import Sidebar from './components/sidebar';
 
 const Account: React.FC = () => {
     return (
-        <DashboardNavbar title="Account" />
+        <Sidebar title="Account" />
     );
 };
 

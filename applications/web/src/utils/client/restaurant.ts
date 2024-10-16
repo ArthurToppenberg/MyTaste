@@ -1,9 +1,9 @@
-import { IRestaurant } from "@/pages/api/protected/restaurant";
+import { IRestaurant } from "@/pages/api/client/restaurant";
 import { IAuthContext } from "@packages/authProvider/src/authContext";
 
 export const getRestaurant = async (authedRequest: IAuthContext['authedRequest']): Promise<IRestaurant> => {
     try {
-        const response = await authedRequest('/protected/restaurant', 'GET').catch((message) => {
+        const response = await authedRequest('/client/restaurant', 'GET').catch((message) => {
             console.error('ERROR - Failed to fetch client: ', message);
             return Promise.reject({ message });
         });

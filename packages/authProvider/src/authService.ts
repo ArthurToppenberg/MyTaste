@@ -13,9 +13,8 @@ export interface signinProps {
     password: string;
 }
 
-// endpoint = "/auth/authenticate"
 export async function authenticate({apiPath, localSaveToken, localGetToken, email, password}: signinProps): Promise<signinResponse> {
-    const endpoint = "/auth/signin";
+    const endpoint = "/authentication/login";
 
     try {
         const response = await axios.post(`${apiPath}${endpoint}`, {

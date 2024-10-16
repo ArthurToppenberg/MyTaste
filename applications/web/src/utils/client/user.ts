@@ -1,9 +1,9 @@
-import { IUser } from "@/pages/api/protected/user";
+import { IUser } from "@/pages/api/client/user";
 import { IAuthContext } from "@packages/authProvider/src/authContext";
 
 export const getUser = async (authedRequest: IAuthContext['authedRequest']): Promise<IUser> => {
     try {
-        const response = await authedRequest('/protected/user', 'GET').catch((message) => {
+        const response = await authedRequest('/client/user', 'GET').catch((message) => {
             console.error('ERROR - Failed to fetch user: ', message);
             return Promise.reject({ message });
         });

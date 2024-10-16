@@ -5,13 +5,13 @@ import React, { useEffect, useState } from "react";
 import fonts from "@/styles/fonts.module.css";
 
 import { getUser } from "@/utils/client/user";
-import { IUser } from "@/pages/api/protected/user";
+import { IUser } from "@/pages/api/client/user";
 
 import { getRestaurant } from "@/utils/client/restaurant";
-import { IRestaurant } from "@/pages/api/protected/restaurant";
+import { IRestaurant } from "@/pages/api/client/restaurant";
 
 import { getClient } from "@/utils/client/client";
-import { IClient } from "@/pages/api/protected/client";
+import { IClient } from "@/pages/api/client/client";
 
 import { useAuthContext } from "@packages/authProvider";
 
@@ -24,8 +24,8 @@ const NavBar: React.FC = () => {
     };
 
     const authMenuItems = [
-        { label: "Login", path: "/auth/login" },
-        { label: "Sign Up", path: "/auth/signup" },
+        { label: "Login", path: "/landing/login" },
+        { label: "Sign Up", path: "/landing/signup" },
     ];
 
     const menuItems = [
@@ -47,14 +47,6 @@ const NavBar: React.FC = () => {
     }, [authedRequest]);
 
     const [profileDropdown, setProfileDropdown] = useState([
-        {
-            key: "dashboard",
-            label: "Dashboard",
-            onclick: async () => {
-                router.push('/protected/dashboard');
-            },
-            description: "Go to Dashboard",
-        },
         {
             key: "logout",
             label: "Logout",
@@ -79,7 +71,7 @@ const NavBar: React.FC = () => {
                             key: "restaurant",
                             label: 'Restaurant',
                             onclick: async () => {
-                                router.push('/protected/dashboard/restaurant');
+                                router.push('/dashboard/restaurant');
                             },
                             description: `Manage ${restaurant.name}`,
                         },
@@ -101,7 +93,7 @@ const NavBar: React.FC = () => {
                             key: "account",
                             label: 'Account',
                             onclick: async () => {
-                                router.push('/protected/dashboard/account');
+                                router.push('/dashboard/account');
                             },
                             description: `Manage ${client.name}'s account`,
                         },
@@ -183,12 +175,12 @@ const NavBar: React.FC = () => {
                     ) : (
                         <>
                             <NavbarItem>
-                                <Button color="primary" variant="flat" onClick={() => handleNav('/auth/login')}>
+                                <Button color="primary" variant="flat" onClick={() => handleNav('/landing/login')}>
                                     Login
                                 </Button>
                             </NavbarItem>
                             <NavbarItem>
-                                <Button color="primary" variant="flat" onClick={() => handleNav('/auth/signup')}>
+                                <Button color="primary" variant="flat" onClick={() => handleNav('/landing/signup')}>
                                     Sign Up
                                 </Button>
                             </NavbarItem>

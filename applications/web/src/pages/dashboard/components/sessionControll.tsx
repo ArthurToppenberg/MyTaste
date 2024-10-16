@@ -4,7 +4,7 @@ import { Image, Card, CardHeader, Dropdown, DropdownItem, DropdownMenu, Dropdown
 import { useAuthContext } from '@packages/authProvider';
 
 import { getUser } from "@/utils/client/user";
-import { IUser } from "@/pages/api/protected/user";
+import { IUser } from "@/pages/api/client/user";
 
 import { useRouter } from 'next/router';
 
@@ -28,7 +28,7 @@ const SessionControll: React.FC = () => {
             label: "Logout",
             onclick: async () => {
                 await localDeleteToken();
-                router.push("/auth/login");
+                router.push("/landing/login");
             },
             description: "Logout from your account",
         },
@@ -56,7 +56,7 @@ return (
                         style={{ filter: 'invert(1) brightness(0.6)' }}
                     />
                     <div className="flex flex-col">
-                        <p className="text-md">Manage</p>
+                        <p className="text-md">Controll</p>
 
                         {user ? (
                             <p className="text-small text-default-500" style={{ maxWidth: '10rem', fontSize: 'calc(20rem / ' + user.email.length + ')' }}>

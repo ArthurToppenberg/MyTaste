@@ -1,9 +1,9 @@
-import { IClient } from "@/pages/api/protected/client";
+import { IClient } from "@/pages/api/client/client";
 import { IAuthContext } from "@packages/authProvider/src/authContext";
 
 export const getClient = async (authedRequest: IAuthContext['authedRequest']): Promise<IClient> => {
     try {
-        const response = await authedRequest('/protected/client', 'GET').catch((message) => {
+        const response = await authedRequest('/client/client', 'GET').catch((message) => {
             console.error('ERROR - Failed to fetch client: ', message);
             return Promise.reject({ message });
         });

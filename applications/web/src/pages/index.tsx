@@ -1,22 +1,14 @@
-import React from 'react';
-import Style from '@/styles/home.module.css';
-import DefaultLayout from '@/layouts/defaultLayout';
-import Fonts from '@/styles/fonts.module.css';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
-const HomePage: React.FC = () => {
-  return (
-    <DefaultLayout>
-      <div className={`${Style.background_image}`}>
-        <div className={`${Style.hero_container}`}>
-          <h1 className={`${Fonts.logo} ${Style.hero_title}`}>My Taste</h1>
-          <p className={`${Fonts.text} ${Style.hero_description}`}>
-            Discover your <strong> taste </strong> today,
-            sign up to get started
-          </p>
-        </div>
-      </div>
-    </DefaultLayout>
-  );
+const HomePage = () => {
+    const router = useRouter();
+
+    useEffect(() => {
+        router.replace('/landing');
+    }, [router]);
+
+    return null;
 };
 
 export default HomePage;

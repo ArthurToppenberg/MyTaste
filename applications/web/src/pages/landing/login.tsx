@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Input, Button, Spacer, Card } from '@nextui-org/react';
 import { signinResponse, useAuthContext } from '@packages/authProvider';
 import { useRouter } from 'next/router';
-import DefaultLayout from "@/layouts/defaultLayout";
+import DefaultLayout from "@/pages/landing/layouts/defaultLayout";
 
 const Login: React.FC = () => {
     const router = useRouter();
