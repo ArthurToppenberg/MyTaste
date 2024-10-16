@@ -1,0 +1,8 @@
+{
+    "name": "@mytaste/api-tool",
+    "version": "0.0.1",
+    "main": "index.ts",
+    "dependencies": {
+        "axios": "^1.7.7"
+    }
+}
