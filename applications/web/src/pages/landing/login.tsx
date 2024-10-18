@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Input, Button, Spacer, Card } from '@nextui-org/react';
-import { signinResponse, useAuthContext } from '@packages/authProvider';
+import {useAuthContext } from '@packages/authProvider';
 import { useRouter } from 'next/router';
 import DefaultLayout from "@/pages/landing/layouts/defaultLayout";
+
+import { ResponseType } from '@packages/apiCommunicator';
 
 const Login: React.FC = () => {
     const router = useRouter();
@@ -11,24 +13,23 @@ const Login: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const {authenticate} = useAuthContext();
+    const {login} = useAuthContext();
 
     const handleLogin = async () => {
         setLoading(true);
         setError('');
 
-        const response: signinResponse = await authenticate(email, password);
+        const response = await login(email, password);
 
-        if (response.message) {
-            setError(response.message);
+        if(response.type === ResponseType.error && response.errorMessage){
+            setError(response.errorMessage);
             setLoading(false);
             return;
         }
 
-        if (response.token) {
+        if(response.type === ResponseType.ok){
             setLoading(false);
             router.push('/');
-            return;
         }
     };
 

@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import { NextApiRequest } from 'next'; // Import NextApiRequest type from Next.js
 
 interface TokenData {
-    user_id: number;
+    account_id: number;
 }
 
 // Extract token from request headers

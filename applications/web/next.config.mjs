@@ -10,7 +10,7 @@ const nextConfig = {
     webpack(config, options) { //include 
         config.module.rules.push({
             test: /\.(ts|tsx)$/,
-            include: [path.join(__dirname, '../../packages/test'), path.join(__dirname, '../../packages/authProvider')], 
+            include: [path.join(__dirname, '../../packages/authProvider'), path.join(__dirname, '../../packages/apiCommunicator')], 
             use: {
                 loader: 'babel-loader',
                 options: {

@@ -4,15 +4,6 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import fonts from "@/styles/fonts.module.css";
 
-import { getUser } from "@/utils/client/user";
-import { IUser } from "@/pages/api/client/user";
-
-import { getRestaurant } from "@/utils/client/restaurant";
-import { IRestaurant } from "@/pages/api/client/restaurant";
-
-import { getClient } from "@/utils/client/client";
-import { IClient } from "@/pages/api/client/client";
-
 import { useAuthContext } from "@packages/authProvider";
 
 const NavBar: React.FC = () => {
@@ -34,113 +25,43 @@ const NavBar: React.FC = () => {
         { label: "Contact", path: "/" },
     ];
 
-    const { authedRequest, localDeleteToken } = useAuthContext();
-    const [user, setUser] = useState<IUser | null>(null);
-
-    useEffect(() => {
-        getUser(authedRequest)
-            .then((data) => {
-                setUser(data);
-            }).catch((error) => {
-                console.warn(error);
-            });
-    }, [authedRequest]);
-
-    const [profileDropdown, setProfileDropdown] = useState([
-        {
-            key: "logout",
-            label: "Logout",
-            onclick: async () => {
-                await localDeleteToken();
-                setUser(null);
-            },
-            description: "Logout from your account",
-        },
-    ]);
-
-    useEffect(() => {
-        // if restaurant exists, add restaurant to dropdown
-        getRestaurant(authedRequest)
-            .then((data) => {
-                const restaurant: IRestaurant = data;
-                setProfileDropdown((prevState) => {
-                    const newState = prevState.filter(item => item.key !== "restaurant");
-                    return [
-                        ...newState,
-                        {
-                            key: "restaurant",
-                            label: 'Restaurant',
-                            onclick: async () => {
-                                router.push('/dashboard/restaurant');
-                            },
-                            description: `Manage ${restaurant.name}`,
-                        },
-                    ];
-                });
-            }).catch((error) => {
-                console.warn(error);
-            });
-
-        // if client exists, add account to dropdown
-        getClient(authedRequest)
-            .then((data) => {
-                const client: IClient = data;
-                setProfileDropdown((prevState) => {
-                    const newState = prevState.filter(item => item.key !== "account");
-                    return [
-                        ...newState,
-                        {
-                            key: "account",
-                            label: 'Account',
-                            onclick: async () => {
-                                router.push('/dashboard/account');
-                            },
-                            description: `Manage ${client.name}'s account`,
-                        },
-                    ];
-                });
-            }).catch((error) => {
-                console.warn(error);
-            });
-
-    }, [authedRequest, router]);
-
     const ProfileDropDown: React.FC = () => {
         return (
-            <Dropdown>
-                <DropdownTrigger>
-                    <Button variant="bordered">
-                        <p className={`${fonts.text}`}>{user?.email}</p>
-                        <Image src="/icons/settings.png" alt="settings" width={18} height={18} style={{ filter: 'invert(1)' }} />
-                    </Button>
-                </DropdownTrigger>
-                <DropdownMenu aria-label="Dynamic Actions">
-                    <DropdownSection title="Dashboard" showDivider>
-                        {profileDropdown.filter(item => item.key !== "logout").map((item) => (
-                            <DropdownItem
-                                key={item.key}
-                                color="default"
-                                onClick={item.onclick}
-                                description={item.description}
-                            >
-                                <p className={`${fonts.text}`}>{item.label}</p>
-                            </DropdownItem>
-                        ))}
-                    </DropdownSection>
-                    <DropdownSection title="Actions">
-                        {profileDropdown.filter(item => item.key === "logout").map((item) => (
-                            <DropdownItem
-                                key={item.key}
-                                color="danger"
-                                className="text-danger"
-                                onClick={item.onclick}
-                            >
-                                <p className={`${fonts.text}`}>{item.label}</p>
-                            </DropdownItem>
-                        ))}
-                    </DropdownSection>
-                </DropdownMenu>
-            </Dropdown>
+            // <Dropdown>
+            //     <DropdownTrigger>
+            //         <Button variant="bordered">
+            //             <p className={`${fonts.text}`}>{user?.email}</p>
+            //             <Image src="/icons/settings.png" alt="settings" width={18} height={18} style={{ filter: 'invert(1)' }} />
+            //         </Button>
+            //     </DropdownTrigger>
+            //     <DropdownMenu aria-label="Dynamic Actions">
+            //         <DropdownSection title="Dashboard" showDivider>
+            //             {profileDropdown.filter(item => item.key !== "logout").map((item) => (
+            //                 <DropdownItem
+            //                     key={item.key}
+            //                     color="default"
+            //                     onClick={item.onclick}
+            //                     description={item.description}
+            //                 >
+            //                     <p className={`${fonts.text}`}>{item.label}</p>
+            //                 </DropdownItem>
+            //             ))}
+            //         </DropdownSection>
+            //         <DropdownSection title="Actions">
+            //             {profileDropdown.filter(item => item.key === "logout").map((item) => (
+            //                 <DropdownItem
+            //                     key={item.key}
+            //                     color="danger"
+            //                     className="text-danger"
+            //                     onClick={item.onclick}
+            //                 >
+            //                     <p className={`${fonts.text}`}>{item.label}</p>
+            //                 </DropdownItem>
+            //             ))}
+            //         </DropdownSection>
+            //     </DropdownMenu>
+            // </Dropdown>
+            <p>Dropdown in development</p>
         );
     };
 
@@ -168,7 +89,7 @@ const NavBar: React.FC = () => {
 
                 {/* Buttons for login and signup or profile name - hidden on small screens */}
                 <NavbarContent justify="end" className="hidden sm:flex">
-                    {user ? (
+                    {false ? (
                         <NavbarItem>
                             <ProfileDropDown key={'pcDropdown'} />
                         </NavbarItem>
@@ -208,7 +129,7 @@ const NavBar: React.FC = () => {
                                 </Link>
                             </NavbarMenuItem>
                         ))}
-                        {user ? (
+                        {/* {user ? (
                             <NavbarMenuItem>
                                 <ProfileDropDown key={'mobileDropdown'} />
                             </NavbarMenuItem>
@@ -225,7 +146,7 @@ const NavBar: React.FC = () => {
                                     </Link>
                                 </NavbarMenuItem>
                             ))
-                        )}
+                        )} */}
                     </NavbarMenu>
                 )}
             </Navbar>
