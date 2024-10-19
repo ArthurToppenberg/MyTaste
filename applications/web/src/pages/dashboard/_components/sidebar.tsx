@@ -1,13 +1,14 @@
 import React from 'react';
 import Image from "next/image";
 import fonts from "@/styles/fonts.module.css";
-import style from "@/styles/dashboardNavbar.module.css";
+import style from "@/styles/dashboardSidebar.module.css";
 
 interface DashboardNavbarProps {
     title: string;
+    children?: React.ReactNode;
 }
 
-const Sidebar: React.FC<DashboardNavbarProps> = ({ title }) => {
+const Sidebar: React.FC<DashboardNavbarProps> = ({ title, children }) => {
     return (
         <div className={style.navbar_container}>
             <div className={`${style.navbar_container_top}`}>
@@ -18,6 +19,10 @@ const Sidebar: React.FC<DashboardNavbarProps> = ({ title }) => {
                         <p className={`font-bold ${fonts.text}`}>{title}</p>
                     </div>
                 </div>
+            </div>
+
+            <div className={style.navbar_container_middle}>
+                {children}
             </div>
 
             <div className={style.navbar_container_bottom}>

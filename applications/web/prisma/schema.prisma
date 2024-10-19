@@ -1,4 +1,4 @@
-// npx prisma migrate dev \n npx prisma generate
+// npx prisma migrate dev
 
 generator client {
   provider = "prisma-client-js"
@@ -10,25 +10,79 @@ datasource db {
 }
 
 model account {
-  id Int @id @default(autoincrement())
-  email String @unique
-  password String
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
   createdAt DateTime @default(now())
-  client client?
+
+  // Relations to either a client or a restaurant
+  client     client?
   restaurant restaurant?
+  admin      admin?
+}
+
+model admin {
+  id Int @id @default(autoincrement())
+
+  account account @relation(fields: [id], references: [id])
 }
 
 model client {
-  id Int @id @default(autoincrement())
-  firstName String
-  lastName String
+  id          Int    @id @default(autoincrement())
+  firstName   String
+  lastName    String
   phoneNumber String
+
+  // Relation to an account (1:1)
   account account @relation(fields: [id], references: [id])
+
+  // Preferences relation (1:N) - A client can have many preferences
+  preferences preferences[]
 }
 
 model restaurant {
-  id Int @id @default(autoincrement())
-  name String @unique
+  id       Int    @id @default(autoincrement())
+  name     String @unique
   location String @unique
-  account account @relation(fields: [id], references: [id])
+
+  // Relation to an account (1:1) !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! FOR NOW MAKE RESTAURANT STANDALONE FOR TESTING
+  account account? @relation(fields: [id], references: [id])
+
+  // Preferences relation (1:N) - A restaurant can have many preferences
+  preferences preferences[]
+}
+
+model features {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  // Value boundaries for each feature
+  max Float
+  min Float
+
+  // Relation to preferences (1:N) - A feature can be part of many preferences
+  preferences preferences[]
+}
+
+model preferences {
+  id Int @id @default(autoincrement())
+
+  // Value chosen for this feature in relation to a client or restaurant
+  value Float
+
+  // Relations
+  clientId     Int? // Foreign key for client
+  restaurantId Int? // Foreign key for restaurant
+  featureId    Int // Foreign key for feature
+
+  // Many-to-One relationship with a client or restaurant
+  client     client?     @relation(fields: [clientId], references: [id])
+  restaurant restaurant? @relation(fields: [restaurantId], references: [id])
+
+  // Many-to-One relationship with features
+  feature features @relation(fields: [featureId], references: [id])
+
+  // Add a unique constraint to ensure that a client or restaurant cannot have multiple entries for the same feature
+  @@unique([clientId, featureId])
+  @@unique([restaurantId, featureId])
 }

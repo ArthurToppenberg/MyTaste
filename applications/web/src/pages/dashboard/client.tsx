@@ -1,9 +1,9 @@
 import React from 'react';
-import Sidebar from './components/sidebar';
+import Sidebar from './_components/sidebar';
 
 const Client: React.FC = () => {
     return (
-        <Sidebar title="Client" />
+        <Sidebar title="Mobile Account" />
     );
 };
 

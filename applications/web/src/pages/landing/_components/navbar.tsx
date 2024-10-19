@@ -31,12 +31,12 @@ const NavBar: React.FC = () => {
 
     const accountDropdownItems = [
         {
-            label: "My Account",
-            onclick: () => handleNav('/dashboard/account'),
+            label: "Admin Panel",
+            onclick: () => handleNav('/dashboard/admin'),
             section: "dashboard",
-            description: "Manage your account",
+            description: "Manage admin shit",
             type: "primary",
-            show: () => true,
+            show: () => account?.is_admin == true,
         },
         {
             label: "Restaurant",
@@ -52,7 +52,7 @@ const NavBar: React.FC = () => {
             section: "dashboard",
             description: "Manage your mobile account",
             type: "primary",
-            show: () => account?.is_restaurant == true,
+            show: () => account?.is_client == true,
         },
         {
             label: "Logout",

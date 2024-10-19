@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Input, Button, Spacer, Card } from '@nextui-org/react';
 import {useAuthContext } from '@packages/authProvider';
 import { useRouter } from 'next/router';
-import DefaultLayout from "@/pages/landing/layouts/defaultLayout";
+import DefaultLayout from "@/pages/landing/_layouts/defaultLayout";
 
 import { ResponseType } from '@packages/apiCommunicator';
 

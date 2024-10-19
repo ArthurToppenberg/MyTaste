@@ -13,43 +13,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         email: null,
         is_client: null,
         is_restaurant: null,
+        is_admin: null,
         type: ResponseType.error,
         errorMessage: 'Internal server error',
         authed: false,
-        token: null
+        token: null,
     }
 
-    const request_permision_denied: AccountResponse = {
-        id: null,
-        email: null,
-        is_client: null,
-        is_restaurant: null,
-        type: ResponseType.error,
-        errorMessage: 'Permission denied',
-        authed: false,
-        token: null
-    }
-
-    const request_token_expired: AccountResponse = {
-        id: null,
-        email: null,
-        is_client: null,
-        is_restaurant: null,
-        type: ResponseType.error,
-        errorMessage: 'Token expired',
-        authed: false,
-        token: null
-    }
-
-    const request_token_invalid: AccountResponse = {
-        id: null,
-        email: null,
-        is_client: null,
-        is_restaurant: null,
-        type: ResponseType.error,
-        errorMessage: 'Invalid token',
-        authed: false,
-        token: null
+    const request_custom_error = (message: string): AccountResponse => {
+        return {
+            id: null,
+            email: null,
+            is_client: null,
+            is_restaurant: null,
+            is_admin: null,
+            type: ResponseType.error,
+            errorMessage: message,
+            authed: false,
+            token: null
+        }
     }
 
     if (req.method !== 'POST') {
@@ -59,13 +41,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
         if(extractTokenFromRequest(req) === null){
-            return res.status(200).json(request_token_invalid);
+            return res.status(200).json(request_custom_error("Request invalid"));
         }
 
         const tokenData = await getTokenData(req);
 
         if (!tokenData) {
-            return res.status(200).json(request_token_expired);
+            return res.status(200).json(request_custom_error("Token Expired"));
         }
 
         let account;
@@ -79,7 +61,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     id: true,
                     email: true,
                     client: true,
-                    restaurant: true
+                    restaurant: true,
+                    admin: true
                 }
             });
         } catch (error) {
@@ -88,11 +71,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         if(!account){
-            return res.status(200).json(request_permision_denied);
+            return res.status(200).json(request_custom_error("Permision Denied"));
         }
 
         const is_client = account.client ? true : false;
         const is_restaurant = account.restaurant ? true : false;
+        const is_admin = account.admin ? true : false;
 
         const token: string | undefined = await renewToken(req);
 
@@ -106,6 +90,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             email: account.email,
             is_client,
             is_restaurant,
+            is_admin,
             type: ResponseType.ok,
             authed: true,
             token

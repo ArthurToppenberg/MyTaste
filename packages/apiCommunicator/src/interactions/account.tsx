@@ -18,6 +18,7 @@ export interface AccountResponse extends IResponse {
     email: string | null;
     is_client: boolean | null;
     is_restaurant: boolean | null;
+    is_admin: boolean | null;
 }
 
 const Account = async ({ apiUrl, token, props }: IRequest): Promise<AccountResponse> => {
@@ -26,6 +27,7 @@ const Account = async ({ apiUrl, token, props }: IRequest): Promise<AccountRespo
         email: null,
         is_client: null,
         is_restaurant: null,
+        is_admin: null,
         type: ResponseType.error,
         errorMessage: "Can't connect to the server",
         authed: false,
@@ -37,6 +39,7 @@ const Account = async ({ apiUrl, token, props }: IRequest): Promise<AccountRespo
         email: null,
         is_client: null,
         is_restaurant: null,
+        is_admin: null,
         type: ResponseType.error,
         errorMessage: "Invalid token",
         authed: false,

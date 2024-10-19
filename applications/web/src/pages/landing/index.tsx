@@ -1,6 +1,6 @@
 import React from 'react';
 import Style from '@/styles/home.module.css';
-import DefaultLayout from '@/pages/landing/layouts/defaultLayout';
+import DefaultLayout from '@/pages/landing/_layouts/defaultLayout';
 import Fonts from '@/styles/fonts.module.css';
 
 const HomePage: React.FC = () => {

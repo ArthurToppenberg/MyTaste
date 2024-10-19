@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Input, Button, Spacer, Card } from '@nextui-org/react';
-import DefaultLayout from '@/pages/landing/layouts/defaultLayout';
+import DefaultLayout from '@/pages/landing/_layouts/defaultLayout';
 import { useRouter } from 'next/router';
 import { useAuthContext } from '@packages/authProvider';
 import { useApiContext, ResponseType } from '@packages/apiCommunicator';
@@ -10,6 +10,9 @@ const SignUp: React.FC = () => {
     const { login } = useAuthContext();
     const { api_signup } = useApiContext();
 
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -18,7 +21,7 @@ const SignUp: React.FC = () => {
 
     const handleSignUp = async () => {
         // Validation checks
-        if (!email || !password || !confirmPassword) {
+        if (!email || !password || !confirmPassword || !firstName || !lastName || !phoneNumber) {
             setError('All fields are required.');
             return;
         }
@@ -32,7 +35,7 @@ const SignUp: React.FC = () => {
         setError('');
 
         // Send request to signup endpoint
-        const response = await api_signup({ email, password });
+        const response = await api_signup({ firstName, lastName, phoneNumber, email, password });
 
         if(response.type === ResponseType.error && response.errorMessage){
             setError(response.errorMessage);
@@ -75,6 +78,39 @@ const SignUp: React.FC = () => {
                             {error}
                         </p>
                     )}
+                    <Spacer y={1} />
+                    <Input
+                        labelPlacement="inside"
+                        type="text"
+                        color="default"
+                        label="First Name"
+                        isRequired
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        fullWidth
+                    />
+                    <Spacer y={1} />
+                    <Input
+                        labelPlacement="inside"
+                        type="text"
+                        color="default"
+                        label="Last Name"
+                        isRequired
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        fullWidth
+                    />
+                    <Spacer y={1} />
+                    <Input
+                        labelPlacement="inside"
+                        type="tel"
+                        color="default"
+                        label="Phone Number"
+                        isRequired
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        fullWidth
+                    />
                     <Spacer y={1} />
                     <Input
                         labelPlacement="inside"

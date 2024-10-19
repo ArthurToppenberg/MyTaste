@@ -6,6 +6,9 @@ import Header from "../components/header";
 export interface SignupProps {
     email: string;
     password: string;
+    firstName: string;
+    lastName: string;
+    phoneNumber: string;
 }
 
 export interface SignupResponse extends IResponse {

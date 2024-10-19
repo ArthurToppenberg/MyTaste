@@ -3,7 +3,7 @@ import { SignupProps, SignupResponse } from '@packages/apiCommunicator/src/inter
 import Prisma from '../../../utils/server/prisma';
 import { genSalt, hash } from 'bcryptjs';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import {isEmail} from 'validator';
+import {isEmail, isAlpha, isMobilePhone} from 'validator';
 import { ResponseType } from '@packages/apiCommunicator';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -21,11 +21,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         token: null
     }
 
-    const response_user_already_exists: SignupResponse = {
-        type: ResponseType.error,
-        errorMessage: 'An account with that email already exists, please try another email or login with that email instead',
-        authed: false,
-        token: null
+    const response_custom_error = (message: string): SignupResponse => {
+        return {
+            type: ResponseType.error,
+            errorMessage: message,
+            authed: false,
+            token: null
+        }
     }
     
     if (req.method !== 'POST') {
@@ -37,7 +39,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const props: SignupProps = req.body;
 
         if(!isEmail(props.email)){
-            return res.status(200).json(response_invalid);
+            return res.status(200).json(response_custom_error('Invalid email'));
+        }
+
+        if(!isAlpha(props.firstName)){
+            return res.status(200).json(response_custom_error('Invalid first name'));
+        } 
+
+        if(!isAlpha(props.lastName)){
+            return res.status(200).json(response_custom_error('Invalid last name'));
+        }
+
+        if(!isMobilePhone(props.phoneNumber)){
+            return res.status(200).json(response_custom_error('Invalid phone number'));
         }
 
         let account;
@@ -56,7 +70,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         if (account) {
-            return res.status(200).json(response_user_already_exists);
+            return res.status(200).json(response_custom_error('An account with that email already exists, please try another email or login with that email instead'));
         }
 
         const saltRounds = 10;
@@ -65,12 +79,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const hashedPassword = await hash(props.password, salt);
 
         try {
-            await Prisma.account.create({
-                data: {
-                    email: props.email,
-                    password: hashedPassword
-                }
-            });
+            createClient(props.email, hashedPassword, props.firstName, props.lastName, props.phoneNumber);
         } catch (error) {
             return res.status(200).json(response_internal_server_error);
         }
@@ -86,4 +95,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.error('Error in singup', error);
         return res.status(200).json(response_internal_server_error);
     }
+}
+
+/**
+ * Create a account with a client connected to it
+ */
+const createClient = async (email: string, hashedPassword: string, firstName: string, lastName: string, phoneNumber: string) => {
+    await Prisma.account.create({
+        data: {
+            email: email,
+            password: hashedPassword,
+            client: {
+                create: {
+                    firstName: firstName,
+                    lastName: lastName,
+                    phoneNumber: phoneNumber
+                }
+            }
+        }
+    });
 }

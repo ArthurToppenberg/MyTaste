@@ -1,7 +1,7 @@
 .navbar_container{
     height: 100vh;
     width: 15rem;
-    background-color: var(--color-gray);
+    background-color: var(--color-dark);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -22,6 +22,8 @@
     justify-content: center;
     align-items: flex-start;
     margin-left: 1rem;
+    border-bottom-width: 1px;
+    border-color: white;
 }
 
 .navbar_logo_header_container h1{
@@ -36,10 +38,22 @@
     width: 100%;
     padding: 0;
     margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .navbar_container_bottom{
     width: 100%;
     margin-top: auto;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.navbar_container_middle{
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
 }
