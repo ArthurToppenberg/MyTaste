@@ -1,67 +1,124 @@
-import { Navbar, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, DropdownSection } from "@nextui-org/react";
+import {
+    Navbar, NavbarBrand, NavbarMenuToggle, NavbarMenuItem, NavbarMenu, NavbarContent, NavbarItem, Link, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem, DropdownSection
+} from "@nextui-org/react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import fonts from "@/styles/fonts.module.css";
-
 import { useAuthContext } from "@packages/authProvider";
+
+import { AccountResponse } from "@packages/apiCommunicator/src/interactions/account";
+import { useApiContext, ResponseType } from "@packages/apiCommunicator";
 
 const NavBar: React.FC = () => {
     const router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [account, setAccount] = useState<AccountResponse | null>(null);
+
+    const { api_auth_account } = useApiContext();
+    const { updateToken, token, logout } = useAuthContext();
 
     const handleNav = (path: string) => {
         router.push(path);
+        setIsMenuOpen(false); // Close the menu when navigating
     };
 
-    const authMenuItems = [
-        { label: "Login", path: "/landing/login" },
-        { label: "Sign Up", path: "/landing/signup" },
-    ];
-
-    const menuItems = [
+    const centerNavigationLinks = [
         { label: "Home", path: "/" },
         { label: "About Us", path: "/" },
         { label: "Contact", path: "/" },
     ];
 
+    const accountDropdownItems = [
+        {
+            label: "My Account",
+            onclick: () => handleNav('/dashboard/account'),
+            section: "dashboard",
+            description: "Manage your account",
+            type: "primary",
+            show: () => true,
+        },
+        {
+            label: "Restaurant",
+            onclick: () => handleNav('/dashboard/restaurant'),
+            section: "dashboard",
+            description: "Manage your restaurant",
+            type: "primary",
+            show: () => account?.is_restaurant == true,
+        },
+        {
+            label: "Mobile Account",
+            onclick: () => handleNav('/dashboard/client'),
+            section: "dashboard",
+            description: "Manage your mobile account",
+            type: "primary",
+            show: () => account?.is_restaurant == true,
+        },
+        {
+            label: "Logout",
+            onclick: () => {
+                logout();
+                setIsMenuOpen(false); // Close the menu after logout
+            },
+            section: "account",
+            description: "Logout from your account",
+            type: "danger",
+            show: () => true,
+        },
+    ];
+
+    useEffect(() => {
+        const fetchAccount = async () => {
+            const account: AccountResponse = await api_auth_account({});
+            if (account.type === ResponseType.error) {
+                setAccount(null);
+                return;
+            }
+            if (account.type === ResponseType.ok && account.authed && account.token) {
+                setAccount(account);
+                updateToken(account.token);
+            }
+        };
+        fetchAccount();
+    }, [token, api_auth_account, updateToken]);
+
     const ProfileDropDown: React.FC = () => {
         return (
-            // <Dropdown>
-            //     <DropdownTrigger>
-            //         <Button variant="bordered">
-            //             <p className={`${fonts.text}`}>{user?.email}</p>
-            //             <Image src="/icons/settings.png" alt="settings" width={18} height={18} style={{ filter: 'invert(1)' }} />
-            //         </Button>
-            //     </DropdownTrigger>
-            //     <DropdownMenu aria-label="Dynamic Actions">
-            //         <DropdownSection title="Dashboard" showDivider>
-            //             {profileDropdown.filter(item => item.key !== "logout").map((item) => (
-            //                 <DropdownItem
-            //                     key={item.key}
-            //                     color="default"
-            //                     onClick={item.onclick}
-            //                     description={item.description}
-            //                 >
-            //                     <p className={`${fonts.text}`}>{item.label}</p>
-            //                 </DropdownItem>
-            //             ))}
-            //         </DropdownSection>
-            //         <DropdownSection title="Actions">
-            //             {profileDropdown.filter(item => item.key === "logout").map((item) => (
-            //                 <DropdownItem
-            //                     key={item.key}
-            //                     color="danger"
-            //                     className="text-danger"
-            //                     onClick={item.onclick}
-            //                 >
-            //                     <p className={`${fonts.text}`}>{item.label}</p>
-            //                 </DropdownItem>
-            //             ))}
-            //         </DropdownSection>
-            //     </DropdownMenu>
-            // </Dropdown>
-            <p>Dropdown in development</p>
+            <Dropdown>
+                <DropdownTrigger>
+                    <Button variant="bordered">
+                        <p className={`${fonts.text}`} style={{ fontSize: '1rem', textAlign: "center" }}>Account</p>
+                        <Image src="/icons/settings.png" alt="settings" width={18} height={18} style={{ filter: 'invert(1)' }} />
+                    </Button>
+                </DropdownTrigger>
+                <DropdownMenu aria-label="Dynamic Actions">
+                    <DropdownSection title="Dashboard" showDivider >
+                        {accountDropdownItems.filter((item) => item.section === "dashboard" && item.show()).map((item, index) => (
+                            <DropdownItem
+                                key={`${item.label}-${index}`}
+                                color={item.type === "danger" ? "danger" : "primary"}
+                                onClick={item.onclick}
+                                description={item.description}
+                            >
+                                {item.label}
+                            </DropdownItem>
+                        ))}
+                    </DropdownSection>
+                    <DropdownSection title="Actions">
+                        {accountDropdownItems.filter((item) => item.section === "account" && item.show()).map((item, index) => (
+                            <DropdownItem
+                                key={`${item.label}-${index}`}
+                                color={item.type === "danger" ? "danger" : "default"}
+                                onClick={item.onclick}
+                                className={item.type === "danger" ? "text-danger" : ""}
+                                description={item.description}
+                            >
+                                {item.label}
+                            </DropdownItem>
+                        ))}
+                    </DropdownSection>
+                </DropdownMenu>
+            </Dropdown>
         );
     };
 
@@ -72,13 +129,13 @@ const NavBar: React.FC = () => {
                 <NavbarContent justify="start">
                     <NavbarBrand>
                         <Image src="/images/logo.png" alt="Mytaste Logo" width={48} height={48} />
-                        <p className={`font-bold text-inherit ${fonts.logo}`} style={{fontSize: '1.1rem'}}>My Taste</p>
+                        <p className={`font-bold text-inherit ${fonts.logo}`} style={{ fontSize: '1.1rem' }}>My Taste</p>
                     </NavbarBrand>
                 </NavbarContent>
 
                 {/* Main navbar content - hidden on small screens */}
                 <NavbarContent className="hidden sm:flex gap-4" justify="center">
-                    {menuItems.map((item, index) => (
+                    {centerNavigationLinks.map((item, index) => (
                         <NavbarItem key={`${item.path}-${index}`}>
                             <Link color="foreground" onClick={() => handleNav(item.path)}>
                                 <p className={`${fonts.text}`}>{item.label}</p>
@@ -89,7 +146,7 @@ const NavBar: React.FC = () => {
 
                 {/* Buttons for login and signup or profile name - hidden on small screens */}
                 <NavbarContent justify="end" className="hidden sm:flex">
-                    {false ? (
+                    {account ? (
                         <NavbarItem>
                             <ProfileDropDown key={'pcDropdown'} />
                         </NavbarItem>
@@ -114,39 +171,35 @@ const NavBar: React.FC = () => {
                     <NavbarMenuToggle onClick={() => setIsMenuOpen(!isMenuOpen)} />
                 </NavbarContent>
 
-                {/* Dropdown menu for small screens */}
                 {isMenuOpen && (
                     <NavbarMenu>
-                        {menuItems.map((item, index) => (
-                            <NavbarMenuItem key={`${item.label}-${index}`}>
-                                <Link
-                                    color="foreground"
-                                    href={item.path}
-                                    size="lg"
-                                    onClick={() => setIsMenuOpen(false)} // Close the menu after selection
-                                >
+                        {centerNavigationLinks.map((item, index) => (
+                            <NavbarMenuItem key={`${item.path}-mobile-${index}`}>
+                                <Link color="foreground" onClick={() => handleNav(item.path)}>
                                     <p className={`${fonts.text}`}>{item.label}</p>
                                 </Link>
                             </NavbarMenuItem>
                         ))}
-                        {/* {user ? (
+
+                        {/* Mobile user options with dropdown */}
+                        {account ? (
                             <NavbarMenuItem>
                                 <ProfileDropDown key={'mobileDropdown'} />
                             </NavbarMenuItem>
                         ) : (
-                            authMenuItems.map((item, index) => (
-                                <NavbarMenuItem key={`${item.label}-${index}`}>
-                                    <Link
-                                        color="foreground"
-                                        href={item.path}
-                                        size="lg"
-                                        onClick={() => setIsMenuOpen(false)} // Close the menu after selection
-                                    >
-                                        <p className={`${fonts.text}`}>{item.label}</p>
-                                    </Link>
+                            <>
+                                <NavbarMenuItem>
+                                    <Button color="primary" variant="flat" onClick={() => handleNav('/landing/login')}>
+                                        Login
+                                    </Button>
                                 </NavbarMenuItem>
-                            ))
-                        )} */}
+                                <NavbarMenuItem>
+                                    <Button color="primary" variant="flat" onClick={() => handleNav('/landing/signup')}>
+                                        Sign Up
+                                    </Button>
+                                </NavbarMenuItem>
+                            </>
+                        )}
                     </NavbarMenu>
                 )}
             </Navbar>

@@ -1,87 +1,67 @@
 import React, { useState } from 'react';
-import { Input, Button, Spacer, Card} from '@nextui-org/react';
+import { Input, Button, Spacer, Card } from '@nextui-org/react';
 import DefaultLayout from '@/pages/landing/layouts/defaultLayout';
-import { signupProps } from '../api/authentication/signup';
-import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useAuthContext } from '@packages/authProvider';
-import { signinResponse } from '@packages/authProvider';
+import { useApiContext, ResponseType } from '@packages/apiCommunicator';
 
 const SignUp: React.FC = () => {
     const router = useRouter();
-    const { authenticate } = useAuthContext();
+    const { login } = useAuthContext();
+    const { api_signup } = useApiContext();
 
     const [email, setEmail] = useState('');
-    const [name, setName] = useState('');
-    const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const handleSignUp = () => {
-        // Add signup logic here
-        console.log('Signup attempt:', { email, name, phone, password, confirmPassword });
-    
+    const handleSignUp = async () => {
         // Validation checks
-        if (!email || !name || !phone || !password || !confirmPassword) {
+        if (!email || !password || !confirmPassword) {
             setError('All fields are required.');
             return;
         }
-    
+
         if (password !== confirmPassword) {
             setError('Passwords do not match.');
             return;
         }
 
-        //check email is an valid email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if(!emailRegex.test(email)){
-            setError('Email is not valid.');
-            return;
-        }
-    
         setLoading(true);
         setError('');
-    
-        //make axio api call here
-        const apiPath = '/api/auth/signup';
-        const data: signupProps = {
-            email,
-            name,
-            phoneNumber: phone,
-            password,
-        };
-    
-        axios.post(apiPath, data)
-            .then(() => {
-                autoLogin().then((succses) => {
-                    if(succses){
-                        router.push('/');
-                    }else{
-                        router.push('/auth/login');
-                    }
-                });
-            })
-            .catch((error) => {
-                console.error(error.message);
-                setError('An error occurred. Please try again.');
-            }).finally(() => {
-                setLoading(false);
-            });
+
+        // Send request to signup endpoint
+        const response = await api_signup({ email, password });
+
+        if(response.type === ResponseType.error && response.errorMessage){
+            setError(response.errorMessage);
+            setLoading(false);
+            return;
+        }
+
+        if(response.type === ResponseType.ok){
+            setLoading(false);
+            router.push('/landing/login');
+        }
+
+        autoLogin();
     };
 
-    const autoLogin = async ():Promise<boolean> => {
-        const response: signinResponse = await authenticate(email, password);
-        if(response.message){
-            return false;
+    const autoLogin = async () => {
+        const response = await login(email, password);
+
+        if(response.type === ResponseType.error && response.errorMessage){
+            setError(response.errorMessage);
+            setLoading(false);
+            return;
         }
 
-        if(response.token){
-            return true;
+        if(response.type === ResponseType.ok){
+            setLoading(false);
+            router.push('/');
         }
-
-        return false;
+        
     };
 
     return (
@@ -104,28 +84,6 @@ const SignUp: React.FC = () => {
                         isRequired
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        fullWidth
-                    />
-                    <Spacer y={1} />
-                    <Input
-                        labelPlacement="inside"
-                        type="text"
-                        color="default"
-                        label="Name"
-                        isRequired
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        fullWidth
-                    />
-                    <Spacer y={1} />
-                    <Input
-                        labelPlacement="inside"
-                        type="tel"
-                        color="default"
-                        label="Phone"
-                        isRequired
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
                         fullWidth
                     />
                     <Spacer y={1} />
@@ -180,20 +138,20 @@ const styles = {
         width: '400px',
         padding: '20px',
         boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
-        '@media (max-width: 600px)': {
+        '@media (maxwidth: 600px)': {
             width: '100%',
         },
     },
     heading: {
         textAlign: 'center' as const,
         fontSize: '24px' as const,
-        '@media (max-width: 600px)': {
+        '@media (maxwidth: 600px)': {
             fontSize: '20px',
         },
     },
     button: {
         width: '100%',
-        '@media (max-width: 600px)': {
+        '@media (maxwidth: 600px)': {
             fontSize: '14px',
         },
     },

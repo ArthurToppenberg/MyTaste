@@ -2,7 +2,7 @@ import React from 'react';
 import Image from "next/image";
 import fonts from "@/styles/fonts.module.css";
 import style from "@/styles/dashboardNavbar.module.css";
-import SessionControll from './sessionControll';
+//import SessionControll from './sessionControll';
 
 interface DashboardNavbarProps {
     title: string;
@@ -22,7 +22,7 @@ const Sidebar: React.FC<DashboardNavbarProps> = ({ title }) => {
             </div>
 
             <div className={style.navbar_container_bottom}>
-                <SessionControll />
+               
             </div>
         </div>
     );

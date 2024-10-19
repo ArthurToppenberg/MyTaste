@@ -7,28 +7,27 @@ import { ResponseType } from '@packages/apiCommunicator';
 import { LoginProps, LoginResponse } from '@packages/apiCommunicator/src/interactions/login';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    if (req.method == 'GET') {
-        return res.status(405).json({ message: 'No data to provide, please use a post request to signin' });
+    
+    const response_invalid: LoginResponse = {
+        token: null,
+        type: ResponseType.error,
+        errorMessage: 'Invalid email or password',
+        authed: false
     }
 
+    const response_internal_server_error: LoginResponse = {
+        token: null,
+        type: ResponseType.error,
+        errorMessage: 'Internal server error',
+        authed: false
+    }
+   
     if (req.method !== 'POST') {
-        return res.status(405).json({ message: 'Method not allowed' });
+        return res.status(200).json(response_internal_server_error);
     }
 
     try {
         const props: LoginProps = req.body;
-
-        const response_invalid: LoginResponse = {
-            token: null,
-            type: ResponseType.error,
-            errorMessage: 'Invalid email or password'
-        }
-
-        const response_internal_server_error: LoginResponse = {
-            token: null,
-            type: ResponseType.error,
-            errorMessage: 'Internal server error'
-        }
 
         let account;
         
@@ -64,12 +63,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const response: LoginResponse = {
             token: jwtToken as string,
+            authed: true,
             type: ResponseType.ok,
         }
 
         return res.status(200).json(response);
     } catch (error) {
         console.error('Error in signin', error);
-        return res.status(500).json({ message: 'Internal server error' });
+        return res.status(200).json(response_internal_server_error);
     }
 }

@@ -1,11 +1,13 @@
 export enum ResponseType{
-    ok,
-    error,
+    ok = 'ok',
+    error = 'error',
 }
 
 export interface IResponse{
     type: ResponseType;
+    authed: boolean;
     errorMessage?: string;
+    token: string | null;
 }
 
 export interface IRequest{

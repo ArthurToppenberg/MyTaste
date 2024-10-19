@@ -1,26 +1,26 @@
 import { IRequest, IResponse, ResponseType } from "../interface";
-import Header from "../components/header";
 import axios from "axios";
 import path from "path";
+import Header from "../components/header";
 
-export interface LoginProps {
+export interface SignupProps {
     email: string;
     password: string;
 }
 
-export interface LoginResponse extends IResponse {
-
+export interface SignupResponse extends IResponse {
+    
 }
 
-const Login = async ({apiUrl, token, props}: IRequest): Promise<LoginResponse> => {
-    const response_failed_connection: LoginResponse = {
+const Signup = async ({apiUrl, token, props}: IRequest): Promise<SignupResponse> => {
+    const response_failed_connection: SignupResponse = {
         type: ResponseType.error,
         errorMessage: "Can't connect to the server",
         authed: false,
         token: null
-    }
+    };
 
-    const relativeUrl = "/authentication/login";
+    const relativeUrl = "/authentication/signup";
     const absolureUrl = path.join(apiUrl, relativeUrl);
 
     const headers = Header({ token: token || "" });
@@ -31,9 +31,9 @@ const Login = async ({apiUrl, token, props}: IRequest): Promise<LoginResponse> =
         return error.response;
     });
 
-    const loginResponse: LoginResponse = response.data;
+    const signupResponse: SignupResponse = response.data;
 
-    return loginResponse;
+    return signupResponse;
 }
 
-export default Login;
+export default Signup;
