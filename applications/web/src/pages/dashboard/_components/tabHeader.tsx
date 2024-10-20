@@ -1,6 +1,5 @@
 import React from 'react';
 import { Navbar, NavbarBrand } from '@nextui-org/react';
-import fonts from '@/styles/fonts.module.css';
 
 export interface TabHeaderProps {
     title: string;

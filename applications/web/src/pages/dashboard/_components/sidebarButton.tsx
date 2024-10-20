@@ -6,10 +6,9 @@ interface SidebarButtonProps {
     name: string;
     tab?: string;
     onClick?: () => void;
-    key?: string;
 }
 
-const SidebarButton: React.FC<SidebarButtonProps> = ({ name, onClick, tab, key }) => {
+const SidebarButton: React.FC<SidebarButtonProps> = ({ name, onClick, tab }) => {
     const { setCurrentTab, currentTab } = useSidebarRouter();
 
     const isSelected = tab === currentTab;
@@ -26,7 +25,7 @@ const SidebarButton: React.FC<SidebarButtonProps> = ({ name, onClick, tab, key }
             }
             }}
             className={isSelected ? 'gray-background' : 'dark-background'}
-            style={{fontSize: '1rem', justifyContent: 'flex-start'}}
+            style={{fontSize: '1rem', alignContent: 'left', justifyContent: 'flex-start'}}
         >
             {name}
         </Button>

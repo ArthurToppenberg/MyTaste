@@ -7,12 +7,6 @@ import {isEmail, isAlpha, isMobilePhone} from 'validator';
 import { ResponseType } from '@packages/apiCommunicator';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const response_invalid: SignupResponse = {
-        type: ResponseType.error,
-        errorMessage: 'Invalid email or password',
-        authed: false,
-        token: null
-    }
 
     const response_internal_server_error: SignupResponse = {
         type: ResponseType.error,
