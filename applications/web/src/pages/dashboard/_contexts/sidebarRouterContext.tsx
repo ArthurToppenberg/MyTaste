@@ -1,25 +1,15 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-interface Tab {
-    key: string;
-    component: ReactNode;
-}
-
+// Define the context and its props
 interface SidebarRouterContextProps {
     currentTab: string;
-    setCurrentTab: (key: string) => void;
-    tabs: Tab[];
+    setCurrentTab: (tab: string) => void;
+    tabs: { key: string; component: ReactNode }[];
 }
 
 const SidebarRouterContext = createContext<SidebarRouterContextProps | undefined>(undefined);
 
-interface SidebarRouterProviderProps {
-    tabs: Tab[];
-    initialTab: string;
-    children: ReactNode;
-}
-
-export const SidebarRouterProvider: React.FC<SidebarRouterProviderProps> = ({ tabs, initialTab, children }) => {
+export const SidebarRouterProvider: React.FC<{ initialTab: string; tabs: { key: string; component: ReactNode }[]; children: ReactNode }> = ({ initialTab, tabs, children }) => {
     const [currentTab, setCurrentTab] = useState(initialTab);
 
     // Log the initial setup to ensure the initial tab key is correct
@@ -50,3 +40,6 @@ export const useSidebarRouter = (): SidebarRouterContextProps => {
     }
     return context;
 };
+
+// Default export
+export default SidebarRouterProvider;
