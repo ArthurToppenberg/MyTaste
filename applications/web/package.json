@@ -6,7 +6,8 @@
     "dev": "prisma generate --no-hints && next dev",
     "build": "prisma generate --no-hints && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "bnr": "npm run build && npm run start"
   },
   "dependencies": {
     "@mytaste/api-communicator": "file:../../packages/apiCommunicator",
