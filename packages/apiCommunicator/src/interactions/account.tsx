@@ -21,7 +21,7 @@ export interface AccountResponse extends IResponse {
     is_admin: boolean | null;
 }
 
-const Account = async ({ apiUrl, token, setToken, props }: IRequest): Promise<AccountResponse> => {
+const Account = async ({ apiUrl, token, updateToken, props }: IRequest): Promise<AccountResponse> => {
     const response_failed_connection: AccountResponse = {
         id: null,
         email: null,
@@ -60,6 +60,11 @@ const Account = async ({ apiUrl, token, setToken, props }: IRequest): Promise<Ac
         }
         return error.response;
     });
+
+    const tokenRecived: string = response.data.token;
+    if (tokenRecived && tokenRecived !== "") {
+        updateToken(tokenRecived);
+    }
 
     const accountResponse: AccountResponse = response.data;
 

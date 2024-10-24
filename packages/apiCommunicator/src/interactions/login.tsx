@@ -12,7 +12,7 @@ export interface LoginResponse extends IResponse {
 
 }
 
-const Login = async ({apiUrl, token, setToken, props}: IRequest): Promise<LoginResponse> => {
+const Login = async ({apiUrl, token, updateToken, props}: IRequest): Promise<LoginResponse> => {
 
     const response_failed_connection: LoginResponse = {
         type: ResponseType.error,
@@ -35,7 +35,7 @@ const Login = async ({apiUrl, token, setToken, props}: IRequest): Promise<LoginR
     const tokenRecived: string = response.data.token;
 
     if (tokenRecived && tokenRecived !== "") {
-       setToken(tokenRecived);
+        updateToken(tokenRecived);
     }
 
     const loginResponse: LoginResponse = response.data;

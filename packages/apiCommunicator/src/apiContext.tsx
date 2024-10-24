@@ -28,12 +28,12 @@ const ApiContext = createContext({
 
 const ApiProvider = ({ children, apiUrl }: ApiProviderProps) => {
 
-    const { token, setToken } = useAuthContext();
+    const { token, updateToken } = useAuthContext();
 
     // Define the functions to be passed to the context value
-    const login = (props: LoginProps) => Login({ apiUrl, token: token, setToken, props });
-    const signup = (props: SignupProps) => Signup({ apiUrl, token: token, setToken, props });
-    const account = (props: AccountProps) => Account({ apiUrl, token: token, setToken, props });
+    const login = (props: LoginProps) => Login({ apiUrl, token: token, updateToken, props });
+    const signup = (props: SignupProps) => Signup({ apiUrl, token: token, updateToken, props });
+    const account = (props: AccountProps) => Account({ apiUrl, token: token, updateToken, props });
 
     // Memoize the context value to avoid unnecessary re-renders
     const contextValue = useMemo(

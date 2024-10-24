@@ -6,8 +6,8 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 */
 export const AuthContext = createContext({
     logout: () => {},
-    setToken: (token: string) => {},
     token: null as string | null,
+    updateToken: (token: string) => {},
 });
 
 export interface AuthProviderProps {
@@ -38,12 +38,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, saveToken,
         }
     }, []);
 
-    useEffect(() => {
-        console.log('Token updated:', token);
-    }, [token]);
-
     return (
-        <AuthContext.Provider value={{logout, token, setToken }}>
+        <AuthContext.Provider value={{logout, token, updateToken }}>
             {children}
         </AuthContext.Provider>
     );

@@ -6,8 +6,11 @@ import {
   TableColumn,
   TableRow,
   TableCell,
-  Button,
+  Image,
+  Chip,
+  Tooltip
 } from "@nextui-org/react";
+import NextImage from "next/image";
 
 interface TableProps {
   columns: { name: string; key: string }[];
@@ -63,19 +66,46 @@ const CustomTable: React.FC<TableProps> = ({
                   {col.key === "actions" ? (
                     <div style={{ display: "flex", gap: "8px" }}>
                       {editAction && (
-                        <Button size="sm" onClick={() => editAction(row)}>
-                          Edit
-                        </Button>
-                      )}
-                      {deleteAction && (
-                        <Button size="sm" color="danger" onClick={() => deleteAction(row)}>
-                          Delete
-                        </Button>
+                      <Tooltip content="Edit" placement="top">
+                        <Chip onClick={() => editAction(row)}>
+                        <Image
+                          as={NextImage}
+                          src='/icons/settings.png'
+                          width={15}
+                          height={15}
+                          alt='settings icon'
+                          style={{borderRadius: '0'}}
+                        />
+                        </Chip>
+                      </Tooltip>
                       )}
                       {saveAction && (
-                        <Button size="sm" color="success" onClick={() => saveAction(row)}>
-                          Save
-                        </Button>
+                      <Tooltip content="Save" placement="top">
+                        <Chip color="success" onClick={() => saveAction(row)}>
+                        <Image
+                          as={NextImage}
+                          src='/icons/save.png'
+                          width={15}
+                          height={15}
+                          alt='save icon'
+                          style={{borderRadius: '0'}}
+                        />
+                        </Chip>
+                      </Tooltip>
+                      )}
+                      {deleteAction && (
+                      <Tooltip content="Delete" placement="top">
+                        <Chip color="danger" onClick={() => deleteAction(row)}>
+                        <Image
+                          as={NextImage}
+                          src='/icons/delete.png'
+                          width={15}
+                          height={15}
+                          alt='delete icon'
+                          style={{borderRadius: '0'}}
+                        />
+                        </Chip>
+                      </Tooltip>
                       )}
                     </div>
                   ) : (
