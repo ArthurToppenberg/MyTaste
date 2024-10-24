@@ -4,7 +4,7 @@ import path from "path";
 import Header from "../components/header";
 
 export interface FeatureProps {
-
+    
 }
 
 export interface FeatureResponse extends IResponse {
