@@ -117,33 +117,6 @@
   min-width: 400px;
 }
 
-/* Media query for devices with a max width of 768px (tablets) */
-@media (max-width: 768px) {
-  .hero_container {
-    padding-left: 2rem;
-    align-items: center;
-  }
-
-  .hero_title {
-    font-size: 4rem;
-  }
-
-  .hero_description {
-    font-size: 0.875rem;
-    max-width: 80%;
-  }
-
-  .container_split {
-    flex-direction: column;
-    height: auto;
-  }
-
-  .container_split_left, .container_split_right {
-    width: 100%;
-    min-width: 0;
-  }
-}
-
 /* Media query for devices with a max width of 480px (mobile phones) */
 @media (max-width: 480px) {
   .hero_container {
@@ -163,10 +136,14 @@
   .container_split {
     flex-direction: column;
     height: auto;
+    padding: 0;
+    margin: 0;
   }
 
   .container_split_left, .container_split_right {
     width: 100%;
-    min-width: 0;
+    padding: 0;
+    margin: 0;
+    height: 600px;
   }
 }
