@@ -1,0 +1,17 @@
+# MyTaste Monorepo
+
+Welcome to the MyTaste Monorepo! This repository contains the codebase for both the mobile and web applications of MyTaste.
+
+## Table of Contents
+
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Scripts](#scripts)
+- [Configuration](#configuration)
+- [Dependencies](#dependencies)
+- [Contributing](#contributing)
+- [License](#license)
+
+## Project Structure
+
+The repository is organized as follows:

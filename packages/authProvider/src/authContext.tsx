@@ -1,16 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useApiContext, ResponseType } from '@packages/apiCommunicator';
-import { LoginResponse } from '@packages/apiCommunicator/src/interactions/login';
-
 /*
     authenticate
     unAuthenticate
     token -> only return string else null
 */
 export const AuthContext = createContext({
-    login: (email: string, password: string) => Promise.resolve({} as LoginResponse),
     logout: () => {},
-    updateToken: (token: string) => {},
+    setToken: (token: string) => {},
     token: null as string | null,
 });
 
@@ -24,18 +20,6 @@ export interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children, saveToken, removeToken, getToken }) => {
     const [token, setToken] = useState<string | null>(null);
 
-    const { api_login, set_token } = useApiContext();
-
-    const login = async (email: string, password: string) => {
-        const response = await api_login({ email, password });
-
-        if(response.type === ResponseType.ok && response.token){
-            updateToken(response.token);
-        }
-
-        return response;
-    };
-
     const logout = () => {
         removeToken();
         setToken(null);
@@ -45,7 +29,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, saveToken,
     const updateToken = (token: string) => {
         saveToken(token);
         setToken(token);
-        set_token(token);
     };
 
     useEffect(() => {
@@ -55,8 +38,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, saveToken,
         }
     }, []);
 
+    useEffect(() => {
+        console.log('Token updated:', token);
+    }, [token]);
+
     return (
-        <AuthContext.Provider value={{ login, logout, token, updateToken }}>
+        <AuthContext.Provider value={{logout, token, setToken }}>
             {children}
         </AuthContext.Provider>
     );

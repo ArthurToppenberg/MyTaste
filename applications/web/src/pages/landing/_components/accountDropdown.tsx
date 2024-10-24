@@ -22,7 +22,7 @@ const AccountDropdown: React.FC<AccountDropdownProps> = ({ noAccountFoundContent
     const [loading, setLoading] = useState(true);
 
     const { api_auth_account } = useApiContext();
-    const { updateToken, token, logout } = useAuthContext();
+    const { token, logout } = useAuthContext();
 
     useEffect(() => {
         const fetchAccount = async () => {
@@ -37,11 +37,10 @@ const AccountDropdown: React.FC<AccountDropdownProps> = ({ noAccountFoundContent
 
             if (account.type === ResponseType.ok && account.authed && account.token) {
                 setAccount(account);
-                updateToken(account.token);
             }
         };
         fetchAccount();
-    }, [token, api_auth_account, updateToken]);
+    }, [token, api_auth_account]);
 
     const accountDropdownItems = [
         {

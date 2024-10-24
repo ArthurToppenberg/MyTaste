@@ -12,7 +12,8 @@ export interface LoginResponse extends IResponse {
 
 }
 
-const Login = async ({apiUrl, token, props}: IRequest): Promise<LoginResponse> => {
+const Login = async ({apiUrl, token, setToken, props}: IRequest): Promise<LoginResponse> => {
+
     const response_failed_connection: LoginResponse = {
         type: ResponseType.error,
         errorMessage: "Can't connect to the server",
@@ -30,6 +31,12 @@ const Login = async ({apiUrl, token, props}: IRequest): Promise<LoginResponse> =
         }
         return error.response;
     });
+
+    const tokenRecived: string = response.data.token;
+
+    if (tokenRecived && tokenRecived !== "") {
+       setToken(tokenRecived);
+    }
 
     const loginResponse: LoginResponse = response.data;
 

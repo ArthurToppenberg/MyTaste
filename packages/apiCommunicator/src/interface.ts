@@ -13,5 +13,6 @@ export interface IResponse{
 export interface IRequest{
     apiUrl: string;
     token: string | null;
+    setToken: (token: string) => void;
     props: any;
 }

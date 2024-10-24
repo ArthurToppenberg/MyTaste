@@ -4,23 +4,23 @@ import { AuthProvider } from '@packages/authProvider';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ApiProvider apiUrl="/api">
-      <AuthProvider
-        saveToken={(token) => {
-          localStorage.setItem('token', token);
-        }}
-        removeToken={() => {
-          localStorage.removeItem('token');
-        }}
-        getToken={() => {
-          return localStorage.getItem('token');
-        }}
-      >
+    <AuthProvider
+      saveToken={(token) => {
+        localStorage.setItem('token', token);
+      }}
+      removeToken={() => {
+        localStorage.removeItem('token');
+      }}
+      getToken={() => {
+        return localStorage.getItem('token');
+      }}
+    >
+      <ApiProvider apiUrl="/api">
         <NextUIProvider>
           {children}
         </NextUIProvider>
-      </AuthProvider>
-    </ApiProvider>
+      </ApiProvider>
+    </AuthProvider>
   )
 }
 
