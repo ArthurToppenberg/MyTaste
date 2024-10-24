@@ -9,7 +9,6 @@ const Admin: React.FC = () => {
     return (
         <SidebarRouterProvider
             tabs={[
-                { key: 'overview', component: <div>Overview</div> },
                 { key: 'features', component: <Features /> },
             ]}
             initialTab='features'
@@ -19,6 +18,8 @@ const Admin: React.FC = () => {
                     <Sidebar title='Admin'>
                         <SidebarButton name='Overview' tab='overview' />
                         <SidebarButton name='Features' tab='features' />
+                        <SidebarButton name='Prompts' tab='prompts' />
+                        <SidebarButton name='Wheights' tab='wheights' />
                     </Sidebar>
                 }
                 rightComponent={

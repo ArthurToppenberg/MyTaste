@@ -19,12 +19,12 @@ const Features: React.FC = () => {
 
     return (
         <div className={style.container}>
-            <TableToolbar addButtonName='Add Feature' />
+            <TableToolbar addButtonName='Create New Feature' onRefresh={() => {}}/>
             <CustomTable
                 columns={[
-                    { name: 'Name', key: 'name' },
-                    { name: 'Min', key: 'min' },
-                    { name: 'Max', key: 'max' },
+                    { name: 'Feature', key: 'name' },
+                    { name: 'Minimum Value', key: 'min' },
+                    { name: 'Maximum Value', key: 'max' },
                 ]}
                 data={[
                     { name: 'Feature 1', min: 0, max: 10 },
