@@ -118,7 +118,7 @@
 }
 
 /* Media query for devices with a max width of 480px (mobile phones) */
-@media (max-width: 480px) {
+/* @media (max-width: 480px) {
   .hero_container {
     padding-left: 1rem;
     align-items: center;
@@ -146,4 +146,4 @@
     margin: 0;
     height: 600px;
   }
-}
+} */

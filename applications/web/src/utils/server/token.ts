@@ -2,13 +2,14 @@ import jwt from 'jsonwebtoken';
 import { NextApiRequest } from 'next'; // Import NextApiRequest type from Next.js
 import logger from './logger';
 
-interface TokenData {
+export interface TokenData {
     account_id: number;
 }
 
 // Extract token from request headers
 export const extractTokenFromRequest = (request: NextApiRequest): string | null => {
-    const token: string = request.body.headers['Token'] as string;
+    const token = request.headers.token as string;
+
     if (!token) {
         logger.error('Token not found in request');
         return null;

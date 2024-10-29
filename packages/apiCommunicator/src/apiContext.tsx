@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo } from "react";
+import React, { createContext, useContext, useEffect, useMemo } from "react";
 
 import { useAuthContext } from "@packages/authProvider";
 
@@ -6,6 +6,7 @@ import { useAuthContext } from "@packages/authProvider";
 import Login, { LoginProps, LoginResponse } from "./interactions/login";
 import Signup, { SignupProps, SignupResponse } from "./interactions/signup";
 import Account, { AccountProps, AccountResponse } from "./interactions/account";
+import Feature, { FeatureProps, FeatureResponse } from "./interactions/feature";
 
 interface ApiProviderProps {
     children: React.ReactNode;
@@ -24,16 +25,19 @@ const ApiContext = createContext({
     api_login: (props: LoginProps) => Promise.resolve({} as LoginResponse),
     api_signup: (props: SignupProps) => Promise.resolve({} as SignupResponse),
     api_auth_account: (props: AccountProps) => Promise.resolve({} as AccountResponse),
+    api_auth_feature: (props: FeatureProps) => Promise.resolve({} as FeatureResponse),
 });
 
 const ApiProvider = ({ children, apiUrl }: ApiProviderProps) => {
 
     const { token, updateToken } = useAuthContext();
+    const [loading, setLoading] = React.useState(true);
 
     // Define the functions to be passed to the context value
-    const login = (props: LoginProps) => Login({ apiUrl, token: token, updateToken, props });
-    const signup = (props: SignupProps) => Signup({ apiUrl, token: token, updateToken, props });
-    const account = (props: AccountProps) => Account({ apiUrl, token: token, updateToken, props });
+    const login = (props: LoginProps) => Login({ loading: loading, apiUrl, token: token, updateToken, props });
+    const signup = (props: SignupProps) => Signup({ loading: loading, apiUrl, token: token, updateToken, props });
+    const account = (props: AccountProps) => Account({ loading: loading, apiUrl, token: token, updateToken, props });
+    const feature = (props: FeatureProps) => Feature({ loading: loading, apiUrl, token: token, updateToken, props });
 
     // Memoize the context value to avoid unnecessary re-renders
     const contextValue = useMemo(
@@ -41,9 +45,16 @@ const ApiProvider = ({ children, apiUrl }: ApiProviderProps) => {
             api_login: login,
             api_signup: signup,
             api_auth_account: account,
+            api_auth_feature: feature,
         }),
         [apiUrl, token] // Depend on apiUrl and token to update when either changes
     );
+
+    useEffect(() => {
+        if (token != null) {
+            setLoading(true);
+        }
+    }, [token]);
 
     return (
         <ApiContext.Provider value={contextValue}>

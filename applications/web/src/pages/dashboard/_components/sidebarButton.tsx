@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Image } from '@nextui-org/react';
+import { Button } from '@nextui-org/react';
 import { useSidebarRouter } from '../_contexts/sidebarRouterContext';
 import NextImage from 'next/image';
 

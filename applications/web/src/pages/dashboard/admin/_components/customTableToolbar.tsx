@@ -12,13 +12,13 @@ const TableToolbar: React.FC<TableToolbarProps> = ({ addButtonName, onRefresh}) 
     return (
         <div className="flex flex-row gap-4">
             <div style={{ marginRight: 'auto' }}>
-                <Button color="primary" endContent={<AddIcon />}>
+                <Button color="secondary" endContent={<AddIcon />}>
                     {addButtonName}
                 </Button>
             </div>
             {onRefresh && (
                 <div style={{ marginLeft: 'auto', alignSelf: 'flex-end' }}>
-                    <Button color="primary" endContent={<RefreshIcon />} onClick={onRefresh}>
+                    <Button color="secondary" endContent={<RefreshIcon />} onClick={onRefresh}>
                         Refresh
                     </Button>
                 </div>

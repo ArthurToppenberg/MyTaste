@@ -17,7 +17,7 @@ import React, { useState } from "react";
 import fonts from "@/styles/fonts.module.css";
 
 import NavigationDropdown from "./navigationDropdown";
-import AccountDropdown from "./accountDropdown";
+import ManageDropdown from "./manageDropdown";
 
 const NavBar: React.FC = () => {
     const router = useRouter();
@@ -75,7 +75,7 @@ const NavBar: React.FC = () => {
 
                 {/* Buttons for login and signup or profile name - hidden on small screens */}
                 <NavbarContent justify="end" className="hidden sm:flex">
-                    <AccountDropdown
+                    <ManageDropdown
                         noAccountFoundContent={
                             <>
                                 <NavbarItem>
@@ -113,7 +113,7 @@ const NavBar: React.FC = () => {
                         ))}
 
                         {/* Mobile user options with dropdown */}
-                        <AccountDropdown
+                        <ManageDropdown
                             noAccountFoundContent={
                                 <>
                                     <NavbarItem>

@@ -8,11 +8,11 @@ import { AccountResponse } from "@packages/apiCommunicator/src/interactions/acco
 import { useApiContext, ResponseType } from "@packages/apiCommunicator";
 import { useAuthContext } from '@packages/authProvider';
 
-interface AccountDropdownProps {
+interface ManageDropdownProps {
     noAccountFoundContent: React.ReactNode;
 }
 
-const AccountDropdown: React.FC<AccountDropdownProps> = ({ noAccountFoundContent }) => {
+const ManageDropdown: React.FC<ManageDropdownProps> = ({ noAccountFoundContent }) => {
     const router = useRouter();
     const handleNav = (path: string) => {
         router.push(path);
@@ -95,7 +95,7 @@ const AccountDropdown: React.FC<AccountDropdownProps> = ({ noAccountFoundContent
                 <Dropdown>
                     <DropdownTrigger>
                         <Button variant="light">
-                            <p className={`${fonts.text}`} style={{ fontSize: '1rem', textAlign: "center" }}>Account</p>
+                            <p className={`${fonts.text}`} style={{ fontSize: '1rem', textAlign: "center" }}>Manage</p>
                             <Image src="/icons/settings.png" alt="settings" width={14} height={14} style={{ filter: 'invert(1)' }} />
                         </Button>
                     </DropdownTrigger>
@@ -132,4 +132,4 @@ const AccountDropdown: React.FC<AccountDropdownProps> = ({ noAccountFoundContent
     );
 };
 
-export default AccountDropdown;
+export default ManageDropdown;

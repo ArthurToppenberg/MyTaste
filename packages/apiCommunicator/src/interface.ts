@@ -11,6 +11,7 @@ export interface IResponse{
 }
 
 export interface IRequest{
+    loading: boolean;
     apiUrl: string;
     token: string | null;
     updateToken: (token: string) => void;

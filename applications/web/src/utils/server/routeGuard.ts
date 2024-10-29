@@ -1,16 +1,8 @@
-/*
-
-    1. Gets the token
-    2. Gets the account
-    
-*/
-
 import Prisma from '../../utils/server/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { getTokenData, TokenData } from '@/utils/server/token';
 
-import { getTokenData } from '@/utils/server/token';
-
-interface RouteGuardProps{
+interface RouteGuardProps {
     req: NextApiRequest;
     res: NextApiResponse;
     allowClient?: boolean;
@@ -18,41 +10,37 @@ interface RouteGuardProps{
     allowAdmin?: boolean;
 }
 
-const routeGuard = async ({ req, res, allowClient, allowRestaurant, allowAdmin }: RouteGuardProps): Promise<void> => {
+const routeGuard = async ({
+    req,
+    allowClient,
+    allowRestaurant,
+    allowAdmin,
+}: RouteGuardProps): Promise<TokenData> => {
     const token = await getTokenData(req);
 
-    if(!token || token === null || token === undefined){
+    if (!token) {
         return Promise.reject('Token not found');
     }
 
     const account = await Prisma.account.findFirst({
-        where: {
-            id: token.account_id
-        },
-        select: {
-            client: true,
-            restaurant: true,
-            admin: true
-        }
+        where: { id: token.account_id },
+        select: { client: true, restaurant: true, admin: true },
     });
 
-    if(!account || account === null || account === undefined){
+    if (!account) {
         return Promise.reject('Account not found');
     }
 
-    if(account.client && allowClient){
-        return;
+    const hasPermission =
+        (account.client && allowClient) ||
+        (account.restaurant && allowRestaurant) ||
+        (account.admin && allowAdmin);
+
+    if (!hasPermission) {
+        return Promise.reject('Access denied');
     }
 
-    if(account.restaurant && allowRestaurant){
-        return;
-    }
-
-    if(account.admin && allowAdmin){
-        return;
-    }
-
-    return;
-}
+    return token as TokenData;
+};
 
 export default routeGuard;

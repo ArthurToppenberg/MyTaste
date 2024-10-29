@@ -54,7 +54,7 @@ const Account = async ({ apiUrl, token, updateToken, props }: IRequest): Promise
     const absolureUrl = path.join(apiUrl, relativeUrl);
 
     const headers = Header({ token: token || "" });
-    const response = await axios.post(absolureUrl, { headers }).catch((error) => {
+    const response = await axios.post(absolureUrl, {}, { headers }).catch((error) => {
         if (error.response.status === 404) {
            return response_failed_connection;
         }
