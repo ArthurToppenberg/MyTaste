@@ -82,7 +82,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         //max > min
-        if (parseFloat(setProps.max) < parseFloat(setProps.min)) {
+        if (parseFloat(setProps.max) <= parseFloat(setProps.min)) {
             return res.status(200).json(response_incorrect_usage);
         }
 
