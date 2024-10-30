@@ -29,7 +29,7 @@ const NavBar: React.FC = () => {
     };
 
     const centerNavigationLinks = [
-        { label: "Home", path: "/" },
+        { label: "Home", url: "/" },
         {
             label: "Services",
             path: "/",
@@ -38,8 +38,8 @@ const NavBar: React.FC = () => {
                 { name: "Link 2", url: "/"},
             ]} />
         },
-        { label: "About Us", path: "/" },
-        { label: "Contact", path: "/" }
+        { label: "About Us", url: "/" },
+        { label: "Contact", url: "/" }
     ];
 
     return (
@@ -105,7 +105,7 @@ const NavBar: React.FC = () => {
                                 {item.component ? (
                                     item.component
                                 ) : (
-                                    <Link color="foreground" onClick={() => handleNav(item.path)}>
+                                    <Link color="foreground" onClick={() => handleNav(item.url)}>
                                         <p className={`${fonts.text}`}>{item.label}</p>
                                     </Link>
                                 )}

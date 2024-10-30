@@ -1,4 +1,4 @@
-import { Button } from '@nextui-org/react';
+import { Button, Card, CardBody, CardHeader } from '@nextui-org/react';
 import React from 'react';
 import AddIcon from './addIcon';
 import RefreshIcon from './refreshIcon';
@@ -8,22 +8,22 @@ export interface TableToolbarProps {
     onRefresh?: () => void
 }
 
-const TableToolbar: React.FC<TableToolbarProps> = ({ addButtonName, onRefresh}) => {
+const TableToolbar: React.FC<TableToolbarProps> = ({ addButtonName, onRefresh }) => {
     return (
-        <div className="flex flex-row gap-4">
-            <div style={{ marginRight: 'auto' }}>
+        <Card>
+            <CardBody>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Button color="secondary" endContent={<AddIcon />}>
                     {addButtonName}
                 </Button>
-            </div>
-            {onRefresh && (
-                <div style={{ marginLeft: 'auto', alignSelf: 'flex-end' }}>
+                {onRefresh && (
                     <Button color="secondary" endContent={<RefreshIcon />} onClick={onRefresh}>
                         Refresh
                     </Button>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
+            </CardBody>
+        </Card>
     );
 };
 

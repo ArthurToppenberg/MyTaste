@@ -1,0 +1,18 @@
+.container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    background-color: var(--color-dark);
+    box-shadow: 0 2px 4px 0 rgba(0,0,0,.1);
+}
+
+.item_center{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-inline: auto;
+    color: var(--color-light);
+    font-size: 1.5rem;
+    
+}

@@ -3,13 +3,22 @@ import axios from "axios";
 import path from "path";
 import Header from "../components/header";
 
+export interface FeatureSetProps {
+    id: number;
+    name: string;
+    min: string;
+    max: string;
+}
+
 export interface FeatureProps {
     get?: boolean;
-    set?: boolean;
+    set?: FeatureSetProps;
 }
 
 export interface FeatureResponse extends IResponse {
     features: any | null; // Table of features
+    feature: any | null; // Single feature
+    message?: string;
 }
 
 const Feature = async ({ apiUrl, token, updateToken, props }: IRequest): Promise<FeatureResponse> => {
@@ -18,7 +27,8 @@ const Feature = async ({ apiUrl, token, updateToken, props }: IRequest): Promise
         errorMessage: "Can't connect to the server",
         authed: false,
         token: null,
-        features: null
+        features: null,
+        feature: null,
     }
 
     const response_invalid_token: FeatureResponse = {
@@ -26,7 +36,8 @@ const Feature = async ({ apiUrl, token, updateToken, props }: IRequest): Promise
         errorMessage: "Invalid token",
         authed: false,
         token: null,
-        features: null
+        features: null,
+        feature: null,
     }
 
     const response_no_token_provided: FeatureResponse = {
@@ -34,7 +45,8 @@ const Feature = async ({ apiUrl, token, updateToken, props }: IRequest): Promise
         errorMessage: "No token provided",
         authed: false,
         token: null,
-        features: null
+        features: null,
+        feature: null,
     }
 
     if(!token || token === "" || token === null || token === undefined) {

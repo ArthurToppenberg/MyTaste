@@ -6,8 +6,8 @@ export enum ResponseType{
 export interface IResponse{
     type: ResponseType;
     authed: boolean;
-    errorMessage?: string;
     token: string | null;
+    errorMessage?: string;
 }
 
 export interface IRequest{

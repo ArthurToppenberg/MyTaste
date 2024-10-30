@@ -11,15 +11,19 @@ import {
   Tooltip,
   Skeleton,
 } from "@nextui-org/react";
-import NextImage from "next/image"; 
+import NextImage from "next/image";
+
+interface RowData {
+  id?: number | string;
+  [key: string]: any;
+}
 
 interface TableProps {
   columns: { name: string; key: string }[];
-  data: { [key: string]: string | number }[];
-  editAction?: (row: { [key: string]: string | number }) => void;
-  deleteAction?: (row: { [key: string]: string | number }) => void;
-  saveAction?: (row: { [key: string]: string | number }) => void;
-  loading?: boolean; // Added loading prop
+  data: RowData[];
+  deleteAction?: (row: RowData) => void;
+  saveAction?: (row: RowData) => Promise<string>;
+  loading?: boolean;
 }
 
 /**
@@ -27,7 +31,6 @@ interface TableProps {
  *
  * @param columns - Array of column objects with 'name' and 'key'. The 'key' should match the key in data to be displayed in the table.
  * @param data - Array of data objects where each key corresponds to a column key. The 'id' key in data will be used as the table row key if provided.
- * @param editAction - Optional function to handle edit actions for a row.
  * @param deleteAction - Optional function to handle delete actions for a row.
  * @param saveAction - Optional function to handle save actions for a row.
  * @param loading - Boolean flag to display a loading skeleton when true.
@@ -37,34 +40,104 @@ interface TableProps {
 const CustomTable: React.FC<TableProps> = ({
   columns,
   data,
-  editAction,
   deleteAction,
   saveAction,
-  loading = false, // Default loading to false
+  loading = false,
 }) => {
+  const [tableData, setTableData] = React.useState<RowData[]>(data);
+  const [editingRowId, setEditingRowId] = React.useState<number | string | null>(null);
+  const [editedRowData, setEditedRowData] = React.useState<RowData>({});
+  const [prevTableData, setPrevTableData] = React.useState<RowData[]>([]);
+  const [messages, setMessages] = React.useState<
+    Record<string, { message: string; type: "success" | "error" }>
+  >({});
+
+  React.useEffect(() => {
+    setTableData(data);
+    setPrevTableData(data);
+  }, [data]);
+
   // Add the actions column if any action prop is provided
   const modifiedColumns = React.useMemo(() => {
-    if (editAction || deleteAction || saveAction) {
-      return [...columns, { name: "Actions", key: "actions" }];
+    let cols = [...columns];
+    if (deleteAction || saveAction) {
+      cols = [...cols, { name: "Actions", key: "actions" }];
     }
-    return columns;
-  }, [columns, editAction, deleteAction, saveAction]);
+    return cols;
+  }, [columns, deleteAction, saveAction]);
+
+  const onEdit = (row: RowData, rowIndex: number) => {
+    const rowKey = row.id !== undefined ? row.id : `row-${rowIndex}`;
+    setEditingRowId(rowKey);
+    setEditedRowData({ ...row });
+  };
+
+  const onSave = () => {
+    setTableData((prevData) =>
+      prevData.map((row, index) => {
+        const rowKey = row.id !== undefined ? row.id : `row-${index}`;
+        if (rowKey === editingRowId) {
+          return editedRowData;
+        }
+        return row;
+      })
+    );
+    if (saveAction) {
+      saveAction(editedRowData)
+        .then((message) => {
+          setMessages((prevMessages) => ({
+            ...prevMessages,
+            [editedRowData.id as string]: { message, type: "success" },
+          }));
+          setPrevTableData(tableData);
+
+          // Remove the message after 5 seconds
+          setTimeout(() => {
+            setMessages((prevMessages) => {
+              const newMessages = { ...prevMessages };
+              delete newMessages[editedRowData.id as string];
+              return newMessages;
+            });
+          }, 5000);
+        })
+        .catch((error) => {
+          setMessages((prevMessages) => ({
+            ...prevMessages,
+            [editedRowData.id as string]: { message: error.toString(), type: "error" },
+          }));
+          setTableData(prevTableData);
+
+          // Remove the message after 5 seconds
+          setTimeout(() => {
+            setMessages((prevMessages) => {
+              const newMessages = { ...prevMessages };
+              delete newMessages[editedRowData.id as string];
+              return newMessages;
+            });
+          }, 5000);
+        });
+    }
+    setEditingRowId(null);
+    setEditedRowData({});
+  };
 
   return (
     <div
       style={{
         maxHeight: "calc(100vh - 200px)",
         maxWidth: "100%",
-        overflow: "auto", // Changed from 'scroll' to 'auto'
+        overflow: "auto",
         borderRadius: "1rem",
       }}
     >
       <Table
         isHeaderSticky
+        isCompact
         classNames={{
-          base: "max-h-[520px] overflow-auto", // Changed from 'overflow-scroll' to 'overflow-auto'
+          base: "overflow-auto",
           table: "min-h-[400px]",
         }}
+        aria-label="Custom Table"
       >
         <TableHeader>
           {modifiedColumns.map((col, index) => (
@@ -79,7 +152,9 @@ const CustomTable: React.FC<TableProps> = ({
               <TableRow key={`skeleton-row-${rowIndex}`}>
                 {modifiedColumns.map((col, colIndex) => (
                   <TableCell key={`skeleton-cell-${rowIndex}-${colIndex}`}>
-                    <Skeleton style={{ width: "100%", height: "1.5rem", borderRadius: '1rem' }} />
+                    <Skeleton
+                      style={{ width: "100%", height: "1.5rem", borderRadius: "1rem" }}
+                    />
                   </TableCell>
                 ))}
               </TableRow>
@@ -87,70 +162,97 @@ const CustomTable: React.FC<TableProps> = ({
           </TableBody>
         ) : (
           <TableBody>
-            {data.map((row, rowIndex) => (
-              <TableRow
-                key={row.id !== undefined ? row.id : `row-${rowIndex}`} // Use 'id' as key if available
-              >
-                {modifiedColumns.map((col, colIndex) => (
-                  <TableCell key={`cell-${rowIndex}-${colIndex}`}>
-                    {col.key === "actions" ? (
-                      <div style={{ display: "flex", gap: "8px", cursor: 'pointer' }}>
-                        {editAction && (
-                          <Tooltip content="Edit" placement="top">
-                            <Chip onClick={() => editAction(row)}>
-                              <Image
-                                as={NextImage}
-                                src="/icons/settings.png"
-                                width={15}
-                                height={15}
-                                alt="settings icon"
-                                style={{ borderRadius: "0" }}
-                              />
-                            </Chip>
-                          </Tooltip>
-                        )}
-                        {saveAction && (
-                          <Tooltip content="Save" placement="top">
-                            <Chip
-                              color="success"
-                              onClick={() => saveAction(row)}
+            {tableData.map((row, rowIndex) => {
+              const rowKey = row.id !== undefined ? row.id : `row-${rowIndex}`;
+              return (
+                <TableRow key={rowKey}>
+                  {modifiedColumns.map((col, colIndex) => (
+                    <TableCell key={`cell-${rowIndex}-${colIndex}`}>
+                      {col.key === "actions" ? (
+                        <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                          {saveAction && editingRowId !== rowKey && (
+                            <Tooltip content="Edit" placement="left">
+                              <Chip onClick={() => onEdit(row, rowIndex)}>
+                                <Image
+                                  as={NextImage}
+                                  src="/icons/edit.png"
+                                  width={15}
+                                  height={15}
+                                  alt="edit icon"
+                                  style={{ borderRadius: "0" }}
+                                />
+                              </Chip>
+                            </Tooltip>
+                          )}
+                          {saveAction && editingRowId === rowKey && (
+                            <Tooltip content="Save" placement="left">
+                              <Chip color="success" onClick={onSave}>
+                                <Image
+                                  as={NextImage}
+                                  src="/icons/save.png"
+                                  width={15}
+                                  height={15}
+                                  alt="save icon"
+                                  style={{ borderRadius: "0" }}
+                                />
+                              </Chip>
+                            </Tooltip>
+                          )}
+                          {deleteAction && (
+                            <Tooltip content="Delete" placement="right">
+                              <Chip color="danger" onClick={() => deleteAction(row)}>
+                                <Image
+                                  as={NextImage}
+                                  src="/icons/delete.png"
+                                  width={15}
+                                  height={15}
+                                  alt="delete icon"
+                                  style={{ borderRadius: "0" }}
+                                />
+                              </Chip>
+                            </Tooltip>
+                          )}
+                          {/* Display the message as a Tooltip */}
+                          {messages[row.id as string] && (
+                            <Tooltip
+                              content={messages[row.id as string].message}
+                              color={
+                                messages[row.id as string].type === "error"
+                                  ? "danger"
+                                  : "success"
+                              }
+                              placement="right"
+                              isOpen
                             >
-                              <Image
-                                as={NextImage}
-                                src="/icons/save.png"
-                                width={15}
-                                height={15}
-                                alt="save icon"
-                                style={{ borderRadius: "0" }}
-                              />
-                            </Chip>
-                          </Tooltip>
-                        )}
-                        {deleteAction && (
-                          <Tooltip content="Delete" placement="top">
-                            <Chip
-                              color="danger"
-                              onClick={() => deleteAction(row)}
-                            >
-                              <Image
-                                as={NextImage}
-                                src="/icons/delete.png"
-                                width={15}
-                                height={15}
-                                alt="delete icon"
-                                style={{ borderRadius: "0" }}
-                              />
-                            </Chip>
-                          </Tooltip>
-                        )}
-                      </div>
-                    ) : (
-                      row[col.key]
-                    )}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
+                              <span></span>
+                            </Tooltip>
+                          )}
+                        </div>
+                      ) : editingRowId === rowKey ? (
+                        <input
+                          type="text"
+                          value={editedRowData[col.key]}
+                          onChange={(e) =>
+                            setEditedRowData({
+                              ...editedRowData,
+                              [col.key]: e.target.value,
+                            })
+                          }
+                          style={{
+                            width: "100%",
+                            padding: "0.5rem",
+                            borderRadius: "0.25rem",
+                            border: "1px solid #ccc",
+                          }}
+                        />
+                      ) : (
+                        row[col.key]
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })}
           </TableBody>
         )}
       </Table>
