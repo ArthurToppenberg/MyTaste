@@ -15,7 +15,7 @@ import NextImage from "next/image";
 
 interface RowData {
   id?: number | string;
-  [key: string]: any;
+  [key: string]: number | string | undefined;
 }
 
 interface TableProps {

@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardHeader } from '@nextui-org/react';
+import { Button, Card, CardBody } from '@nextui-org/react';
 import React from 'react';
 import AddIcon from './addIcon';
 import RefreshIcon from './refreshIcon';

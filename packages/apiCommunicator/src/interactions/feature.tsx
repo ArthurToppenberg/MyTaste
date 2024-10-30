@@ -13,6 +13,7 @@ export interface FeatureSetProps {
 export interface FeatureProps {
     get?: boolean;
     set?: FeatureSetProps;
+    delete?: number;
 }
 
 export interface FeatureResponse extends IResponse {

@@ -5,7 +5,6 @@ import {encryptToken} from '@/utils/server/token';
 
 import { ResponseType } from '@packages/apiCommunicator';
 import { LoginProps, LoginResponse } from '@packages/apiCommunicator/src/interactions/login';
-import logger from '@/utils/server/logger';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     

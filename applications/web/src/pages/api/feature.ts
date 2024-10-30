@@ -121,6 +121,49 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(200).json(response);
     }
 
+    const delete_feature = async (): Promise<void> => {
+        let deleteId: number;
+
+        try {
+            deleteId = req.body.delete;
+        } catch (error) {
+            return res.status(200).json(response_incorrect_usage);
+        }
+
+        if (!deleteId) {
+            return res.status(200).json(response_incorrect_usage);
+        }
+
+        let feature;
+
+        try {
+            feature = await Prisma.features.delete({
+                where: { id: deleteId }
+            });
+        } catch (error) {
+            logger.error('Error in deleting feature', error);
+            return res.status(200).json(response_internal_server_error);
+        }
+
+        const token: string | undefined = await renewToken(req);
+
+        if (!token) {
+            logger.error('In accounts, unable to renew token');
+            return res.status(200).json(response_internal_server_error);
+        }
+
+        const response: FeatureResponse = {
+            type: ResponseType.ok,
+            authed: true,
+            token,
+            features: null,
+            feature: feature,
+            message: "Feature succsessfully deleted"
+        }
+
+        return res.status(200).json(response);
+    }
+
     try {
         const props: FeatureProps = req.body;
 
@@ -128,6 +171,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return get_features();
         } else if (props.set) {
             return set_feature();
+        }else if (props.delete) {
+            return delete_feature();
         } else {
             return res.status(200).json(response_incorrect_usage);
         }

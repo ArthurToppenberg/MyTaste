@@ -6,43 +6,69 @@ import { ResponseType, useApiContext } from '@packages/apiCommunicator';
 import { useRouter } from 'next/router';
 import { useAuthContext } from '@packages/authProvider';
 import Header from '../../_components/header';
+import { Button, Modal, ModalBody, ModalContent, ModalFooter, ModalHeader, useDisclosure } from '@nextui-org/react';
 
 const Features: React.FC = () => {
     const router = useRouter();
     const { api_auth_feature } = useApiContext();
     const { token } = useAuthContext();
 
-    const handleDelete = (row: { [key: string]: string | number }) => {
-        console.log("Delete action triggered for:", row);
+    const handleDelete = (row: { [key: string]: string | number | undefined }) => {
+        setSelectedRow(row);
+        onOpen();
     };
 
-    const handleSave = async (row: { [key: string]: string | number }): Promise<string> => {
-        const response = await api_auth_feature({ set: { id: row.id as number, name: row.name.toString(), min: row.min.toString(), max: row.max.toString() } });
+    const [selectedRow, setSelectedRow] = useState<{ [key: string]: string | number | undefined }>({});
+
+    const deleteFeature = async (): Promise<string> => {
+        const response = await api_auth_feature({ delete: selectedRow.id as number });
 
         if (response.type === ResponseType.error) {
-            return Promise.reject(response.errorMessage || 'An error occured but no error message was provided'); 
+            return Promise.reject(response.errorMessage || 'An error occured but no error message was provided');
         }
 
         if (response.type === ResponseType.ok && response.authed === false) {
             router.push('/landing/login');
-            return Promise.reject(response.errorMessage || 'An error occured but no error message was provided'); 
+            return Promise.reject(response.errorMessage || 'An error occured but no error message was provided');
         }
-        
+
         if (response.type === ResponseType.ok && response.feature) {
-           //update the response feature in the features state, but only update the single feature that was changed
-              setFeatures((prev) => {
+            //remove feature from the features state
+            setFeatures((prev) => {
+                return prev.filter((feature) => feature.id !== response.feature?.id);
+            });
+        }
+
+        return response.message || 'No message was provided';
+    };
+
+    const handleSave = async (row: { [key: string]: string | number | undefined }): Promise<string> => {
+        const response = await api_auth_feature({ set: { id: row.id as number, name: row.name?.toString() || '', min: row.min?.toString() || '', max: row.max?.toString() || '' } });
+
+        if (response.type === ResponseType.error) {
+            return Promise.reject(response.errorMessage || 'An error occured but no error message was provided');
+        }
+
+        if (response.type === ResponseType.ok && response.authed === false) {
+            router.push('/landing/login');
+            return Promise.reject(response.errorMessage || 'An error occured but no error message was provided');
+        }
+
+        if (response.type === ResponseType.ok && response.feature) {
+            //update the response feature in the features state, but only update the single feature that was changed
+            setFeatures((prev) => {
                 return prev.map((feature) => {
-                     if (feature.id === response.feature?.id) {
-                          return {
+                    if (feature.id === response.feature?.id) {
+                        return {
                             id: response.feature.id,
                             name: response.feature.name,
                             min: response.feature.min,
                             max: response.feature.max
-                          };
-                     }
-                     return feature;
+                        };
+                    }
+                    return feature;
                 });
-              });
+            });
         }
 
         return response.message || 'No message was provided';
@@ -58,7 +84,7 @@ const Features: React.FC = () => {
 
     const [features, setFeatures] = useState<Feature[]>([]);
 
-    const fetchData = async () => {
+    const fetchData = React.useCallback(async () => {
         const response = await api_auth_feature({ get: true });
 
         if (response.type === ResponseType.error) {
@@ -74,14 +100,16 @@ const Features: React.FC = () => {
             setFeatures(response.features);
             return;
         }
-    };
+    }, [api_auth_feature, router]);
 
     useEffect(() => {
         //Fetch the data only on the inital load
         if (features.length === 0) {
             fetchData();
         }
-    }, [token]);
+    }, [token, features.length]);
+
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     return (
         <>
@@ -105,9 +133,29 @@ const Features: React.FC = () => {
                     deleteAction={handleDelete}
                     saveAction={handleSave}
                     loading={features.length === 0}
-                    
+
                 />
             </div>
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                <ModalContent>
+                    {(onClose) => (
+                        <>
+                            <ModalHeader>Delete Feature</ModalHeader>
+                            <ModalBody>
+                                <p>Are you sure you want to delete this feature?</p>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="danger" variant="light" onPress={onClose}>
+                                    Close
+                                </Button>
+                                <Button color="primary" onPress={async () => { await deleteFeature(); onClose(); }}>
+                                    Yes
+                                </Button>
+                            </ModalFooter>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
         </>
     );
 };
