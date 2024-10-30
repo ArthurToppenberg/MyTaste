@@ -10,6 +10,7 @@ import {
   Chip,
   Tooltip,
   Skeleton,
+  Spinner,
 } from "@nextui-org/react";
 import NextImage from "next/image";
 
@@ -45,12 +46,17 @@ const CustomTable: React.FC<TableProps> = ({
   loading = false,
 }) => {
   const [tableData, setTableData] = React.useState<RowData[]>(data);
-  const [editingRowId, setEditingRowId] = React.useState<number | string | null>(null);
+  const [editingRowId, setEditingRowId] = React.useState<number | string | null>(
+    null
+  );
   const [editedRowData, setEditedRowData] = React.useState<RowData>({});
   const [prevTableData, setPrevTableData] = React.useState<RowData[]>([]);
   const [messages, setMessages] = React.useState<
     Record<string, { message: string; type: "success" | "error" }>
   >({});
+  const [isSavingRowId, setIsSavingRowId] = React.useState<
+    number | string | null
+  >(null);
 
   React.useEffect(() => {
     setTableData(data);
@@ -63,7 +69,7 @@ const CustomTable: React.FC<TableProps> = ({
     if (deleteAction || saveAction) {
       cols = [...cols, { name: "Actions", key: "actions" }];
     }
-    return cols;  
+    return cols;
   }, [columns, deleteAction, saveAction]);
 
   const onEdit = (row: RowData, rowIndex: number) => {
@@ -73,15 +79,7 @@ const CustomTable: React.FC<TableProps> = ({
   };
 
   const onSave = () => {
-    setTableData((prevData) =>
-      prevData.map((row, index) => {
-        const rowKey = row.id !== undefined ? row.id : `row-${index}`;
-        if (rowKey === editingRowId) {
-          return editedRowData;
-        }
-        return row;
-      })
-    );
+    setIsSavingRowId(editingRowId);
     if (saveAction) {
       saveAction(editedRowData)
         .then((message) => {
@@ -90,6 +88,17 @@ const CustomTable: React.FC<TableProps> = ({
             [editedRowData.id as string]: { message, type: "success" },
           }));
           setPrevTableData(tableData);
+
+          // Update tableData with the editedRowData
+          setTableData((prevData) =>
+            prevData.map((row, index) => {
+              const rowKey = row.id !== undefined ? row.id : `row-${index}`;
+              if (rowKey === editingRowId) {
+                return editedRowData;
+              }
+              return row;
+            })
+          );
 
           // Remove the message after 5 seconds
           setTimeout(() => {
@@ -103,7 +112,10 @@ const CustomTable: React.FC<TableProps> = ({
         .catch((error) => {
           setMessages((prevMessages) => ({
             ...prevMessages,
-            [editedRowData.id as string]: { message: error.toString(), type: "error" },
+            [editedRowData.id as string]: {
+              message: error.toString(),
+              type: "error",
+            },
           }));
           setTableData(prevTableData);
 
@@ -115,25 +127,44 @@ const CustomTable: React.FC<TableProps> = ({
               return newMessages;
             });
           }, 5000);
+        })
+        .finally(() => {
+          setIsSavingRowId(null);
+          setEditingRowId(null);
+          setEditedRowData({});
         });
+    } else {
+      // If no saveAction provided, just update the tableData and reset editing state
+      setTableData((prevData) =>
+        prevData.map((row, index) => {
+          const rowKey = row.id !== undefined ? row.id : `row-${index}`;
+          if (rowKey === editingRowId) {
+            return editedRowData;
+          }
+          return row;
+        })
+      );
+      setIsSavingRowId(null);
+      setEditingRowId(null);
+      setEditedRowData({});
     }
-    setEditingRowId(null);
-    setEditedRowData({});
   };
 
   return (
     <Table
-      isHeaderSticky
       isCompact
       classNames={{
         base: "max-h-[calc(100vh-200px)] overflow-auto scrollbar-hide",
-        // Removed the min-h-[420px] to prevent rows from stretching
       }}
       aria-label="Custom Table"
+      style={{ tableLayout: "fixed", width: "100%" }} // Added tableLayout fixed
     >
       <TableHeader>
         {modifiedColumns.map((col, index) => (
-          <TableColumn key={`col-${index}`} style={{ minWidth: "150px" }}>
+          <TableColumn
+            key={`col-${index}`}
+            style={{ width: `${100 / modifiedColumns.length}%` }} // Set equal widths
+          >
             {col.name}
           </TableColumn>
         ))}
@@ -158,27 +189,49 @@ const CustomTable: React.FC<TableProps> = ({
             const rowKey = row.id !== undefined ? row.id : `row-${rowIndex}`;
             return (
               <TableRow key={rowKey}>
-                {modifiedColumns.map((col, colIndex) => (
-                  <TableCell key={`cell-${rowIndex}-${colIndex}`}>
-                    {col.key === "actions" ? (
-                      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                        {saveAction && editingRowId !== rowKey && (
-                          <Tooltip content="Edit" placement="left">
-                            <Chip onClick={() => onEdit(row, rowIndex)}>
-                              <Image
-                                as={NextImage}
-                                src="/icons/edit.png"
-                                width={15}
-                                height={15}
-                                alt="edit icon"
-                                style={{ borderRadius: "0" }}
-                              />
+                {modifiedColumns.map((col, colIndex) => {
+                  let cellContent;
+
+                  if (col.key === "actions") {
+                    const actionButtons: React.ReactNode[] = [];
+
+                    if (saveAction && editingRowId !== rowKey) {
+                      actionButtons.push(
+                        <Tooltip content="Edit" placement="left" key="edit">
+                          <Chip
+                            onClick={() => onEdit(row, rowIndex)}
+                            isDisabled={isSavingRowId !== null}
+                          >
+                            <Image
+                              as={NextImage}
+                              src="/icons/edit.png"
+                              width={15}
+                              height={15}
+                              alt="edit icon"
+                              style={{ borderRadius: "0" }}
+                            />
+                          </Chip>
+                        </Tooltip>
+                      );
+                    }
+
+                    if (saveAction && editingRowId === rowKey) {
+                      if (isSavingRowId === rowKey) {
+                        actionButtons.push(
+                          <Tooltip content="Saving..." placement="left" key="saving">
+                            <Chip color="success" isDisabled>
+                              <Spinner size="sm" />
                             </Chip>
                           </Tooltip>
-                        )}
-                        {saveAction && editingRowId === rowKey && (
-                          <Tooltip content="Save" placement="left">
-                            <Chip color="success" onClick={onSave}>
+                        );
+                      } else {
+                        actionButtons.push(
+                          <Tooltip content="Save" placement="left" key="save">
+                            <Chip
+                              color="success"
+                              onClick={onSave}
+                              isDisabled={isSavingRowId !== null}
+                            >
                               <Image
                                 as={NextImage}
                                 src="/icons/save.png"
@@ -189,38 +242,59 @@ const CustomTable: React.FC<TableProps> = ({
                               />
                             </Chip>
                           </Tooltip>
-                        )}
-                        {deleteAction && (
-                          <Tooltip content="Delete" placement="right">
-                            <Chip color="danger" onClick={() => deleteAction(row)}>
-                              <Image
-                                as={NextImage}
-                                src="/icons/delete.png"
-                                width={15}
-                                height={15}
-                                alt="delete icon"
-                                style={{ borderRadius: "0" }}
-                              />
-                            </Chip>
-                          </Tooltip>
-                        )}
-                        {/* Display the message as a Tooltip */}
-                        {messages[row.id as string] && (
-                          <Tooltip
-                            content={messages[row.id as string].message}
-                            color={
-                              messages[row.id as string].type === "error"
-                                ? "danger"
-                                : "success"
-                            }
-                            placement="right"
-                            isOpen
+                        );
+                      }
+                    }
+
+                    if (deleteAction) {
+                      actionButtons.push(
+                        <Tooltip content="Delete" placement="right" key="delete">
+                          <Chip
+                            color="danger"
+                            onClick={() => deleteAction(row)}
+                            isDisabled={isSavingRowId !== null}
                           >
-                            <span></span>
-                          </Tooltip>
-                        )}
+                            <Image
+                              as={NextImage}
+                              src="/icons/delete.png"
+                              width={15}
+                              height={15}
+                              alt="delete icon"
+                              style={{ borderRadius: "0" }}
+                            />
+                          </Chip>
+                        </Tooltip>
+                      );
+                    }
+
+                    // Display the message as a Tooltip
+                    if (messages[row.id as string]) {
+                      actionButtons.push(
+                        <Tooltip
+                          content={messages[row.id as string].message}
+                          color={
+                            messages[row.id as string].type === "error"
+                              ? "danger"
+                              : "success"
+                          }
+                          placement="right"
+                          isOpen
+                          key="message"
+                        >
+                          <span></span>
+                        </Tooltip>
+                      );
+                    }
+
+                    cellContent = (
+                      <div
+                        style={{ display: "flex", gap: "8px", alignItems: "center" }}
+                      >
+                        {actionButtons}
                       </div>
-                    ) : editingRowId === rowKey ? (
+                    );
+                  } else if (editingRowId === rowKey) {
+                    cellContent = (
                       <input
                         type="text"
                         value={editedRowData[col.key]}
@@ -235,13 +309,25 @@ const CustomTable: React.FC<TableProps> = ({
                           padding: "0.5rem",
                           borderRadius: "0.25rem",
                           border: "1px solid #ccc",
+                          boxSizing: "border-box", // Ensure padding doesn't exceed cell width
                         }}
+                        disabled={isSavingRowId !== null}
                       />
-                    ) : (
-                      row[col.key]
-                    )}
-                  </TableCell>
-                ))}
+                    );
+                  } else {
+                    cellContent = (
+                      <div style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+                        {row[col.key]}
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <TableCell key={`cell-${rowIndex}-${colIndex}`}>
+                      {cellContent}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             );
           })}

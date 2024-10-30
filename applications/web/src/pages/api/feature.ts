@@ -86,6 +86,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(200).json(response_incorrect_usage);
         }
 
+        //remove all spaces from the name
+        setProps.name = setProps.name.replace(/\s/g, '');
+
         let feature;
 
         try {
@@ -164,6 +167,62 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(200).json(response);
     }
 
+    const create_feature = async (): Promise<void> => {
+        let createProps: FeatureSetProps
+
+        try {
+            createProps = req.body.create;
+        } catch (error) {
+            return res.status(200).json(response_incorrect_usage);
+        }
+
+        //Do some validation here
+        if (!createProps.name || !createProps.min || !createProps.max) {
+            return res.status(200).json(response_incorrect_usage);
+        }
+
+        //max > min
+        if (parseFloat(createProps.max) <= parseFloat(createProps.min)) {
+            return res.status(200).json(response_incorrect_usage);
+        }
+
+        //remove all spaces from the name
+        createProps.name = createProps.name.replace(/\s/g, '');
+
+        let feature;
+
+        try {
+            feature = await Prisma.features.create({
+                data: {
+                    name: createProps.name,
+                    min: parseFloat(createProps.min),
+                    max: parseFloat(createProps.max)
+                }
+            });
+        } catch (error) {
+            logger.error('Error in creating feature', error);
+            return res.status(200).json(response_internal_server_error);
+        }
+
+        const token: string | undefined = await renewToken(req);
+
+        if (!token) {
+            logger.error('In accounts, unable to renew token');
+            return res.status(200).json(response_internal_server_error);
+        }
+
+        const response: FeatureResponse = {
+            type: ResponseType.ok,
+            authed: true,
+            token,
+            features: null,
+            feature: feature,
+            message: "Feature succsessfully created"
+        }
+
+        return res.status(200).json(response);
+    }
+
     try {
         const props: FeatureProps = req.body;
 
@@ -173,6 +232,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return set_feature();
         }else if (props.delete) {
             return delete_feature();
+        } else if (props.create) {
+            return create_feature();
         } else {
             return res.status(200).json(response_incorrect_usage);
         }

@@ -3,17 +3,21 @@ import axios from "axios";
 import path from "path";
 import Header from "../components/header";
 
-export interface FeatureSetProps {
-    id: number;
+export interface FeatureCreateProps {
     name: string;
     min: string;
     max: string;
+}
+
+export interface FeatureSetProps extends FeatureCreateProps {
+    id: number;
 }
 
 export interface FeatureProps {
     get?: boolean;
     set?: FeatureSetProps;
     delete?: number;
+    create?: FeatureCreateProps;
 }
 
 export interface FeatureResponse extends IResponse {
