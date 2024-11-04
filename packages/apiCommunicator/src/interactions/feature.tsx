@@ -58,7 +58,7 @@ const Feature = async ({ apiUrl, token, updateToken, props }: IRequest): Promise
         return response_no_token_provided;
     }
 
-    const relativeUrl = "/feature";
+    const relativeUrl = "/admin/feature";
     const absolureUrl = path.join(apiUrl, relativeUrl);
 
     const headers = Header({ token: token || "" });

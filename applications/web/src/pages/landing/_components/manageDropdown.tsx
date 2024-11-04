@@ -44,7 +44,7 @@ const ManageDropdown: React.FC<ManageDropdownProps> = ({ noAccountFoundContent }
 
     const accountDropdownItems = [
         {
-            label: "Admin Panel",
+            label: "Admin",
             onclick: () => handleNav('/dashboard/admin'),
             section: "dashboard",
             description: "Manage admin stuff",
@@ -60,7 +60,7 @@ const ManageDropdown: React.FC<ManageDropdownProps> = ({ noAccountFoundContent }
             show: () => account?.is_restaurant === true,
         },
         {
-            label: "Mobile Account",
+            label: "Mobile",
             onclick: () => handleNav('/dashboard/client'),
             section: "dashboard",
             description: "Manage your mobile account",

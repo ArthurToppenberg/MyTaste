@@ -7,6 +7,7 @@ import Login, { LoginProps, LoginResponse } from "./interactions/login";
 import Signup, { SignupProps, SignupResponse } from "./interactions/signup";
 import Account, { AccountProps, AccountResponse } from "./interactions/account";
 import Feature, { FeatureProps, FeatureResponse } from "./interactions/feature";
+import Accounts, { AccountsProps, AccountsResponse } from "./interactions/accounts";
 
 interface ApiProviderProps {
     children: React.ReactNode;
@@ -26,6 +27,7 @@ const ApiContext = createContext({
     api_signup: (props: SignupProps) => Promise.resolve({} as SignupResponse),
     api_auth_account: (props: AccountProps) => Promise.resolve({} as AccountResponse),
     api_auth_feature: (props: FeatureProps) => Promise.resolve({} as FeatureResponse),
+    api_auth_accounts: (props: AccountsProps) => Promise.resolve({} as AccountsResponse),
 });
 
 const ApiProvider = ({ children, apiUrl }: ApiProviderProps) => {
@@ -38,6 +40,7 @@ const ApiProvider = ({ children, apiUrl }: ApiProviderProps) => {
     const signup = (props: SignupProps) => Signup({ loading: loading, apiUrl, token: token, updateToken, props });
     const account = (props: AccountProps) => Account({ loading: loading, apiUrl, token: token, updateToken, props });
     const feature = (props: FeatureProps) => Feature({ loading: loading, apiUrl, token: token, updateToken, props });
+    const accounts = (props: AccountsProps) => Accounts({ loading: loading, apiUrl, token: token, updateToken, props });
 
     // Memoize the context value to avoid unnecessary re-renders
     const contextValue = useMemo(
@@ -46,6 +49,7 @@ const ApiProvider = ({ children, apiUrl }: ApiProviderProps) => {
             api_signup: signup,
             api_auth_account: account,
             api_auth_feature: feature,
+            api_auth_accounts: accounts,
         }),
         [apiUrl, token] // Depend on apiUrl and token to update when either changes
     );

@@ -1,5 +1,5 @@
 import logger from '@/utils/server/logger';
-import Prisma from '../../utils/server/prisma';
+import Prisma from '../../../utils/server/prisma';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import RouteGuard from '@/utils/server/routeGuard';
 
