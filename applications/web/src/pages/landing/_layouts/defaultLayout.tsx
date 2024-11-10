@@ -7,7 +7,7 @@ interface DefaultLayoutProps {
 
 const DefaultLayout: React.FC<DefaultLayoutProps> = ({ children }) => {
     return (
-        <div>
+        <div style={{display: 'flex', flexDirection: 'column'}}>
             <NavBar />
             {children}
         </div>

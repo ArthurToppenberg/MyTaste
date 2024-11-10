@@ -26,16 +26,17 @@ const HomePage: React.FC = () => {
             <p className={`${Style.topic_description} ${Fonts.text}`}>
               Coming to the app store
             </p>
-
           </div>
-          <Image
-             as={NextImage}
-            src="/images/iphone.png"
-            alt="phone mockup"
-            width={350}
-            height={750}
-            isBlurred
-          />
+          <div className={Style.image_crop_mobile}>
+            <Image
+              as={NextImage}
+              src="/images/iphone.png"
+              alt="phone mockup"
+              width={350}
+              height={750}
+              isBlurred
+            />
+          </div>
         </div>
         <div className={`${Style.container_split_right}`}>
           <div className={`${Style.container_image_collage}`}>

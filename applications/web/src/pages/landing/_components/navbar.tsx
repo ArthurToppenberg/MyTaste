@@ -17,7 +17,7 @@ import React, { useState } from "react";
 import fonts from "@/styles/fonts.module.css";
 
 import NavigationDropdown from "./navigationDropdown";
-import AccountDropdown from "./accountDropdown";
+import ManageDropdown from "./manageDropdown";
 
 const NavBar: React.FC = () => {
     const router = useRouter();
@@ -29,7 +29,7 @@ const NavBar: React.FC = () => {
     };
 
     const centerNavigationLinks = [
-        { label: "Home", path: "/" },
+        { label: "Home", url: "/" },
         {
             label: "Services",
             path: "/",
@@ -38,8 +38,8 @@ const NavBar: React.FC = () => {
                 { name: "Link 2", url: "/"},
             ]} />
         },
-        { label: "About Us", path: "/" },
-        { label: "Contact", path: "/" }
+        { label: "About Us", url: "/" },
+        { label: "Contact", url: "/" }
     ];
 
     return (
@@ -75,7 +75,7 @@ const NavBar: React.FC = () => {
 
                 {/* Buttons for login and signup or profile name - hidden on small screens */}
                 <NavbarContent justify="end" className="hidden sm:flex">
-                    <AccountDropdown
+                    <ManageDropdown
                         noAccountFoundContent={
                             <>
                                 <NavbarItem>
@@ -105,7 +105,7 @@ const NavBar: React.FC = () => {
                                 {item.component ? (
                                     item.component
                                 ) : (
-                                    <Link color="foreground" onClick={() => handleNav(item.path)}>
+                                    <Link color="foreground" onClick={() => handleNav(item.url)}>
                                         <p className={`${fonts.text}`}>{item.label}</p>
                                     </Link>
                                 )}
@@ -113,7 +113,7 @@ const NavBar: React.FC = () => {
                         ))}
 
                         {/* Mobile user options with dropdown */}
-                        <AccountDropdown
+                        <ManageDropdown
                             noAccountFoundContent={
                                 <>
                                     <NavbarItem>

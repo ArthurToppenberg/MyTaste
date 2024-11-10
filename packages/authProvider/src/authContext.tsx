@@ -1,17 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useApiContext, ResponseType } from '@packages/apiCommunicator';
-import { LoginResponse } from '@packages/apiCommunicator/src/interactions/login';
 
-/*
-    authenticate
-    unAuthenticate
-    token -> only return string else null
-*/
 export const AuthContext = createContext({
-    login: (email: string, password: string) => Promise.resolve({} as LoginResponse),
     logout: () => {},
-    updateToken: (token: string) => {},
     token: null as string | null,
+    updateToken: (token: string) => {},
+    loading: true,
 });
 
 export interface AuthProviderProps {
@@ -23,18 +16,7 @@ export interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children, saveToken, removeToken, getToken }) => {
     const [token, setToken] = useState<string | null>(null);
-
-    const { api_login, set_token } = useApiContext();
-
-    const login = async (email: string, password: string) => {
-        const response = await api_login({ email, password });
-
-        if(response.type === ResponseType.ok && response.token){
-            updateToken(response.token);
-        }
-
-        return response;
-    };
+    const [loading, setLoading] = useState(true);
 
     const logout = () => {
         removeToken();
@@ -43,23 +25,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children, saveToken,
     };
 
     const updateToken = (token: string) => {
-        saveToken(token);
+        if (token === '') {
+            logout();
+            return;
+        }
+
+        const old_token = getToken();
+        if (token === old_token) {
+            return;
+        }
+
         setToken(token);
-        set_token(token);
+        saveToken(token);
     };
 
     useEffect(() => {
         const token = getToken();
-        if(token){
-            updateToken(token);
+        if (token) {
+            setToken(token);
         }
+        setLoading(false); // Set loading to false once the token is fetched
     }, []);
 
     return (
-        <AuthContext.Provider value={{ login, logout, token, updateToken }}>
+        <AuthContext.Provider value={{ logout, token, updateToken, loading }}>
             {children}
         </AuthContext.Provider>
     );
-}
+};
 
 export const useAuthContext = () => useContext(AuthContext);

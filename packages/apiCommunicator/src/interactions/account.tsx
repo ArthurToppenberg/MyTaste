@@ -21,7 +21,7 @@ export interface AccountResponse extends IResponse {
     is_admin: boolean | null;
 }
 
-const Account = async ({ apiUrl, token, props }: IRequest): Promise<AccountResponse> => {
+const Account = async ({ apiUrl, token, updateToken, props }: IRequest): Promise<AccountResponse> => {
     const response_failed_connection: AccountResponse = {
         id: null,
         email: null,
@@ -54,12 +54,17 @@ const Account = async ({ apiUrl, token, props }: IRequest): Promise<AccountRespo
     const absolureUrl = path.join(apiUrl, relativeUrl);
 
     const headers = Header({ token: token || "" });
-    const response = await axios.post(absolureUrl, { headers }).catch((error) => {
+    const response = await axios.post(absolureUrl, {}, { headers }).catch((error) => {
         if (error.response.status === 404) {
            return response_failed_connection;
         }
         return error.response;
     });
+
+    const tokenRecived: string = response.data.token;
+    if (tokenRecived && tokenRecived !== "") {
+        updateToken(tokenRecived);
+    }
 
     const accountResponse: AccountResponse = response.data;
 

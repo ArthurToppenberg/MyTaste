@@ -8,6 +8,7 @@
     },
     "dependencies": {
         "axios": "^1.7.7",
-        "path": "^0.12.7"
+        "path": "^0.12.7",
+        "@mytaste/auth-provider": "file:../authProvider"
     }
 }

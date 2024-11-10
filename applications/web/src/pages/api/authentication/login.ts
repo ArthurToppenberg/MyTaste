@@ -69,7 +69,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         return res.status(200).json(response);
     } catch (error) {
-        console.error('Error in signin', error);
         return res.status(200).json(response_internal_server_error);
     }
 }

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Input, Button, Spacer, Card } from '@nextui-org/react';
-import {useAuthContext } from '@packages/authProvider';
 import { useRouter } from 'next/router';
 import DefaultLayout from "@/pages/landing/_layouts/defaultLayout";
+import { useApiContext } from '@packages/apiCommunicator';
 
 import { ResponseType } from '@packages/apiCommunicator';
 
@@ -13,13 +13,13 @@ const Login: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const {login} = useAuthContext();
+    const {api_login} = useApiContext();
 
     const handleLogin = async () => {
         setLoading(true);
         setError('');
 
-        const response = await login(email, password);
+        const response = await api_login({email, password});
 
         if(response.type === ResponseType.error && response.errorMessage){
             setError(response.errorMessage);

@@ -8,11 +8,11 @@ import { AccountResponse } from "@packages/apiCommunicator/src/interactions/acco
 import { useApiContext, ResponseType } from "@packages/apiCommunicator";
 import { useAuthContext } from '@packages/authProvider';
 
-interface AccountDropdownProps {
+interface ManageDropdownProps {
     noAccountFoundContent: React.ReactNode;
 }
 
-const AccountDropdown: React.FC<AccountDropdownProps> = ({ noAccountFoundContent }) => {
+const ManageDropdown: React.FC<ManageDropdownProps> = ({ noAccountFoundContent }) => {
     const router = useRouter();
     const handleNav = (path: string) => {
         router.push(path);
@@ -22,7 +22,7 @@ const AccountDropdown: React.FC<AccountDropdownProps> = ({ noAccountFoundContent
     const [loading, setLoading] = useState(true);
 
     const { api_auth_account } = useApiContext();
-    const { updateToken, token, logout } = useAuthContext();
+    const { token, logout } = useAuthContext();
 
     useEffect(() => {
         const fetchAccount = async () => {
@@ -37,15 +37,14 @@ const AccountDropdown: React.FC<AccountDropdownProps> = ({ noAccountFoundContent
 
             if (account.type === ResponseType.ok && account.authed && account.token) {
                 setAccount(account);
-                updateToken(account.token);
             }
         };
         fetchAccount();
-    }, [token, api_auth_account, updateToken]);
+    }, [token, api_auth_account]);
 
     const accountDropdownItems = [
         {
-            label: "Admin Panel",
+            label: "Admin",
             onclick: () => handleNav('/dashboard/admin'),
             section: "dashboard",
             description: "Manage admin stuff",
@@ -61,7 +60,7 @@ const AccountDropdown: React.FC<AccountDropdownProps> = ({ noAccountFoundContent
             show: () => account?.is_restaurant === true,
         },
         {
-            label: "Mobile Account",
+            label: "Mobile",
             onclick: () => handleNav('/dashboard/client'),
             section: "dashboard",
             description: "Manage your mobile account",
@@ -96,7 +95,7 @@ const AccountDropdown: React.FC<AccountDropdownProps> = ({ noAccountFoundContent
                 <Dropdown>
                     <DropdownTrigger>
                         <Button variant="light">
-                            <p className={`${fonts.text}`} style={{ fontSize: '1rem', textAlign: "center" }}>Account</p>
+                            <p className={`${fonts.text}`} style={{ fontSize: '1rem', textAlign: "center" }}>Manage</p>
                             <Image src="/icons/settings.png" alt="settings" width={14} height={14} style={{ filter: 'invert(1)' }} />
                         </Button>
                     </DropdownTrigger>
@@ -133,4 +132,4 @@ const AccountDropdown: React.FC<AccountDropdownProps> = ({ noAccountFoundContent
     );
 };
 
-export default AccountDropdown;
+export default ManageDropdown;

@@ -4,7 +4,6 @@
     "main": "index.ts",
     "peerDependencies": {
         "react": "18.2.0",
-        "react-dom": "18.2.0",
-        "@mytaste/api-communicator": "file:../apiCommunicator"
+        "react-dom": "18.2.0"
     }
 }

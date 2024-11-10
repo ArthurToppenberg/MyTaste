@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import { Input, Button, Spacer, Card } from '@nextui-org/react';
 import DefaultLayout from '@/pages/landing/_layouts/defaultLayout';
 import { useRouter } from 'next/router';
-import { useAuthContext } from '@packages/authProvider';
 import { useApiContext, ResponseType } from '@packages/apiCommunicator';
 
 const SignUp: React.FC = () => {
     const router = useRouter();
-    const { login } = useAuthContext();
-    const { api_signup } = useApiContext();
+    const { api_signup, api_login } = useApiContext();
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -52,7 +50,7 @@ const SignUp: React.FC = () => {
     };
 
     const autoLogin = async () => {
-        const response = await login(email, password);
+        const response = await api_login({email, password});
 
         if(response.type === ResponseType.error && response.errorMessage){
             setError(response.errorMessage);
@@ -64,7 +62,6 @@ const SignUp: React.FC = () => {
             setLoading(false);
             router.push('/');
         }
-        
     };
 
     return (
